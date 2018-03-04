@@ -2,9 +2,13 @@
   "name": "dwv-simplistic",
   "version": "0.1.0-beta",
   "description": "Simplistic viewer using DWV.",
-  "keywords": [ "DICOM", "medical", "imaging" ],
+  "keywords": [
+    "DICOM",
+    "medical",
+    "imaging"
+  ],
   "license": "GPL-3.0",
-  "author" : "ivmartel <ivmartel@gmail.com>",
+  "author": "ivmartel <ivmartel@gmail.com>",
   "homepage": "https://ivmartel.github.io/dwv-simplistic/",
   "repository": {
     "type": "git",

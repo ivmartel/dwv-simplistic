@@ -3,7 +3,7 @@
 // https://developers.google.com/web/fundamentals/primers/service-workers/
 // chrome: chrome://inspect/#service-workers
 
-var CACHE_NAME = 'dwv-simplistic-test-cache-v0';
+var CACHE_NAME = 'dwv-simplistic-cache-v0';
 var urlsToCache = [
     './',
     // css
@@ -13,8 +13,10 @@ var urlsToCache = [
     './src/appgui.js',
     // images
     './resources/icons/dwv-16.png',
-    './resources/icons/dwv-60.png',
+    './resources/icons/dwv-32.png',
+    './resources/icons/dwv-64.png',
     './resources/icons/dwv-128.png',
+    './resources/icons/dwv-256.png',
     './node_modules/dwv/resources/help/double_tap.png',
     './node_modules/dwv/resources/help/tap_and_hold.png',
     './node_modules/dwv/resources/help/tap.png',
