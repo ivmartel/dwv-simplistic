@@ -4,7 +4,7 @@ module.exports = function(grunt) {
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         jshint: {
-            files: ['Gruntfile.js', 'src/*.js'],
+            files: ['Gruntfile.js', 'service-worker.js', 'src/*.js'],
             options: {
                 jshintrc: '.jshintrc'
             }
