@@ -57,6 +57,7 @@ if ('serviceWorker' in navigator) {
     });
 }
 
+
 // DOM ready?
 document.addEventListener("DOMContentLoaded", function (/*event*/) {
     domContentLoaded = true;

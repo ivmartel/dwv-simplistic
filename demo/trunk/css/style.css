@@ -16,7 +16,7 @@ body {
     margin: auto; text-align: center; }
 .dropBox.hover { border: 5px dashed #cc0; }
 
-/* tolbar and button */
+/* toolbar */
 button {
     margin: 5px; padding: 10px 10px;
     border: 0 none; border-radius: 4px;
