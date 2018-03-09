@@ -1,7 +1,7 @@
 {
   "name": "dwv-simplistic",
   "short_name": "dwv-simplistic",
-  "description": "Simplistic viwer using DWV.",
+  "description": "Simple medical viewer using DWV (DICOM Web Viewer).",
   "start_url": "/dwv-simplistic/demo/trunk/index.html",
   "display": "standalone",
   "background_color": "#f8852d",
