@@ -1,8 +1,6 @@
 dwv-simplistic
 ==============
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/ivmartel/dwv-simplistic.svg)](https://greenkeeper.io/)
-
 Simple medical viewer using [DWV](https://github.com/ivmartel/dwv) (DICOM Web Viewer).
 
 All coding/implementation contributions and comments are welcome.
