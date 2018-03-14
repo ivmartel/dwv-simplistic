@@ -1,4 +1,4 @@
-body { 
+body {
     font-family: Arial, Helvetica, sans-serif;
     background: #252525; color: #fff; }
 
@@ -6,12 +6,12 @@ body {
 .layerContainer { 
     position: relative; padding: 0;
     margin: auto; text-align: center; }
-.imageLayer { 
+.imageLayer {
     position: absolute;
     left: 0px; }
 
 /* drag&drop */
-.dropBox { 
+.dropBox {
     border: 5px dashed #ccc;
     margin: auto; text-align: center; }
 .dropBox.hover { border: 5px dashed #cc0; }
