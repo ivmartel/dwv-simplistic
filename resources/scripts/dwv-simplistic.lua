@@ -174,7 +174,7 @@ print([[
 // check browser support
 dwv.browser.check();
 // initialise i18n
-dwv.i18nInitialise("en","/dwv-simplistic/node_modules/dwv");
+dwv.i18nInitialise("auto", "/dwv-simplistic/node_modules/dwv");
 ]])
 
 print([[
