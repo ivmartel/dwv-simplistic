@@ -19,7 +19,7 @@ function startApp() {
         "isMobile": true
     });
     // activate tools on load end
-    dwvApp.addEventListener('load-end', function (event) {
+    dwvApp.addEventListener('load-end', function (/*event*/) {
         document.getElementById('tools').disabled = false;
         document.getElementById('reset').disabled = false;
     });
