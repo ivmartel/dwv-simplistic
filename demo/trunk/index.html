@@ -50,13 +50,21 @@
 <div id="dwv">
 
 <!-- Toolbar -->
-<div class="toolbar"></div>
+<div class="toolbar">
+  <select id="tools" name="tools" onChange="dwvApp.onChangeTool({currentTarget: {value: this.value}})" disabled>
+    <option value="Scroll" data-i18n="tool.Scroll.name">Scroll</option>
+    <option value="WindowLevel" data-i18n="tool.WindowLevel.name">WindowLevel</option>
+    <option value="ZoomAndPan" data-i18n="tool.ZoomAndPan.name">ZoomAndPan</option>
+  </select>
+  <button id="reset" value="Reset" onClick="dwvApp.onDisplayReset()" data-i18n="basics.reset" disabled>Reset</button>
+</div>
 <!-- Layer Container -->
 <div class="layerContainer">
-<div class="dropBox"></div>
+<div class="dropBox">Drag and drop data here.</div>
 <canvas class="imageLayer">Only for HTML5 compatible browsers...</canvas>
 </div><!-- /layerContainer -->
 
+<div id="legend" class="legend"></div>
 </div><!-- /dwv -->
 
 </body>

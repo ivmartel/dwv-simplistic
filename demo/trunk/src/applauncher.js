@@ -1,20 +1,28 @@
 /**
  * Application launcher.
  */
+// main application (global to be accessed from html)
+var dwvApp = new dwv.App();
 
 // start app function
 function startApp() {
-    // main application
-    var myapp = new dwv.App();
+    // translate page
+    dwv.i18nPage();
+
+    // update legend
+    document.getElementById('legend').innerHTML = "Powered by dwv "+dwv.getVersion();
     // initialise the application
-    myapp.init({
+    dwvApp.init({
         "containerDivId": "dwv",
         "fitToWindow": true,
-        "gui": ["tool"],
         "tools": ["Scroll", "ZoomAndPan", "WindowLevel"],
         "isMobile": true
     });
-    dwv.gui.appendResetHtml(myapp);
+    // activate tools on load end
+    dwvApp.addEventListener('load-end', function (/*event*/) {
+        document.getElementById('tools').disabled = false;
+        document.getElementById('reset').disabled = false;
+    });
 }
 
 // Image decoders (for web workers)
