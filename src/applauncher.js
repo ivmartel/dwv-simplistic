@@ -10,7 +10,15 @@ function startApp() {
     dwv.i18nPage();
 
     // update legend
-    document.getElementById('legend').innerHTML = "Powered by dwv "+dwv.getVersion();
+    var dwvLink = document.createElement("a");
+    dwvLink.href = "https://github.com/ivmartel/dwv";
+    dwvLink.title = "dwv on github";
+    dwvLink.appendChild(document.createTextNode("dwv"));
+    var para = document.createElement("p");
+    para.appendChild(document.createTextNode("Powered by "));
+    para.appendChild(dwvLink);
+    para.appendChild(document.createTextNode(" " + dwv.getVersion()));
+    document.getElementById('legend').appendChild(para);
     // initialise the application
     dwvApp.init({
         "containerDivId": "dwv",

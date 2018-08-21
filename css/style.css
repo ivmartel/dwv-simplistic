@@ -21,6 +21,9 @@ body {
   text-align: center;
   font-size: 8pt;
 }
+.legend a {
+    color: #ccc;
+}
 
 /* toolbar */
 button {
