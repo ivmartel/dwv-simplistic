@@ -1,20 +1,36 @@
 /**
  * Application launcher.
  */
+// main application (global to be accessed from html)
+var dwvApp = new dwv.App();
 
 // start app function
 function startApp() {
-    // main application
-    var myapp = new dwv.App();
+    // translate page
+    dwv.i18nPage();
+
+    // update legend
+    var dwvLink = document.createElement("a");
+    dwvLink.href = "https://github.com/ivmartel/dwv";
+    dwvLink.title = "dwv on github";
+    dwvLink.appendChild(document.createTextNode("dwv"));
+    var para = document.createElement("p");
+    para.appendChild(document.createTextNode("Powered by "));
+    para.appendChild(dwvLink);
+    para.appendChild(document.createTextNode(" " + dwv.getVersion()));
+    document.getElementById('legend').appendChild(para);
     // initialise the application
-    myapp.init({
+    dwvApp.init({
         "containerDivId": "dwv",
         "fitToWindow": true,
-        "gui": ["tool"],
         "tools": ["Scroll", "ZoomAndPan", "WindowLevel"],
         "isMobile": true
     });
-    dwv.gui.appendResetHtml(myapp);
+    // activate tools on load end
+    dwvApp.addEventListener('load-end', function (/*event*/) {
+        document.getElementById('tools').disabled = false;
+        document.getElementById('reset').disabled = false;
+    });
 }
 
 // Image decoders (for web workers)
@@ -43,20 +59,6 @@ dwv.i18nOnInitialised( function () {
 dwv.browser.check();
 // initialise i18n
 dwv.i18nInitialise("auto", "node_modules/dwv");
-
-// initialise service worker
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./service-worker.js').then(function (registration) {
-            // Registration was successful
-            console.log('ServiceWorker registration successful with scope: ', registration.scope);
-        }, function (err) {
-            // registration failed :(
-            console.log('ServiceWorker registration failed: ', err);
-        });
-    });
-}
-
 
 // DOM ready?
 document.addEventListener("DOMContentLoaded", function (/*event*/) {
