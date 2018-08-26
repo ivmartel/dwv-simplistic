@@ -111,20 +111,23 @@ print([[
 
 print([[
 <script type="text/javascript">
+// main application (global to be accessed from html)
+var dwvApp = new dwv.App();
 // start app function
 function startApp() {
-    // main application
-    var myapp = new dwv.App();
     // initialise the application
-    myapp.init({
+    dwvApp.init({
         "containerDivId": "dwv",
         "fitToWindow": true,
-        "gui": ["tool"],
         "tools": ["Scroll", "ZoomAndPan", "WindowLevel"],
         "isMobile": true,
         "skipLoadUrl": true
     });
-    dwv.gui.appendResetHtml(myapp);
+    // activate tools on load end
+    dwvApp.addEventListener('load-end', function (/*event*/) {
+        document.getElementById('tools').disabled = false;
+        document.getElementById('reset').disabled = false;
+    });
 ]])
 -- create javascript url array
 print([[
@@ -138,7 +141,7 @@ print([[
 ]])
 -- load data
 print([[
-    if( inputUrls && inputUrls.length > 0 ) myapp.loadURLs(inputUrls);
+    if( inputUrls && inputUrls.length > 0 ) dwvApp.loadURLs(inputUrls);
 }; // end startApp
 ]])
 
@@ -163,11 +166,6 @@ dwv.i18nOnInitialised( function () {
     i18nInitialised = true;
     launchApp();
 });
-// DOM ready?
-document.addEventListener("DOMContentLoaded", function (/*event*/) {
-    domContentLoaded = true;
-    launchApp();
-});
 ]])
 
 print([[
@@ -175,6 +173,11 @@ print([[
 dwv.browser.check();
 // initialise i18n
 dwv.i18nInitialise("auto", "/dwv-simplistic/node_modules/dwv");
+// DOM ready?
+document.addEventListener("DOMContentLoaded", function (/*event*/) {
+    domContentLoaded = true;
+    launchApp();
+});
 ]])
 
 print([[
@@ -190,10 +193,17 @@ print([[
 <div id="dwv">
 
 <!-- Toolbar -->
-<div class="toolbar"></div>
+<div class="toolbar">
+  <select id="tools" name="tools" onChange="dwvApp.onChangeTool({currentTarget: {value: this.value}})" disabled>
+    <option value="Scroll" data-i18n="tool.Scroll.name">Scroll</option>
+    <option value="WindowLevel" data-i18n="tool.WindowLevel.name">WindowLevel</option>
+    <option value="ZoomAndPan" data-i18n="tool.ZoomAndPan.name">ZoomAndPan</option>
+  </select>
+  <button id="reset" value="Reset" onClick="dwvApp.onDisplayReset()" data-i18n="basics.reset" disabled>Reset</button>
+</div>
 <!-- Layer Container -->
 <div class="layerContainer">
-<div class="dropBox"></div>
+<div class="dropBox">Drag and drop data here.</div>
 <canvas class="imageLayer">Only for HTML5 compatible browsers...</canvas>
 </div><!-- /layerContainer -->
 
