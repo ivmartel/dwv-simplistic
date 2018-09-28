@@ -1,6 +1,9 @@
 /**
  * Application launcher.
  */
+// namespace
+var dwvsimple = dwvsimple || {};
+
 // main application gui (global to be accessed from html)
 var dwvAppGui = null;
 
