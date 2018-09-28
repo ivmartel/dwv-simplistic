@@ -1,8 +1,11 @@
 /**
  * Application launcher.
  */
-// main application (global to be accessed from html)
-var dwvApp = new dwv.App();
+// namespace
+var dwvsimple = dwvsimple || {};
+
+// main application gui (global to be accessed from html)
+var dwvAppGui = null;
 
 // start app function
 function startApp() {
@@ -20,16 +23,32 @@ function startApp() {
     para.appendChild(document.createTextNode(" " + dwv.getVersion()));
     document.getElementById('legend').appendChild(para);
     // initialise the application
+    var dwvApp = new dwv.App();
     dwvApp.init({
         "containerDivId": "dwv",
         "fitToWindow": true,
         "tools": ["Scroll", "ZoomAndPan", "WindowLevel"],
         "isMobile": true
     });
-    // activate tools on load end
+
+    // app gui
+    dwvAppGui = new dwvsimple.Gui(dwvApp);
+
+    // listen to 'load-end'
     dwvApp.addEventListener('load-end', function (/*event*/) {
+        // activate tools
         document.getElementById('tools').disabled = false;
         document.getElementById('reset').disabled = false;
+        document.getElementById('presets').disabled = false;
+        // update presets
+        dwvAppGui.updatePresets(dwvApp.getViewController().getWindowLevelPresetsNames());
+    });
+    // listen to 'wl-center-change'
+    dwvApp.addEventListener('wl-center-change', function (/*event*/) {
+        // update presets (in case new was added)
+        dwvAppGui.updatePresets(dwvApp.getViewController().getWindowLevelPresetsNames());
+        // suppose it is a manual change so switch preset to manual
+        dwvAppGui.setSelectedPreset("manual");
     });
 }
 
