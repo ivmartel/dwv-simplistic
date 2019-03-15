@@ -25,7 +25,7 @@ Install dependencies (using `yarn`, replace with `npm` if you prefer):
 yarn install
 ```
 
-Serve the code on `localhost:8080`:
+Call the start script to launch the viewer on a local server:
 ```sh
 yarn run start
 ```
