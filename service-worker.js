@@ -54,7 +54,7 @@ var urlsToCache = [
     './node_modules/jszip/dist/jszip.min.js',
     // js: decoders
     './node_modules/dwv/decoders/dwv/rle.js',
-    './node_modules/dwv/decoders/dwv/decode-rle.js'
+    './node_modules/dwv/decoders/dwv/decode-rle.js',
     './node_modules/dwv/decoders/pdfjs/jpx.js',
     './node_modules/dwv/decoders/pdfjs/arithmetic_decoder.js',
     './node_modules/dwv/decoders/pdfjs/decode-jpeg2000.js',
