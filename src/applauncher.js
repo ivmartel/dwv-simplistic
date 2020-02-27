@@ -1,8 +1,9 @@
+// namespace
+var dwvsimple = dwvsimple || {};
+
 /**
  * Application launcher.
  */
-// namespace
-var dwvsimple = dwvsimple || {};
 
 // main application gui (global to be accessed from html)
 var dwvAppGui = null;
@@ -20,22 +21,67 @@ function startApp() {
     var dwvApp = new dwv.App();
     dwvApp.init({
         "containerDivId": "dwv",
-        "tools": ["Scroll", "ZoomAndPan", "WindowLevel"],
-        "isMobile": true
+        "tools": {
+            Scroll: {},
+            ZoomAndPan: {},
+            WindowLevel: {}
+        }
     });
 
     // app gui
     dwvAppGui = new dwvsimple.Gui(dwvApp);
 
-    // listen to 'load-end'
-    dwvApp.addEventListener('load-end', function (/*event*/) {
+    // setup the dropbox loader
+    var dropBoxLoader = new dwvsimple.gui.DropboxLoader(dwvApp);
+    dropBoxLoader.init();
+
+    // handle load events
+    let nReceivedError = null;
+    let nReceivedAbort = null;
+    dwvApp.addEventListener('load-start', function (/*event*/) {
+        nReceivedError = 0;
+        nReceivedAbort = 0;
+    });
+    dwvApp.addEventListener('load', function (/*event*/) {
         // activate tools
         document.getElementById('tools').disabled = false;
         document.getElementById('reset').disabled = false;
         document.getElementById('presets').disabled = false;
         // update presets
         dwvAppGui.updatePresets(dwvApp.getViewController().getWindowLevelPresetsNames());
+        // set the selected tool
+        let selectedTool = 'Scroll';
+        if (dwvApp.isMonoSliceData() &&
+            dwvApp.getImage().getNumberOfFrames() === 1) {
+            selectedTool = 'ZoomAndPan';
+        }
+        dwvApp.setTool(selectedTool);
+        // hide drop box (for url load)
+        dropBoxLoader.hideDropboxElement();
     });
+    dwvApp.addEventListener('load-end', function (/*event*/) {
+        if (nReceivedError) {
+            alert('Received errors during load. Check log for details.');
+        }
+        if (nReceivedAbort) {
+            alert('Load was aborted.');
+        }
+    });
+    dwvApp.addEventListener('error', function (event) {
+        console.error(event.error);
+        ++nReceivedError;
+    });
+    dwvApp.addEventListener('abort', function (/*event*/) {
+        ++nReceivedAbort;
+    });
+
+    // handle key events
+    dwvApp.addEventListener('keydown', function (event) {
+        dwvApp.defaultOnKeydown(event);
+    });
+    // handle window resize
+    window.addEventListener('resize', dwvApp.onResize);
+
     // listen to 'wl-center-change'
     dwvApp.addEventListener('wl-center-change', function (/*event*/) {
         // update presets (in case new was added)
@@ -43,6 +89,9 @@ function startApp() {
         // suppose it is a manual change so switch preset to manual
         dwvAppGui.setSelectedPreset("manual");
     });
+
+    // possible load from location
+    dwv.utils.loadFromUri(window.location.href, dwvApp);
 }
 
 // Image decoders (for web workers)
@@ -68,8 +117,8 @@ dwv.i18nOnInitialised( function () {
     launchApp();
 });
 
-// check browser support
-dwv.browser.check();
+// check environment support
+dwv.env.check();
 // initialise i18n
 dwv.i18nInitialise("auto", "node_modules/dwv");
 

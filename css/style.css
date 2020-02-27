@@ -17,11 +17,13 @@ body {
     left: 0px; }
 
 /* drag&drop */
-.dropBox {
-    border: 5px dashed #ccc;
-    margin: auto; text-align: center;
-    padding: 5px; color: #ccc; }
-.dropBox.hover { border: 5px dashed #cc0; }
+.dropBox {}
+.dropBoxBorder {
+    margin: 20px auto;
+    border: 5px dashed #ccc; }
+.dropBoxBorder.hover {
+    margin: 20px auto;
+    border: 5px dashed #cc0; }
 
 .legend {
   text-align: center;
