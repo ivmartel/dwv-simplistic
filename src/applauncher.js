@@ -36,8 +36,8 @@ function startApp() {
     dropBoxLoader.init();
 
     // handle load events
-    let nReceivedError = null;
-    let nReceivedAbort = null;
+    var nReceivedError = null;
+    var nReceivedAbort = null;
     dwvApp.addEventListener('load-start', function (/*event*/) {
         nReceivedError = 0;
         nReceivedAbort = 0;
@@ -50,7 +50,7 @@ function startApp() {
         // update presets
         dwvAppGui.updatePresets(dwvApp.getViewController().getWindowLevelPresetsNames());
         // set the selected tool
-        let selectedTool = 'Scroll';
+        var selectedTool = 'Scroll';
         if (dwvApp.isMonoSliceData() &&
             dwvApp.getImage().getNumberOfFrames() === 1) {
             selectedTool = 'ZoomAndPan';
