@@ -41,7 +41,7 @@ function startApp() {
     var abortOnCrtlX = function (event) {
         if (event.ctrlKey && event.keyCode === 88 ) { // crtl-x
             console.log("Abort load received from user (crtl-x).");
-            myapp.abortLoad();
+            dwvApp.abortLoad();
         }
     };
 
