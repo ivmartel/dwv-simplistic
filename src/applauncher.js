@@ -17,16 +17,18 @@ function startApp() {
     document.getElementById('dwvVersion').appendChild(
       document.createTextNode(dwv.getVersion()));
 
-    // initialise the application
-    var dwvApp = new dwv.App();
-    dwvApp.init({
+    // options
+    var options = {
         "containerDivId": "dwv",
         "tools": {
             Scroll: {},
             ZoomAndPan: {},
             WindowLevel: {}
         }
-    });
+    };
+    // main application
+    var dwvApp = new dwv.App();
+    dwvApp.init(options);
 
     // app gui
     dwvAppGui = new dwvsimple.Gui(dwvApp);
@@ -35,12 +37,28 @@ function startApp() {
     var dropBoxLoader = new dwvsimple.gui.DropboxLoader(dwvApp);
     dropBoxLoader.init();
 
+    // abort shortcut listener
+    var abortOnCrtlX = function (event) {
+        if (event.ctrlKey && event.keyCode === 88 ) { // crtl-x
+            console.log("Abort load received from user (crtl-x).");
+            myapp.abortLoad();
+        }
+    };
+
     // handle load events
+    var nReceivedLoadItem = null;
     var nReceivedError = null;
     var nReceivedAbort = null;
     dwvApp.addEventListener('load-start', function (/*event*/) {
+        // reset counts
+        nReceivedLoadItem = 0;
         nReceivedError = 0;
         nReceivedAbort = 0;
+        // allow to cancel via crtl-x
+        window.addEventListener("keydown", abortOnCrtlX);
+    });
+    dwvApp.addEventListener('load-item', function (/*event*/) {
+        ++nReceivedLoadItem;
     });
     dwvApp.addEventListener('load', function (/*event*/) {
         // activate tools
@@ -59,20 +77,34 @@ function startApp() {
         // hide drop box (for url load)
         dropBoxLoader.hideDropboxElement();
     });
-    dwvApp.addEventListener('load-end', function (/*event*/) {
-        if (nReceivedError) {
-            alert('Received errors during load. Check log for details.');
-        }
-        if (nReceivedAbort) {
-            alert('Load was aborted.');
-        }
-    });
     dwvApp.addEventListener('error', function (event) {
         console.error(event.error);
         ++nReceivedError;
     });
     dwvApp.addEventListener('abort', function (/*event*/) {
         ++nReceivedAbort;
+    });
+    dwvApp.addEventListener('load-end', function (/*event*/) {
+        // show the drop box if no item were received
+        if (nReceivedLoadItem === 0) {
+            dropBoxLoader.showDropboxElement();
+        }
+        // show alert for errors
+        if (nReceivedError !== 0) {
+            var message = "A load error has ";
+            if (nReceivedError > 1) {
+                message = nReceivedError + " load errors have ";
+            }
+            message += "occured. See log for details.";
+            alert(message);
+        }
+        // console warn for aborts
+        if (nReceivedAbort !== 0) {
+            console.warn("Data load was aborted.");
+        }
+        // stop listening for crtl-x
+        window.removeEventListener("keydown", abortOnCrtlX);
+
     });
 
     // handle key events
