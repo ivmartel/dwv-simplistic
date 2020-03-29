@@ -60,7 +60,9 @@ function startApp() {
     dwvApp.addEventListener('load-item', function (/*event*/) {
         ++nReceivedLoadItem;
     });
-    dwvApp.addEventListener('load', function (/*event*/) {
+    dwvApp.addEventListener('load-item', function (/*event*/) {
+        // hide drop box (for url load)
+        dropBoxLoader.hideDropboxElement();
         // activate tools
         document.getElementById('tools').disabled = false;
         document.getElementById('reset').disabled = false;
@@ -74,8 +76,6 @@ function startApp() {
             selectedTool = 'ZoomAndPan';
         }
         dwvApp.setTool(selectedTool);
-        // hide drop box (for url load)
-        dropBoxLoader.hideDropboxElement();
     });
     dwvApp.addEventListener('error', function (event) {
         console.error(event.error);
