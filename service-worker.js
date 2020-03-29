@@ -13,6 +13,7 @@ var urlsToCache = [
     './src/applauncher.js',
     './src/appgui.js',
     './src/register-sw.js',
+    './src/gui/dropboxLoader.js',
     // images
     './resources/icons/icon-16.png',
     './resources/icons/icon-32.png',
