@@ -2,14 +2,8 @@
  * Application GUI.
  */
 
-// decode query
-dwv.utils.decodeQuery = dwv.utils.base.decodeQuery;
-// Progress
-dwv.gui.displayProgress = function (/*percent*/) { /*does nothing*/ };
 // get element
 dwv.gui.getElement = dwv.gui.base.getElement;
-// refresh
-dwv.gui.refreshElement = dwv.gui.base.refreshElement;
 
 // namespace
 var dwvsimple = dwvsimple || {};
@@ -21,7 +15,7 @@ dwvsimple.Gui = function (app) {
    */
   this.onChangePreset = function (name) {
     // update viewer
-    app.onChangeWindowLevelPreset({currentTarget: {value: name}});
+    app.setWindowLevelPreset(name);
     // set selected
     this.setSelectedPreset(name);
   };
@@ -30,13 +24,13 @@ dwvsimple.Gui = function (app) {
    * @param {string} name The name of the new tool.
    */
   this.onChangeTool = function (name) {
-      app.onChangeTool({currentTarget: {value: name}});
+      app.setTool(name);
   };
   /**
    * Handle display reset.
    */
   this.onDisplayReset = function () {
-      app.onDisplayReset();
+      app.resetDisplay();
       // reset preset dropdown
       var domPresets = document.getElementById('presets');
       domPresets.selectedIndex = 0;
