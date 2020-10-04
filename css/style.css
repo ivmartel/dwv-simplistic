@@ -1,29 +1,41 @@
-html, body {
-    height: 100%;
+html,
+body {
+  height: 100%;
 }
 
 body {
-    font-family: Arial, Helvetica, sans-serif;
-    background: #252525; color: #fff; }
+  font-family: Arial, Helvetica, sans-serif;
+  background: #252525;
+  color: #fff;
+}
 
-#dwv { height: 90%; }
+#dwv {
+  height: 90%;
+}
 
 /* Layers */
 .layerContainer {
-    position: relative; padding: 0;
-    margin: auto; text-align: center; }
+  position: relative;
+  padding: 0;
+  margin: auto;
+  text-align: center;
+}
 .imageLayer {
-    position: absolute;
-    left: 0px; }
+  position: absolute;
+  left: 0px;
+}
 
 /* drag&drop */
-.dropBox {}
+.dropBox {
+}
 .dropBoxBorder {
-    margin: 20px auto;
-    border: 5px dashed #ccc; }
+  margin: 20px auto;
+  border: 5px dashed #ccc;
+}
 .dropBoxBorder.hover {
-    margin: 20px auto;
-    border: 5px dashed #cc0; }
+  margin: 20px auto;
+  border: 5px dashed #cc0;
+}
 
 .legend {
   text-align: center;
@@ -31,25 +43,50 @@ body {
   margin: 1em;
 }
 .legend a {
-    color: #ccc;
+  color: #ccc;
 }
 
 /* toolbar */
 button {
-    margin: 5px; padding: 10px 10px;
-    border: 0 none; border-radius: 4px;
-    font-size: 14px; font-weight: 600;
-    color: #fff; background-color: #444; }
-button:hover { background-color: #555; }
-button:disabled { color: #aeaeae; }
-.toolbar { font: 14px arial, sans-serif; margin-bottom: 5px; text-align: center; }
-.wl-button, .reset-button { margin-right: 5px; }
+  margin: 5px;
+  padding: 10px 10px;
+  border: 0 none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  background-color: #444;
+}
+button:hover {
+  background-color: #555;
+}
+button:disabled {
+  color: #aeaeae;
+}
+.toolbar {
+  font: 14px arial, sans-serif;
+  margin-bottom: 5px;
+  text-align: center;
+}
+.wl-button,
+.reset-button {
+  margin-right: 5px;
+}
 
 select {
-  margin: 5px; padding: 10px 10px;
-  border: 0 none; border-radius: 4px;
-  font-size: 14px; font-weight: 600;
-  color: #fff; background-color: #444;
-  text-align-last: center;}
-select:hover { background-color: #555; }
-select:disabled { color: #aeaeae; }
+  margin: 5px;
+  padding: 10px 10px;
+  border: 0 none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  background-color: #444;
+  text-align-last: center;
+}
+select:hover {
+  background-color: #555;
+}
+select:disabled {
+  color: #aeaeae;
+}
