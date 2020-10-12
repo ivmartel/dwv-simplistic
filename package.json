@@ -28,6 +28,7 @@
   "scripts": {
     "start": "grunt start",
     "dev": "grunt dev",
-    "test": "grunt test --verbose"
+    "test": "grunt test --verbose",
+    "lint": "grunt lint"
   }
 }
