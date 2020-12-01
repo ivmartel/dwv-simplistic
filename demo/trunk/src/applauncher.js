@@ -48,23 +48,23 @@ function startApp() {
   };
 
   // handle load events
-  var nReceivedLoadItem = null;
+  var nLoadItem = null;
   var nReceivedError = null;
   var nReceivedAbort = null;
   dwvApp.addEventListener('load-start', function (/*event*/) {
     // reset counts
-    nReceivedLoadItem = 0;
+    nLoadItem = 0;
     nReceivedError = 0;
     nReceivedAbort = 0;
+    // hide drop box
+    dropBoxLoader.showDropbox(false);
     // allow to cancel via crtl-x
     window.addEventListener('keydown', abortOnCrtlX);
   });
   dwvApp.addEventListener('load-item', function (/*event*/) {
-    ++nReceivedLoadItem;
+    ++nLoadItem;
   });
   dwvApp.addEventListener('load-item', function (/*event*/) {
-    // hide drop box (for url load)
-    dropBoxLoader.hideDropboxElement();
     // activate tools
     document.getElementById('tools').disabled = false;
     document.getElementById('reset').disabled = false;
@@ -91,22 +91,23 @@ function startApp() {
     ++nReceivedAbort;
   });
   dwvApp.addEventListener('load-end', function (/*event*/) {
-    // show the drop box if no item were received
-    if (nReceivedLoadItem === 0) {
-      dropBoxLoader.showDropboxElement();
-    }
     // show alert for errors
-    if (nReceivedError !== 0) {
+    if (nReceivedError) {
       var message = 'A load error has ';
       if (nReceivedError > 1) {
         message = nReceivedError + ' load errors have ';
       }
       message += 'occured. See log for details.';
       alert(message);
+      // show the drop box if no item were received
+      if (!nLoadItem) {
+        dropBoxLoader.showDropbox(true);
+      }
     }
     // console warn for aborts
     if (nReceivedAbort !== 0) {
       console.warn('Data load was aborted.');
+      dropBoxLoader.showDropbox(true);
     }
     // stop listening for crtl-x
     window.removeEventListener('keydown', abortOnCrtlX);
