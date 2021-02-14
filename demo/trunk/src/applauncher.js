@@ -51,28 +51,24 @@ function startApp() {
   var nLoadItem = null;
   var nReceivedError = null;
   var nReceivedAbort = null;
-  dwvApp.addEventListener('load-start', function (/*event*/) {
+  var isFirstRender = null;
+  dwvApp.addEventListener('loadstart', function (/*event*/) {
     // reset counts
     nLoadItem = 0;
     nReceivedError = 0;
     nReceivedAbort = 0;
+    isFirstRender = true;
     // hide drop box
     dropBoxLoader.showDropbox(false);
     // allow to cancel via crtl-x
     window.addEventListener('keydown', abortOnCrtlX);
   });
-  dwvApp.addEventListener('load-item', function (/*event*/) {
+  dwvApp.addEventListener('loaditem', function (/*event*/) {
     ++nLoadItem;
-  });
-  dwvApp.addEventListener('load-item', function (/*event*/) {
     // activate tools
     document.getElementById('tools').disabled = false;
     document.getElementById('reset').disabled = false;
     document.getElementById('presets').disabled = false;
-    // update presets
-    dwvAppGui.updatePresets(
-      dwvApp.getViewController().getWindowLevelPresetsNames()
-    );
     // set the selected tool
     var selectedTool = 'Scroll';
     if (
@@ -83,6 +79,15 @@ function startApp() {
     }
     dwvApp.setTool(selectedTool);
   });
+  dwvApp.addEventListener('renderend', function (/*event*/) {
+    if (isFirstRender) {
+      isFirstRender = false;
+      // update presets
+      dwvAppGui.updatePresets(
+        dwvApp.getViewController().getWindowLevelPresetsNames()
+      );
+    }
+  });
   dwvApp.addEventListener('error', function (event) {
     console.error(event.error);
     ++nReceivedError;
@@ -90,7 +95,7 @@ function startApp() {
   dwvApp.addEventListener('abort', function (/*event*/) {
     ++nReceivedAbort;
   });
-  dwvApp.addEventListener('load-end', function (/*event*/) {
+  dwvApp.addEventListener('loadend', function (/*event*/) {
     // show alert for errors
     if (nReceivedError) {
       var message = 'A load error has ';
@@ -121,7 +126,7 @@ function startApp() {
   window.addEventListener('resize', dwvApp.onResize);
 
   // listen to 'wl-center-change'
-  dwvApp.addEventListener('wl-center-change', function (/*event*/) {
+  dwvApp.addEventListener('wlcenterchange', function (/*event*/) {
     // update presets (in case new was added)
     dwvAppGui.updatePresets(
       dwvApp.getViewController().getWindowLevelPresetsNames()
