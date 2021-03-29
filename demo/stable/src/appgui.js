@@ -24,16 +24,16 @@ dwvsimple.Gui = function (app) {
    * @param {string} name The name of the new tool.
    */
   this.onChangeTool = function (name) {
-      app.setTool(name);
+    app.setTool(name);
   };
   /**
    * Handle display reset.
    */
   this.onDisplayReset = function () {
-      app.resetDisplay();
-      // reset preset dropdown
-      var domPresets = document.getElementById('presets');
-      domPresets.selectedIndex = 0;
+    app.resetDisplay();
+    // reset preset dropdown
+    var domPresets = document.getElementById('presets');
+    domPresets.selectedIndex = 0;
   };
 }; // class dwvsimple.Gui
 
@@ -45,14 +45,14 @@ dwvsimple.Gui.prototype.updatePresets = function (presets) {
   var domPresets = document.getElementById('presets');
   // clear previous
   while (domPresets.hasChildNodes()) {
-      domPresets.removeChild(domPresets.firstChild);
+    domPresets.removeChild(domPresets.firstChild);
   }
   // add new
   for (var i = 0; i < presets.length; ++i) {
     var option = document.createElement('option');
     option.value = presets[i];
     var label = presets[i];
-    var key = "wl.presets."+label+".name";
+    var key = 'wl.presets.' + label + '.name';
     if (dwv.i18nExists(key)) {
       label = dwv.i18n(key);
     }
@@ -71,7 +71,7 @@ dwvsimple.Gui.prototype.setSelectedPreset = function (name) {
   var index = 0;
   for (index in domPresets.options) {
     if (domPresets.options[index].value === name) {
-        break;
+      break;
     }
   }
   // set selected
