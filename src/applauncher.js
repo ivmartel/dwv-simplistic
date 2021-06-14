@@ -65,26 +65,26 @@ function startApp() {
   });
   dwvApp.addEventListener('loaditem', function (/*event*/) {
     ++nLoadItem;
-    // activate tools
-    document.getElementById('tools').disabled = false;
-    document.getElementById('reset').disabled = false;
-    document.getElementById('presets').disabled = false;
-    // set the selected tool
-    var selectedTool = 'Scroll';
-    if (
-      dwvApp.isMonoSliceData() &&
-      dwvApp.getImage().getNumberOfFrames() === 1
-    ) {
-      selectedTool = 'ZoomAndPan';
-    }
-    dwvApp.setTool(selectedTool);
   });
   dwvApp.addEventListener('renderend', function (/*event*/) {
     if (isFirstRender) {
       isFirstRender = false;
+      // activate tools
+      document.getElementById('tools').disabled = false;
+      document.getElementById('reset').disabled = false;
+      document.getElementById('presets').disabled = false;
+      // set the selected tool
+      var selectedTool = 'ZoomAndPan';
+      if (dwvApp.canScroll()) {
+        selectedTool = 'Scroll';
+      }
+      dwvApp.setTool(selectedTool);
       // update presets
+      var layerController = dwvApp.getLayerController();
+      var viewController =
+        layerController.getActiveViewLayer().getViewController();
       dwvAppGui.updatePresets(
-        dwvApp.getViewController().getWindowLevelPresetsNames()
+        viewController.getWindowLevelPresetsNames()
       );
     }
   });
@@ -128,8 +128,11 @@ function startApp() {
   // listen to 'wl-center-change'
   dwvApp.addEventListener('wlcenterchange', function (/*event*/) {
     // update presets (in case new was added)
+    var layerController = dwvApp.getLayerController();
+    var viewController =
+      layerController.getActiveViewLayer().getViewController();
     dwvAppGui.updatePresets(
-      dwvApp.getViewController().getWindowLevelPresetsNames()
+      viewController.getWindowLevelPresetsNames()
     );
     // suppose it is a manual change so switch preset to manual
     dwvAppGui.setSelectedPreset('manual');

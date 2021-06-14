@@ -20,13 +20,15 @@ body {
   margin: auto;
   text-align: center;
 }
-.imageLayer {
+.layer {
   position: absolute;
-  left: 0px;
+  pointer-events: none;
 }
 
 /* drag&drop */
 .dropBox {
+  text-align: center;
+  width: 50%; height: 75%;
 }
 .dropBoxBorder {
   margin: 20px auto;
