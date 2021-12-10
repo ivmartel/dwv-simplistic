@@ -20,7 +20,7 @@ function startApp() {
 
   // options
   var options = {
-    containerDivId: 'dwv',
+    dataViewConfigs: {'*': [{divId: 'layerGroup0'}]},
     tools: {
       Scroll: {},
       ZoomAndPan: {},
@@ -80,9 +80,9 @@ function startApp() {
       }
       dwvApp.setTool(selectedTool);
       // update presets
-      var layerController = dwvApp.getLayerController();
-      var viewController =
-        layerController.getActiveViewLayer().getViewController();
+      var lg = dwvApp.getLayerGroupById(0);
+      var vl = lg.getActiveViewLayer();
+      var viewController = vl.getViewController();
       dwvAppGui.updatePresets(
         viewController.getWindowLevelPresetsNames()
       );
@@ -125,12 +125,12 @@ function startApp() {
   // handle window resize
   window.addEventListener('resize', dwvApp.onResize);
 
-  // listen to 'wl-center-change'
-  dwvApp.addEventListener('wlcenterchange', function (/*event*/) {
+  // listen to 'wlchange'
+  dwvApp.addEventListener('wlchange', function (/*event*/) {
     // update presets (in case new was added)
-    var layerController = dwvApp.getLayerController();
-    var viewController =
-      layerController.getActiveViewLayer().getViewController();
+    var lg = dwvApp.getLayerGroupById(0);
+    var vl = lg.getActiveViewLayer();
+    var viewController = vl.getViewController();
     dwvAppGui.updatePresets(
       viewController.getWindowLevelPresetsNames()
     );
