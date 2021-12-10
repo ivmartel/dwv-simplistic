@@ -51,9 +51,6 @@
 
 <body>
 
-<!-- DWV -->
-<div id="dwv">
-
 <!-- Toolbar -->
 <div class="toolbar">
   <select id="tools" name="tools" onChange="dwvAppGui.onChangeTool(this.value)" disabled>
@@ -69,12 +66,17 @@
 
 <div id="dropBox"></div>
 
+<!-- DWV -->
+<div id="dwv">
+
 <!-- Layer Container -->
-<div class="layerContainer"></div>
+<div id="layerGroup0" class="layerGroup"></div>
 
 <div id="legend" class="legend"><p>Powered by <a
   href="https://github.com/ivmartel/dwv"
-  title="dwv on github">dwv</a> <span id="dwvVersion"></span>.</p></div>
+  title="dwv on github">dwv</a> <span id="dwvVersion"></span>.</p>
+</div>
+
 </div><!-- /dwv -->
 
 </body>
