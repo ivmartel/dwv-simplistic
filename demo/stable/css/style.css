@@ -5,28 +5,33 @@ body {
 
 body {
   font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  padding: 0;
   background: #252525;
   color: #fff;
 }
 
 #dwv {
-  height: 90%;
+  height: 80%;
 }
 
 /* Layers */
-.layerContainer {
+.layerGroup {
   position: relative;
   padding: 0;
-  margin: auto;
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  height: 100%;
 }
-.imageLayer {
+.layer {
   position: absolute;
-  left: 0px;
+  pointer-events: none;
 }
 
 /* drag&drop */
 .dropBox {
+  text-align: center;
+  width: 50%; height: 75%;
 }
 .dropBoxBorder {
   margin: 20px auto;

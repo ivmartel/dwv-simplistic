@@ -28,7 +28,7 @@
 <link rel="apple-touch-icon" sizes="256x256" href="resources/icons/icon-256.png" />
 <!-- Third party (dwv) -->
 <script type="text/javascript" src="node_modules/i18next/i18next.min.js"></script>
-<script type="text/javascript" src="node_modules/i18next-xhr-backend/i18nextXHRBackend.min.js"></script>
+<script type="text/javascript" src="node_modules/i18next-http-backend/i18nextHttpBackend.min.js"></script>
 <script type="text/javascript" src="node_modules/i18next-browser-languagedetector/i18nextBrowserLanguageDetector.min.js"></script>
 <script type="text/javascript" src="node_modules/jszip/dist/jszip.min.js"></script>
 <!-- decoders -->
@@ -51,9 +51,6 @@
 
 <body>
 
-<!-- DWV -->
-<div id="dwv">
-
 <!-- Toolbar -->
 <div class="toolbar">
   <select id="tools" name="tools" onChange="dwvAppGui.onChangeTool(this.value)" disabled>
@@ -66,15 +63,20 @@
   </select>
   <button id="reset" value="Reset" onClick="dwvAppGui.onDisplayReset()" data-i18n="basics.reset" disabled>Reset</button>
 </div>
+
+<!-- DWV -->
+<div id="dwv">
+
 <!-- Layer Container -->
-<div class="layerContainer">
-<div class="dropBox"></div>
-<canvas class="imageLayer">Only for HTML5 compatible browsers...</canvas>
-</div><!-- /layerContainer -->
+<div id="layerGroup0" class="layerGroup">
+  <div id="dropBox"></div>
+</div>
 
 <div id="legend" class="legend"><p>Powered by <a
   href="https://github.com/ivmartel/dwv"
-  title="dwv on github">dwv</a> <span id="dwvVersion"></span>.</p></div>
+  title="dwv on github">dwv</a> <span id="dwvVersion"></span>.</p>
+</div>
+
 </div><!-- /dwv -->
 
 </body>

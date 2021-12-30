@@ -2,9 +2,6 @@
  * Application GUI.
  */
 
-// get element
-dwv.gui.getElement = dwv.gui.base.getElement;
-
 // namespace
 var dwvsimple = dwvsimple || {};
 

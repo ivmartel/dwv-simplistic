@@ -20,7 +20,7 @@ function startApp() {
 
   // options
   var options = {
-    containerDivId: 'dwv',
+    dataViewConfigs: {'*': [{divId: 'layerGroup0'}]},
     tools: {
       Scroll: {},
       ZoomAndPan: {},
@@ -65,26 +65,26 @@ function startApp() {
   });
   dwvApp.addEventListener('loaditem', function (/*event*/) {
     ++nLoadItem;
-    // activate tools
-    document.getElementById('tools').disabled = false;
-    document.getElementById('reset').disabled = false;
-    document.getElementById('presets').disabled = false;
-    // set the selected tool
-    var selectedTool = 'Scroll';
-    if (
-      dwvApp.isMonoSliceData() &&
-      dwvApp.getImage().getNumberOfFrames() === 1
-    ) {
-      selectedTool = 'ZoomAndPan';
-    }
-    dwvApp.setTool(selectedTool);
   });
   dwvApp.addEventListener('renderend', function (/*event*/) {
     if (isFirstRender) {
       isFirstRender = false;
+      // activate tools
+      document.getElementById('tools').disabled = false;
+      document.getElementById('reset').disabled = false;
+      document.getElementById('presets').disabled = false;
+      // set the selected tool
+      var selectedTool = 'ZoomAndPan';
+      if (dwvApp.canScroll()) {
+        selectedTool = 'Scroll';
+      }
+      dwvApp.setTool(selectedTool);
       // update presets
+      var lg = dwvApp.getLayerGroupById(0);
+      var vl = lg.getActiveViewLayer();
+      var viewController = vl.getViewController();
       dwvAppGui.updatePresets(
-        dwvApp.getViewController().getWindowLevelPresetsNames()
+        viewController.getWindowLevelPresetsNames()
       );
     }
   });
@@ -125,11 +125,14 @@ function startApp() {
   // handle window resize
   window.addEventListener('resize', dwvApp.onResize);
 
-  // listen to 'wl-center-change'
-  dwvApp.addEventListener('wlcenterchange', function (/*event*/) {
+  // listen to 'wlchange'
+  dwvApp.addEventListener('wlchange', function (/*event*/) {
     // update presets (in case new was added)
+    var lg = dwvApp.getLayerGroupById(0);
+    var vl = lg.getActiveViewLayer();
+    var viewController = vl.getViewController();
     dwvAppGui.updatePresets(
-      dwvApp.getViewController().getWindowLevelPresetsNames()
+      viewController.getWindowLevelPresetsNames()
     );
     // suppose it is a manual change so switch preset to manual
     dwvAppGui.setSelectedPreset('manual');

@@ -1,5 +1,5 @@
 --
--- dwv-simplistic (medical viewer using DWV) lua script 
+-- dwv-simplistic (medical viewer using DWV) lua script
 --  for integration in a Conquest PACS server.
 --
 -- Usage:
@@ -13,7 +13,7 @@
 -- >> viewer = dwv-simplistic
 -- 3. copy the dwv-simplistic source code from one of its release available at
 -- https://github.com/ivmartel/dwv-simplistic/releases
--- in a 'dwv-simplistic' folder in the web folder of your web server. 
+-- in a 'dwv-simplistic' folder in the web folder of your web server.
 -- It should be accessible via '[server address]/dwv-simplistic'.
 --
 -- This script relies on the 'kFactorFile', 'ACRNemaMap' and 'Dictionary'
@@ -88,7 +88,7 @@ print([[
 print([[
 <!-- Third party (dwv) -->
 <script type="text/javascript" src="/dwv-simplistic/node_modules/i18next/i18next.min.js"></script>
-<script type="text/javascript" src="/dwv-simplistic/node_modules/i18next-xhr-backend/i18nextXHRBackend.min.js"></script>
+<script type="text/javascript" src="/dwv-simplistic/node_modules/i18next-http-backend/i18nextHttpBackend.min.js"></script>
 <script type="text/javascript" src="/dwv-simplistic/node_modules/i18next-browser-languagedetector/i18nextBrowserLanguageDetector.min.js"></script>
 <script type="text/javascript" src="/dwv-simplistic/node_modules/jszip/dist/jszip.min.js"></script>
 ]])
