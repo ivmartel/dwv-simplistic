@@ -49,10 +49,6 @@ dwvsimple.Gui.prototype.updatePresets = function (presets) {
     var option = document.createElement('option');
     option.value = presets[i];
     var label = presets[i];
-    var key = 'wl.presets.' + label + '.name';
-    if (dwv.i18nExists(key)) {
-      label = dwv.i18n(key);
-    }
     option.appendChild(document.createTextNode(label));
     domPresets.appendChild(option);
   }
