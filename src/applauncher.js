@@ -49,14 +49,14 @@ function startApp() {
 
   // handle load events
   var nLoadItem = null;
-  var nReceivedError = null;
-  var nReceivedAbort = null;
+  var nReceivedLoadError = null;
+  var nReceivedLoadAbort = null;
   var isFirstRender = null;
   dwvApp.addEventListener('loadstart', function (/*event*/) {
     // reset counts
     nLoadItem = 0;
-    nReceivedError = 0;
-    nReceivedAbort = 0;
+    nReceivedLoadError = 0;
+    nReceivedLoadAbort = 0;
     isFirstRender = true;
     // hide drop box
     dropBoxLoader.showDropbox(false);
@@ -80,7 +80,7 @@ function startApp() {
       }
       dwvApp.setTool(selectedTool);
       // update presets
-      var lg = dwvApp.getLayerGroupById(0);
+      var lg = dwvApp.getActiveLayerGroup();
       var vl = lg.getActiveViewLayer();
       var viewController = vl.getViewController();
       dwvAppGui.updatePresets(
@@ -88,19 +88,19 @@ function startApp() {
       );
     }
   });
-  dwvApp.addEventListener('error', function (event) {
+  dwvApp.addEventListener('loaderror', function (event) {
     console.error(event.error);
-    ++nReceivedError;
+    ++nReceivedLoadError;
   });
-  dwvApp.addEventListener('abort', function (/*event*/) {
-    ++nReceivedAbort;
+  dwvApp.addEventListener('loadabort', function (/*event*/) {
+    ++nReceivedLoadAbort;
   });
   dwvApp.addEventListener('loadend', function (/*event*/) {
     // show alert for errors
-    if (nReceivedError) {
+    if (nReceivedLoadError) {
       var message = 'A load error has ';
-      if (nReceivedError > 1) {
-        message = nReceivedError + ' load errors have ';
+      if (nReceivedLoadError > 1) {
+        message = nReceivedLoadError + ' load errors have ';
       }
       message += 'occured. See log for details.';
       alert(message);
@@ -110,7 +110,7 @@ function startApp() {
       }
     }
     // console warn for aborts
-    if (nReceivedAbort !== 0) {
+    if (nReceivedLoadAbort !== 0) {
       console.warn('Data load was aborted.');
       dropBoxLoader.showDropbox(true);
     }
@@ -128,7 +128,7 @@ function startApp() {
   // listen to 'wlchange'
   dwvApp.addEventListener('wlchange', function (/*event*/) {
     // update presets (in case new was added)
-    var lg = dwvApp.getLayerGroupById(0);
+    var lg = dwvApp.getActiveLayerGroup();
     var vl = lg.getActiveViewLayer();
     var viewController = vl.getViewController();
     dwvAppGui.updatePresets(
