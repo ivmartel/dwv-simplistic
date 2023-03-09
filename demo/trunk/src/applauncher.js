@@ -21,7 +21,10 @@ function startApp() {
     tools: {
       Scroll: {},
       ZoomAndPan: {},
-      WindowLevel: {}
+      WindowLevel: {},
+      Draw: {
+        options: ['Ruler']
+      }
     }
   };
   // main application
