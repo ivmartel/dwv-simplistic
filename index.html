@@ -49,17 +49,7 @@
 <body>
 
 <!-- Toolbar -->
-<div class="toolbar">
-  <select id="tools" name="tools" onChange="dwvAppGui.onChangeTool(this.value)" disabled>
-    <option value="Scroll">Scroll</option>
-    <option value="WindowLevel">WindowLevel</option>
-    <option value="ZoomAndPan">ZoomAndPan</option>
-  </select>
-  <select id="presets" name="presets" onChange="dwvAppGui.onChangePreset(this.value)" disabled>
-    <option value="">Preset...</option>
-  </select>
-  <button id="reset" value="Reset" onClick="dwvAppGui.onDisplayReset()" disabled>Reset</button>
-</div>
+<div id="toolbar"></div>
 
 <!-- DWV -->
 <div id="dwv">

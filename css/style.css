@@ -52,46 +52,37 @@ body {
 }
 
 /* toolbar */
-button {
-  margin: 5px;
-  padding: 10px 10px;
-  border: 0 none;
-  border-radius: 4px;
-  font-size: 14px;
-  font-weight: 600;
-  color: #fff;
-  background-color: #444;
-}
-button:hover {
-  background-color: #555;
-}
-button:disabled {
-  color: #aeaeae;
-}
-.toolbar {
+#toolbar {
   font: 14px arial, sans-serif;
   margin-bottom: 5px;
-  text-align: center;
+  display: flex;
+  justify-content: center;
 }
-.wl-button,
-.reset-button {
-  margin-right: 5px;
-}
-
-select {
-  margin: 5px;
+#toolbar button, select {
+  margin: 10px 3px;
   padding: 10px 10px;
   border: 0 none;
   border-radius: 4px;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
   color: #fff;
   background-color: #444;
-  text-align-last: center;
+  height: 40px;
 }
-select:hover {
+#toolbar button:enabled:hover, select:enabled:hover {
   background-color: #555;
+  cursor: pointer;
 }
-select:disabled {
+#toolbar button:disabled, select:disabled {
   color: #aeaeae;
+  cursor: default;
+}
+#toolbar .active {
+  background-color: green !important;
+}
+#toolbar button:enabled path {
+  fill: #fff;
+}
+#toolbar button:disabled path {
+  fill: #aeaeae;
 }

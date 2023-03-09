@@ -29,7 +29,15 @@ function startApp() {
   dwvApp.init(options);
 
   // app gui
-  dwvAppGui = new dwvsimple.Gui(dwvApp);
+  var guiTools = Object.keys(options.tools);
+  var wlIndex = guiTools.indexOf('WindowLevel');
+  if (wlIndex !== -1) {
+    guiTools.splice(wlIndex + 1, 0, 'presets');
+  }
+  guiTools.push('reset');
+  dwvAppGui = new dwvsimple.Gui(dwvApp, guiTools);
+  dwvAppGui.init();
+  dwvAppGui.enableTools(false);
 
   // setup the dropbox loader
   var dropBoxLoader = new dwvsimple.gui.DropboxLoader(dwvApp);
@@ -66,16 +74,15 @@ function startApp() {
   dwvApp.addEventListener('renderend', function (/*event*/) {
     if (isFirstRender) {
       isFirstRender = false;
-      // activate tools
-      document.getElementById('tools').disabled = false;
-      document.getElementById('reset').disabled = false;
-      document.getElementById('presets').disabled = false;
+      // enable tools
+      dwvAppGui.enableTools(true);
       // set the selected tool
       var selectedTool = 'ZoomAndPan';
       if (dwvApp.canScroll()) {
         selectedTool = 'Scroll';
       }
       dwvApp.setTool(selectedTool);
+      dwvAppGui.activateTool(selectedTool, true);
       // update presets
       var lg = dwvApp.getActiveLayerGroup();
       var vl = lg.getActiveViewLayer();
