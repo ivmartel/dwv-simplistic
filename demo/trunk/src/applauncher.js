@@ -83,6 +83,11 @@ function startApp() {
       var selectedTool = 'ZoomAndPan';
       if (dwvApp.canScroll()) {
         selectedTool = 'Scroll';
+      } else {
+        dwvAppGui.enableTool('Scroll', false);
+      }
+      if (!dwvApp.canWindowLevel()) {
+        dwvAppGui.enableTool('WindowLevel', false);
       }
       dwvApp.setTool(selectedTool);
       dwvAppGui.activateTool(selectedTool, true);
