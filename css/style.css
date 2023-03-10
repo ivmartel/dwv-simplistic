@@ -7,8 +7,8 @@ body {
   font-family: Arial, Helvetica, sans-serif;
   margin: 0;
   padding: 0;
-  background: #252525;
-  color: #fff;
+  background: #fff;
+  color: #000;
 }
 
 #dwv {
@@ -47,9 +47,6 @@ body {
   font-size: 8pt;
   margin: 1em;
 }
-.legend a {
-  color: #ccc;
-}
 
 /* toolbar */
 #toolbar {
@@ -61,28 +58,64 @@ body {
 #toolbar button, select {
   margin: 10px 3px;
   padding: 10px 10px;
-  border: 0 none;
   border-radius: 4px;
   font-size: 16px;
   font-weight: 600;
-  color: #fff;
-  background-color: #444;
   height: 40px;
+  border: 1px solid #e0e0e0;
+  background-color: #fff;
+  color: #757575;
 }
 #toolbar button:enabled:hover, select:enabled:hover {
-  background-color: #555;
+  background-color: #f5f5f5;
   cursor: pointer;
 }
 #toolbar button:disabled, select:disabled {
-  color: #aeaeae;
+  color: #bdbdbd;
   cursor: default;
 }
 #toolbar .active {
-  background-color: green !important;
+  background-color: #f0f1f9 !important;
 }
 #toolbar button:enabled path {
-  fill: #fff;
+  fill: #757575;
+}
+#toolbar button.active:enabled path {
+  fill: #4a5bb9;
 }
 #toolbar button:disabled path {
-  fill: #aeaeae;
+  fill: #bdbdbd;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background: #252525;
+    color: #fff;
+  }
+  .legend a {
+    color: #ccc;
+  }
+  #toolbar button, select {
+    border: 1px solid #2f2f2f;
+    background-color: #fff;
+  }
+  #toolbar button, select {
+    color: #fff;
+    background-color: #333;
+  }
+  #toolbar button:enabled:hover, select:enabled:hover {
+    background-color: #555;
+  }
+  #toolbar button:disabled, select:disabled {
+    color: #aeaeae;
+  }
+  #toolbar .active {
+    background-color: #404040 !important;
+  }
+  #toolbar button:enabled path {
+    fill: #fff;
+  }
+  #toolbar button:disabled path {
+    fill: #aeaeae;
+  }
 }
