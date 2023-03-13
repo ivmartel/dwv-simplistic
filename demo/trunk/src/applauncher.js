@@ -37,7 +37,8 @@ function startApp() {
   if (wlIndex !== -1) {
     guiTools.splice(wlIndex + 1, 0, 'presets');
   }
-  guiTools.push('reset');
+  guiTools.push('Reset');
+  guiTools.push('ToggleOrientation');
   dwvAppGui = new dwvsimple.Gui(dwvApp, guiTools);
   dwvAppGui.init();
   dwvAppGui.enableTools(false);

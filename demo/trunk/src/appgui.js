@@ -17,7 +17,9 @@ var _paths = {
   // straighten
   'Draw': 'M3.812 15.521q-1.041 0-1.75-.709-.708-.708-.708-1.75V6.938q0-1.042.708-1.75.709-.709 1.75-.709h12.376q1.041 0 1.75.709.708.708.708 1.75v6.124q0 1.042-.708 1.75-.709.709-1.75.709Zm0-2.459h12.376V6.938H14V10h-1.5V6.938h-1.75V10h-1.5V6.938H7.5V10H6V6.938H3.812v6.124ZM6 10h1.5Zm3.25 0h1.5Zm3.25 0H14ZM10 10Z',
   // refresh
-  'reset': 'M9.917 16.708q-2.771 0-4.74-1.968Q3.208 12.771 3.208 10t1.969-4.74q1.969-1.968 4.74-1.968 1.541 0 2.833.625 1.292.625 2.208 1.708V3.292h1.834v6.02H10.75V7.5h2.604q-.604-.792-1.489-1.271-.886-.479-1.948-.479-1.771 0-3.011 1.24Q5.667 8.229 5.667 10q0 1.771 1.239 3.01 1.24 1.24 3.011 1.24 1.625 0 2.802-1.094t1.385-2.656h2.521q-.208 2.625-2.125 4.417-1.917 1.791-4.583 1.791Z'
+  'Reset': 'M9.917 16.708q-2.771 0-4.74-1.968Q3.208 12.771 3.208 10t1.969-4.74q1.969-1.968 4.74-1.968 1.541 0 2.833.625 1.292.625 2.208 1.708V3.292h1.834v6.02H10.75V7.5h2.604q-.604-.792-1.489-1.271-.886-.479-1.948-.479-1.771 0-3.011 1.24Q5.667 8.229 5.667 10q0 1.771 1.239 3.01 1.24 1.24 3.011 1.24 1.625 0 2.802-1.094t1.385-2.656h2.521q-.208 2.625-2.125 4.417-1.917 1.791-4.583 1.791Z',
+  // refresh
+  'ToggleOrientation': 'M6.812 14.312q-.75 0-1.281-.531Q5 13.25 5 12.5V8.146q0-.75.521-1.292t1.291-.542H7.5l1-1h3l1 1h.688q.77 0 1.291.542.521.542.521 1.292V12.5q0 .75-.531 1.281-.531.531-1.281.531Zm0-1.812h6.376V8.146H6.812V12.5ZM10 11.667q.562 0 .948-.396.385-.396.385-.959 0-.562-.395-.947-.396-.386-.938-.386-.562 0-.948.396-.385.396-.385.937 0 .563.395.959.396.396.938.396ZM7 .479q.75-.25 1.521-.364Q9.292 0 10.104 0 12 0 13.719.698q1.719.698 3.052 1.896t2.177 2.844Q19.792 7.083 20 9h-2.146q-.166-1.271-.719-2.406-.552-1.136-1.395-2.021-.844-.885-1.959-1.479-1.114-.594-2.385-.823l.958.979-1.25 1.292Zm6 19.042q-.75.25-1.521.364-.771.115-1.583.115-1.917 0-3.636-.698-1.718-.698-3.041-1.896t-2.177-2.844Q.188 12.917 0 11h2.146q.146 1.271.698 2.406.552 1.136 1.406 2.021.854.885 1.969 1.479 1.114.594 2.385.823l-.958-.979 1.25-1.292Zm-2.958-9.229Z'
 };
 /* eslint-enable max-len */
 
@@ -40,9 +42,13 @@ dwvsimple.getToolButton = function (toolName, appGui) {
   button.id = toolName;
   button.title = toolName;
   button.appendChild(svg);
-  if (toolName === 'reset') {
+  if (toolName === 'Reset') {
     button.onclick = function () {
       appGui.onDisplayReset();
+    };
+  } else if (toolName === 'ToggleOrientation') {
+    button.onclick = function () {
+      appGui.toggleOrientation();
     };
   } else {
     button.onclick = function () {
@@ -82,6 +88,9 @@ dwvsimple.getSelect = function (toolName, appGui) {
 dwvsimple.Gui = function (app, tools) {
 
   var self = this;
+
+  // view orientation
+  this.orientation;
 
   /**
    * Initialise the GUI: fill the toolbar.
@@ -178,6 +187,39 @@ dwvsimple.Gui = function (app, tools) {
     var domPresets = document.getElementById('presets');
     domPresets.selectedIndex = 0;
   };
+
+  /**
+   * Toogle the viewer orientation.
+   */
+  this.toggleOrientation = function () {
+    if (typeof this.orientation !== 'undefined') {
+      if (this.orientation === 'axial') {
+        this.orientation = 'coronal';
+      } else if (this.orientation === 'coronal') {
+        this.orientation = 'sagittal';
+      } else if (this.orientation === 'sagittal') {
+        this.orientation = 'axial';
+      }
+    } else {
+      // default is most probably axial
+      this.orientation = 'coronal';
+    }
+    // update data view config
+    var config = {
+      '*': [
+        {
+          divId: 'layerGroup0',
+          orientation: this.orientation
+        }
+      ]
+    };
+    app.setDataViewConfig(config);
+    // render data
+    for (var i = 0; i < app.getNumberOfLoadedData(); ++i) {
+      app.render(i);
+    }
+  };
+
 }; // class dwvsimple.Gui
 
 /**
