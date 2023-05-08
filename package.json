@@ -1,6 +1,6 @@
 {
   "name": "dwv-simplistic",
-  "version": "0.7.0",
+  "version": "0.8.0-beta",
   "description": "Simple medical viewer using DWV (DICOM Web Viewer).",
   "keywords": [
     "DICOM",
