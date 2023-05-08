@@ -10,9 +10,6 @@ var dwvAppGui = null;
 
 // start app function
 function startApp() {
-  // translate page
-  dwv.i18nPage();
-
   // update legend
   document
     .getElementById('dwvVersion')
@@ -24,7 +21,10 @@ function startApp() {
     tools: {
       Scroll: {},
       ZoomAndPan: {},
-      WindowLevel: {}
+      WindowLevel: {},
+      Draw: {
+        options: ['Ruler']
+      }
     }
   };
   // main application
@@ -32,7 +32,16 @@ function startApp() {
   dwvApp.init(options);
 
   // app gui
-  dwvAppGui = new dwvsimple.Gui(dwvApp);
+  var guiTools = Object.keys(options.tools);
+  var wlIndex = guiTools.indexOf('WindowLevel');
+  if (wlIndex !== -1) {
+    guiTools.splice(wlIndex + 1, 0, 'presets');
+  }
+  guiTools.push('Reset');
+  guiTools.push('ToggleOrientation');
+  dwvAppGui = new dwvsimple.Gui(dwvApp, guiTools);
+  dwvAppGui.init();
+  dwvAppGui.enableTools(false);
 
   // setup the dropbox loader
   var dropBoxLoader = new dwvsimple.gui.DropboxLoader(dwvApp);
@@ -49,14 +58,14 @@ function startApp() {
 
   // handle load events
   var nLoadItem = null;
-  var nReceivedError = null;
-  var nReceivedAbort = null;
+  var nReceivedLoadError = null;
+  var nReceivedLoadAbort = null;
   var isFirstRender = null;
   dwvApp.addEventListener('loadstart', function (/*event*/) {
     // reset counts
     nLoadItem = 0;
-    nReceivedError = 0;
-    nReceivedAbort = 0;
+    nReceivedLoadError = 0;
+    nReceivedLoadAbort = 0;
     isFirstRender = true;
     // hide drop box
     dropBoxLoader.showDropbox(false);
@@ -69,18 +78,22 @@ function startApp() {
   dwvApp.addEventListener('renderend', function (/*event*/) {
     if (isFirstRender) {
       isFirstRender = false;
-      // activate tools
-      document.getElementById('tools').disabled = false;
-      document.getElementById('reset').disabled = false;
-      document.getElementById('presets').disabled = false;
+      // enable tools
+      dwvAppGui.enableTools(true);
       // set the selected tool
       var selectedTool = 'ZoomAndPan';
       if (dwvApp.canScroll()) {
         selectedTool = 'Scroll';
+      } else {
+        dwvAppGui.enableTool('Scroll', false);
+      }
+      if (!dwvApp.canWindowLevel()) {
+        dwvAppGui.enableTool('WindowLevel', false);
       }
       dwvApp.setTool(selectedTool);
+      dwvAppGui.activateTool(selectedTool, true);
       // update presets
-      var lg = dwvApp.getLayerGroupById(0);
+      var lg = dwvApp.getActiveLayerGroup();
       var vl = lg.getActiveViewLayer();
       var viewController = vl.getViewController();
       dwvAppGui.updatePresets(
@@ -88,19 +101,19 @@ function startApp() {
       );
     }
   });
-  dwvApp.addEventListener('error', function (event) {
+  dwvApp.addEventListener('loaderror', function (event) {
     console.error(event.error);
-    ++nReceivedError;
+    ++nReceivedLoadError;
   });
-  dwvApp.addEventListener('abort', function (/*event*/) {
-    ++nReceivedAbort;
+  dwvApp.addEventListener('loadabort', function (/*event*/) {
+    ++nReceivedLoadAbort;
   });
   dwvApp.addEventListener('loadend', function (/*event*/) {
     // show alert for errors
-    if (nReceivedError) {
+    if (nReceivedLoadError) {
       var message = 'A load error has ';
-      if (nReceivedError > 1) {
-        message = nReceivedError + ' load errors have ';
+      if (nReceivedLoadError > 1) {
+        message = nReceivedLoadError + ' load errors have ';
       }
       message += 'occured. See log for details.';
       alert(message);
@@ -110,7 +123,7 @@ function startApp() {
       }
     }
     // console warn for aborts
-    if (nReceivedAbort !== 0) {
+    if (nReceivedLoadAbort !== 0) {
       console.warn('Data load was aborted.');
       dropBoxLoader.showDropbox(true);
     }
@@ -128,7 +141,7 @@ function startApp() {
   // listen to 'wlchange'
   dwvApp.addEventListener('wlchange', function (/*event*/) {
     // update presets (in case new was added)
-    var lg = dwvApp.getLayerGroupById(0);
+    var lg = dwvApp.getActiveLayerGroup();
     var vl = lg.getActiveViewLayer();
     var viewController = vl.getViewController();
     dwvAppGui.updatePresets(
@@ -150,28 +163,10 @@ dwv.image.decoderScripts = {
   rle: 'node_modules/dwv/decoders/dwv/decode-rle.js'
 };
 
-// status flags
-var domContentLoaded = false;
-var i18nInitialised = false;
-// launch when both DOM and i18n are ready
-function launchApp() {
-  if (domContentLoaded && i18nInitialised) {
-    startApp();
-  }
-}
-// i18n ready?
-dwv.i18nOnInitialised(function () {
-  i18nInitialised = true;
-  launchApp();
-});
-
 // check environment support
 dwv.env.check();
-// initialise i18n
-dwv.i18nInitialise('auto', 'node_modules/dwv');
 
 // DOM ready?
 document.addEventListener('DOMContentLoaded', function (/*event*/) {
-  domContentLoaded = true;
-  launchApp();
+  startApp();
 });

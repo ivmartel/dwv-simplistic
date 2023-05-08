@@ -87,9 +87,6 @@ print([[
 
 print([[
 <!-- Third party (dwv) -->
-<script type="text/javascript" src="/dwv-simplistic/node_modules/i18next/i18next.min.js"></script>
-<script type="text/javascript" src="/dwv-simplistic/node_modules/i18next-http-backend/i18nextHttpBackend.min.js"></script>
-<script type="text/javascript" src="/dwv-simplistic/node_modules/i18next-browser-languagedetector/i18nextBrowserLanguageDetector.min.js"></script>
 <script type="text/javascript" src="/dwv-simplistic/node_modules/jszip/dist/jszip.min.js"></script>
 ]])
 
@@ -154,31 +151,14 @@ dwv.image.decoderScripts = {
     "jpeg-baseline": "/dwv-simplistic/node_modules/dwv/decoders/pdfjs/decode-jpegbaseline.js",
     "rle": "/dwv-simplistic/node_modules/dwv/decoders/dwv/decode-rle.js"
 };
-// status flags
-var domContentLoaded = false;
-var i18nInitialised = false;
-// launch when both DOM and i18n are ready
-function launchApp() {
-    if ( domContentLoaded && i18nInitialised ) {
-        startApp();
-    }
-}
-// i18n ready?
-dwv.i18nOnInitialised( function () {
-    i18nInitialised = true;
-    launchApp();
-});
 ]])
 
 print([[
 // check browser support
 dwv.browser.check();
-// initialise i18n
-dwv.i18nInitialise("auto", "/dwv-simplistic/node_modules/dwv");
 // DOM ready?
 document.addEventListener("DOMContentLoaded", function (/*event*/) {
-    domContentLoaded = true;
-    launchApp();
+    startApp();
 });
 ]])
 
@@ -197,11 +177,11 @@ print([[
 <!-- Toolbar -->
 <div class="toolbar">
   <select id="tools" name="tools" onChange="dwvApp.onChangeTool({currentTarget: {value: this.value}})" disabled>
-    <option value="Scroll" data-i18n="tool.Scroll.name">Scroll</option>
-    <option value="WindowLevel" data-i18n="tool.WindowLevel.name">WindowLevel</option>
-    <option value="ZoomAndPan" data-i18n="tool.ZoomAndPan.name">ZoomAndPan</option>
+    <option value="Scroll">Scroll</option>
+    <option value="WindowLevel">WindowLevel</option>
+    <option value="ZoomAndPan">ZoomAndPan</option>
   </select>
-  <button id="reset" value="Reset" onClick="dwvApp.onDisplayReset()" data-i18n="basics.reset" disabled>Reset</button>
+  <button id="reset" value="Reset" onClick="dwvApp.onDisplayReset()" disabled>Reset</button>
 </div>
 <!-- Layer Container -->
 <div class="layerContainer">

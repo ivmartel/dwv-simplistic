@@ -1,13 +1,160 @@
 /**
  * Application GUI.
  */
-
 // namespace
 var dwvsimple = dwvsimple || {};
 
-dwvsimple.Gui = function (app) {
+// icons from https://fonts.google.com/icons
+// Fill: 0 Weight: 700 Grade: 0 Optical Size: 20
+/* eslint-disable max-len */
+var _paths = {
+  // menu
+  'Scroll': 'M2.521 15.292v-2.459h14.958v2.459Zm0-4.063V8.771h14.958v2.458Zm0-4.062V4.708h14.958v2.459Z',
+  // search
+  'ZoomAndPan': 'm15.896 17.792-5.125-5.125q-.604.375-1.344.593-.739.219-1.594.219-2.271 0-3.875-1.604T2.354 8q0-2.271 1.604-3.875t3.875-1.604q2.271 0 3.875 1.604T13.312 8q0 .875-.218 1.594-.219.718-.594 1.302l5.146 5.166Zm-8.063-6.771q1.271 0 2.146-.875T10.854 8q0-1.271-.875-2.146t-2.146-.875q-1.271 0-2.145.875-.876.875-.876 2.146t.876 2.146q.874.875 2.145.875Z',
+  // contrast
+  'WindowLevel': 'M10 18.708q-1.792 0-3.375-.677t-2.781-1.875q-1.198-1.198-1.875-2.781-.677-1.583-.677-3.396 0-1.791.677-3.364t1.875-2.771q1.198-1.198 2.781-1.875 1.583-.677 3.396-.677 1.791 0 3.364.677t2.771 1.875q1.198 1.198 1.875 2.781.677 1.583.677 3.375t-.677 3.375q-.677 1.583-1.875 2.781-1.198 1.198-2.781 1.875-1.583.677-3.375.677Zm1-2.541q2.271-.375 3.76-2.063 1.49-1.687 1.49-4.104 0-2.354-1.49-4.062Q13.271 4.229 11 3.854Z',
+  // straighten
+  'Draw': 'M3.812 15.521q-1.041 0-1.75-.709-.708-.708-.708-1.75V6.938q0-1.042.708-1.75.709-.709 1.75-.709h12.376q1.041 0 1.75.709.708.708.708 1.75v6.124q0 1.042-.708 1.75-.709.709-1.75.709Zm0-2.459h12.376V6.938H14V10h-1.5V6.938h-1.75V10h-1.5V6.938H7.5V10H6V6.938H3.812v6.124ZM6 10h1.5Zm3.25 0h1.5Zm3.25 0H14ZM10 10Z',
+  // refresh
+  'Reset': 'M9.917 16.708q-2.771 0-4.74-1.968Q3.208 12.771 3.208 10t1.969-4.74q1.969-1.968 4.74-1.968 1.541 0 2.833.625 1.292.625 2.208 1.708V3.292h1.834v6.02H10.75V7.5h2.604q-.604-.792-1.489-1.271-.886-.479-1.948-.479-1.771 0-3.011 1.24Q5.667 8.229 5.667 10q0 1.771 1.239 3.01 1.24 1.24 3.011 1.24 1.625 0 2.802-1.094t1.385-2.656h2.521q-.208 2.625-2.125 4.417-1.917 1.791-4.583 1.791Z',
+  // refresh
+  'ToggleOrientation': 'M6.812 14.312q-.75 0-1.281-.531Q5 13.25 5 12.5V8.146q0-.75.521-1.292t1.291-.542H7.5l1-1h3l1 1h.688q.77 0 1.291.542.521.542.521 1.292V12.5q0 .75-.531 1.281-.531.531-1.281.531Zm0-1.812h6.376V8.146H6.812V12.5ZM10 11.667q.562 0 .948-.396.385-.396.385-.959 0-.562-.395-.947-.396-.386-.938-.386-.562 0-.948.396-.385.396-.385.937 0 .563.395.959.396.396.938.396ZM7 .479q.75-.25 1.521-.364Q9.292 0 10.104 0 12 0 13.719.698q1.719.698 3.052 1.896t2.177 2.844Q19.792 7.083 20 9h-2.146q-.166-1.271-.719-2.406-.552-1.136-1.395-2.021-.844-.885-1.959-1.479-1.114-.594-2.385-.823l.958.979-1.25 1.292Zm6 19.042q-.75.25-1.521.364-.771.115-1.583.115-1.917 0-3.636-.698-1.718-.698-3.041-1.896t-2.177-2.844Q.188 12.917 0 11h2.146q.146 1.271.698 2.406.552 1.136 1.406 2.021.854.885 1.969 1.479 1.114.594 2.385.823l-.958-.979 1.25-1.292Zm-2.958-9.229Z'
+};
+/* eslint-enable max-len */
+
+/**
+ * Get a tool html button.
+ *
+ * @param {string} toolName The tool name.
+ * @param {object} appGui The associated GUi.
+ * @returns An HTML button element.
+ */
+dwvsimple.getToolButton = function (toolName, appGui) {
+  var xmlns = 'http://www.w3.org/2000/svg';
+  var path = document.createElementNS(xmlns, 'path');
+  path.setAttributeNS(null, 'd', _paths[toolName]);
+  var svg = document.createElementNS(xmlns, 'svg');
+  svg.setAttributeNS(null, 'height', 20);
+  svg.setAttributeNS(null, 'width', 20);
+  svg.appendChild(path);
+  var button = document.createElement('button');
+  button.id = toolName;
+  button.title = toolName;
+  button.appendChild(svg);
+  if (toolName === 'Reset') {
+    button.onclick = function () {
+      appGui.onDisplayReset();
+    };
+  } else if (toolName === 'ToggleOrientation') {
+    button.onclick = function () {
+      appGui.toggleOrientation();
+    };
+  } else {
+    button.onclick = function () {
+      appGui.onChangeTool(toolName);
+    };
+  }
+  return button;
+};
+
+/**
+ * Get a tool html select.
+ *
+ * @param {string} toolName The tool name.
+ * @param {object} appGui The associated GUi.
+ * @returns An HTML select element.
+ */
+dwvsimple.getSelect = function (toolName, appGui) {
+  var option = document.createElement('option');
+  option.value = '';
+  option.appendChild(document.createTextNode('Preset...'));
+  var select = document.createElement('select');
+  select.id = toolName;
+  select.appendChild(option);
+  select.onchange = function () {
+    appGui.onChangePreset(this.value);
+  };
+  return select;
+};
+
+/**
+ * GUI class.
+ *
+ * @class
+ * @param {object} app The associated app.
+ * @param {Array} tools The list of tools.
+ */
+dwvsimple.Gui = function (app, tools) {
+
+  var self = this;
+
+  // view orientation
+  this.orientation;
+
+  /**
+   * Initialise the GUI: fill the toolbar.
+   */
+  this.init = function () {
+    var toolbar = document.getElementById('toolbar');
+    for (var i = 0; i < tools.length; ++i) {
+      if (tools[i] === 'presets') {
+        toolbar.appendChild(dwvsimple.getSelect(tools[i], self));
+      } else {
+        toolbar.appendChild(dwvsimple.getToolButton(tools[i], self));
+      }
+    }
+  };
+
+  /**
+   * Enable or not a tool.
+   *
+   * @param {string} name The tool name.
+   * @param {boolean} flag True to enable.
+   */
+  this.enableTool = function (name, flag) {
+    document.getElementById(name).disabled = !flag;
+  };
+
+  /**
+   * Enable or not all tools.
+   *
+   * @param {boolean} flag True to enable.
+   */
+  this.enableTools = function (flag) {
+    for (var i = 0; i < tools.length; ++i) {
+      this.enableTool(tools[i], flag);
+    }
+  };
+
+  /**
+   * Activate or not a tool.
+   *
+   * @param {string} name The tool name.
+   * @param {boolean} flag True to activate.
+   */
+  this.activateTool = function (name, flag) {
+    if (flag) {
+      document.getElementById(name).classList.add('active');
+    } else {
+      document.getElementById(name).classList.remove('active');
+    }
+  };
+
+  /**
+   * Activate or not all tool.
+   *
+   * @param {boolean} flag True to activate.
+   */
+  this.activateTools = function (flag) {
+    for (var i = 0; i < tools.length; ++i) {
+      this.activateTool(tools[i], flag);
+    }
+  };
+
   /**
    * Handle preset change.
+   *
    * @param {string} name The name of the new preset.
    */
   this.onChangePreset = function (name) {
@@ -16,13 +163,21 @@ dwvsimple.Gui = function (app) {
     // set selected
     this.setSelectedPreset(name);
   };
+
   /**
    * Handle tool change.
+   *
    * @param {string} name The name of the new tool.
    */
   this.onChangeTool = function (name) {
+    this.activateTools(false);
+    this.activateTool(name, true);
     app.setTool(name);
+    if (name === 'Draw') {
+      app.setToolFeatures({shapeName: 'Ruler'});
+    }
   };
+
   /**
    * Handle display reset.
    */
@@ -32,6 +187,39 @@ dwvsimple.Gui = function (app) {
     var domPresets = document.getElementById('presets');
     domPresets.selectedIndex = 0;
   };
+
+  /**
+   * Toogle the viewer orientation.
+   */
+  this.toggleOrientation = function () {
+    if (typeof this.orientation !== 'undefined') {
+      if (this.orientation === 'axial') {
+        this.orientation = 'coronal';
+      } else if (this.orientation === 'coronal') {
+        this.orientation = 'sagittal';
+      } else if (this.orientation === 'sagittal') {
+        this.orientation = 'axial';
+      }
+    } else {
+      // default is most probably axial
+      this.orientation = 'coronal';
+    }
+    // update data view config
+    var config = {
+      '*': [
+        {
+          divId: 'layerGroup0',
+          orientation: this.orientation
+        }
+      ]
+    };
+    app.setDataViewConfig(config);
+    // render data
+    for (var i = 0; i < app.getNumberOfLoadedData(); ++i) {
+      app.render(i);
+    }
+  };
+
 }; // class dwvsimple.Gui
 
 /**
@@ -49,10 +237,6 @@ dwvsimple.Gui.prototype.updatePresets = function (presets) {
     var option = document.createElement('option');
     option.value = presets[i];
     var label = presets[i];
-    var key = 'wl.presets.' + label + '.name';
-    if (dwv.i18nExists(key)) {
-      label = dwv.i18n(key);
-    }
     option.appendChild(document.createTextNode(label));
     domPresets.appendChild(option);
   }
