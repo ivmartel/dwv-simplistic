@@ -26,24 +26,6 @@ var urlsToCache = [
   './resources/help/touch_drag.png',
   './resources/help/twotouch_drag.png',
   './resources/help/twotouch_pinch.png',
-  // translations
-  './node_modules/dwv/locales/de/translation.json',
-  './node_modules/dwv/locales/en/translation.json',
-  './node_modules/dwv/locales/es/translation.json',
-  './node_modules/dwv/locales/fr/translation.json',
-  './node_modules/dwv/locales/it/translation.json',
-  './node_modules/dwv/locales/jp/translation.json',
-  './node_modules/dwv/locales/ru/translation.json',
-  './node_modules/dwv/locales/zh/translation.json',
-  // overlays
-  './node_modules/dwv/locales/de/overlays.json',
-  './node_modules/dwv/locales/en/overlays.json',
-  './node_modules/dwv/locales/es/overlays.json',
-  './node_modules/dwv/locales/fr/overlays.json',
-  './node_modules/dwv/locales/it/overlays.json',
-  './node_modules/dwv/locales/jp/overlays.json',
-  './node_modules/dwv/locales/ru/overlays.json',
-  './node_modules/dwv/locales/zh/overlays.json',
 
   // third party
 
