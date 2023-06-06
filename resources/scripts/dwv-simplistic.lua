@@ -145,17 +145,15 @@ print([[
 
 print([[
 // Image decoders (for web workers)
-dwv.image.decoderScripts = {
-    "jpeg2000": "/dwv-simplistic/node_modules/dwv/decoders/pdfjs/decode-jpeg2000.js",
-    "jpeg-lossless": "/dwv-simplistic/node_modules/dwv/decoders/rii-mango/decode-jpegloss.js",
-    "jpeg-baseline": "/dwv-simplistic/node_modules/dwv/decoders/pdfjs/decode-jpegbaseline.js",
-    "rle": "/dwv-simplistic/node_modules/dwv/decoders/dwv/decode-rle.js"
-};
+dwv.decoderScripts.jpeg2000 =
+  'node_modules/dwv/decoders/pdfjs/decode-jpeg2000.js';
+dwv.decoderScripts['jpeg-lossless'] =
+  'node_modules/dwv/decoders/rii-mango/decode-jpegloss.js';
+dwv.decoderScripts['jpeg-baseline'] =
+  'node_modules/dwv/decoders/pdfjs/decode-jpegbaseline.js';
 ]])
 
 print([[
-// check browser support
-dwv.browser.check();
 // DOM ready?
 document.addEventListener("DOMContentLoaded", function (/*event*/) {
     startApp();
