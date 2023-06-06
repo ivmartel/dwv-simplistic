@@ -13,7 +13,7 @@ function startApp() {
   // update legend
   document
     .getElementById('dwvVersion')
-    .appendChild(document.createTextNode(dwv.getVersion()));
+    .appendChild(document.createTextNode(dwv.getDwvVersion()));
 
   // options
   var options = {
@@ -152,19 +152,17 @@ function startApp() {
   });
 
   // possible load from location
-  dwv.utils.loadFromUri(window.location.href, dwvApp);
+  dwvApp.loadFromUri(window.location.href);
 }
 
 // Image decoders (for web workers)
-dwv.image.decoderScripts = {
-  jpeg2000: 'node_modules/dwv/decoders/pdfjs/decode-jpeg2000.js',
-  'jpeg-lossless': 'node_modules/dwv/decoders/rii-mango/decode-jpegloss.js',
-  'jpeg-baseline': 'node_modules/dwv/decoders/pdfjs/decode-jpegbaseline.js',
-  rle: 'node_modules/dwv/decoders/dwv/decode-rle.js'
-};
-
-// check environment support
-dwv.env.check();
+dwv.decoderScripts.jpeg2000 =
+  'node_modules/dwv/decoders/pdfjs/decode-jpeg2000.js';
+dwv.decoderScripts['jpeg-lossless'] =
+  'node_modules/dwv/decoders/rii-mango/decode-jpegloss.js';
+dwv.decoderScripts['jpeg-baseline'] =
+  'node_modules/dwv/decoders/pdfjs/decode-jpegbaseline.js';
+dwv.decoderScripts.rle = 'node_modules/dwv/decoders/dwv/decode-rle.js';
 
 // DOM ready?
 document.addEventListener('DOMContentLoaded', function (/*event*/) {
