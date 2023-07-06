@@ -75,6 +75,16 @@ dwvsimple.gui.DropboxLoader = function (app) {
   }
 
   /**
+   * Handle a an input[type:file] change event.
+   * @param event The event to handle.
+   */
+  function onInputFile(event) {
+    if (event.target && event.target.files) {
+      app.loadFiles(event.target.files);
+    }
+  }
+
+  /**
    * Show or hide the data load drop box.
    * @param {boolean} show Flag to show or hide.
    */
@@ -91,7 +101,23 @@ dwvsimple.gui.DropboxLoader = function (app) {
       // add content if empty
       if (box.innerHTML === '') {
         var p = document.createElement('p');
-        p.appendChild(document.createTextNode('Drag and drop data here'));
+        p.appendChild(document.createTextNode('Drag and drop data here or '));
+        // input file
+        var input = document.createElement('input');
+        input.onchange = onInputFile;
+        input.type = 'file';
+        input.multiple = true;
+        input.id = 'input-file';
+        input.style.display = 'none';
+        var label = document.createElement('label');
+        label.htmlFor = 'input-file';
+        var link = document.createElement('a');
+        link.appendChild(document.createTextNode('click here'));
+        link.id = 'input-file-link';
+        label.appendChild(link);
+        p.appendChild(input);
+        p.appendChild(label);
+
         box.appendChild(p);
       }
       // show box
