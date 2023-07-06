@@ -41,6 +41,9 @@ body {
   margin: 20px auto;
   border: 5px dashed #cc0;
 }
+#input-file-link {
+  text-decoration-line: underline;
+}
 
 .legend {
   text-align: center;
