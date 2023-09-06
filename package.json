@@ -15,7 +15,7 @@
     "url": "git://github.com/ivmartel/dwv-simplistic.git"
   },
   "dependencies": {
-    "dwv": "0.32.1"
+    "dwv": "0.32.2"
   },
   "devDependencies": {
     "grunt": "^1.4.0",
