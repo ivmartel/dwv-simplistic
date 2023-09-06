@@ -189,7 +189,7 @@ dwvsimple.Gui = function (app, tools) {
   };
 
   /**
-   * Toogle the viewer orientation.
+   * Toggle the viewer orientation.
    */
   this.toggleOrientation = function () {
     if (typeof this.orientation !== 'undefined') {
@@ -213,7 +213,7 @@ dwvsimple.Gui = function (app, tools) {
         }
       ]
     };
-    app.setDataViewConfig(config);
+    app.setDataViewConfigs(config);
     // render data
     for (var i = 0; i < app.getNumberOfLoadedData(); ++i) {
       app.render(i);
