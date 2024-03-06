@@ -1,14 +1,18 @@
 // namespace
 var dwvsimple = dwvsimple || {};
 
+// Image decoders (for web workers)
+dwv.decoderScripts.jpeg2000 =
+  'node_modules/dwv/decoders/pdfjs/decode-jpeg2000.js';
+dwv.decoderScripts['jpeg-lossless'] =
+  'node_modules/dwv/decoders/rii-mango/decode-jpegloss.js';
+dwv.decoderScripts['jpeg-baseline'] =
+  'node_modules/dwv/decoders/pdfjs/decode-jpegbaseline.js';
+dwv.decoderScripts.rle = 'node_modules/dwv/decoders/dwv/decode-rle.js';
+
 /**
  * Application launcher.
  */
-
-// main application gui (global to be accessed from html)
-var dwvAppGui = null;
-
-// start app function
 function startApp() {
   // update legend
   document
@@ -39,7 +43,7 @@ function startApp() {
   }
   guiTools.push('Reset');
   guiTools.push('ToggleOrientation');
-  dwvAppGui = new dwvsimple.Gui(dwvApp, guiTools);
+  var dwvAppGui = new dwvsimple.Gui(dwvApp, guiTools);
   dwvAppGui.init();
   dwvAppGui.enableTools(false);
 
@@ -155,16 +159,7 @@ function startApp() {
   dwvApp.loadFromUri(window.location.href);
 }
 
-// Image decoders (for web workers)
-dwv.decoderScripts.jpeg2000 =
-  'node_modules/dwv/decoders/pdfjs/decode-jpeg2000.js';
-dwv.decoderScripts['jpeg-lossless'] =
-  'node_modules/dwv/decoders/rii-mango/decode-jpegloss.js';
-dwv.decoderScripts['jpeg-baseline'] =
-  'node_modules/dwv/decoders/pdfjs/decode-jpegbaseline.js';
-dwv.decoderScripts.rle = 'node_modules/dwv/decoders/dwv/decode-rle.js';
-
-// DOM ready?
+// start when DOM is ready
 document.addEventListener('DOMContentLoaded', function (/*event*/) {
   startApp();
 });
