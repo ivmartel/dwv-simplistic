@@ -16,11 +16,6 @@ dwv.decoderScripts.rle = 'node_modules/dwv/decoders/dwv/decode-rle.js';
  * @param {string} uid The app uid.
  */
 function startApp(uid) {
-  // update legend
-  document
-    .getElementById('dwvVersion')
-    .appendChild(document.createTextNode(dwv.getDwvVersion()));
-
   // options
   var options = {
     dataViewConfigs: {'*': [{divId: 'layerGroup-' + uid}]},
@@ -169,6 +164,11 @@ function startApp(uid) {
 
 // start when DOM is ready
 document.addEventListener('DOMContentLoaded', function (/*event*/) {
+  // update legend
+  document
+    .getElementById('dwvVersion')
+    .appendChild(document.createTextNode(dwv.getDwvVersion()));
+
   // start
   startApp('simpl0');
 });
