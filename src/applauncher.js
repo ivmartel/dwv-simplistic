@@ -12,8 +12,10 @@ dwv.decoderScripts.rle = 'node_modules/dwv/decoders/dwv/decode-rle.js';
 
 /**
  * Application launcher.
+ *
+ * @param {string} uid The app uid.
  */
-function startApp() {
+function startApp(uid) {
   // update legend
   document
     .getElementById('dwvVersion')
@@ -21,7 +23,7 @@ function startApp() {
 
   // options
   var options = {
-    dataViewConfigs: {'*': [{divId: 'layerGroup0'}]},
+    dataViewConfigs: {'*': [{divId: 'layerGroup-' + uid}]},
     tools: {
       Scroll: {},
       ZoomAndPan: {},
@@ -43,7 +45,7 @@ function startApp() {
   }
   guiTools.push('Reset');
   guiTools.push('ToggleOrientation');
-  var dwvAppGui = new dwvsimple.Gui(dwvApp, guiTools);
+  var dwvAppGui = new dwvsimple.Gui(dwvApp, guiTools, uid);
   dwvAppGui.init();
   dwvAppGui.enableTools(false);
 
@@ -167,5 +169,6 @@ function startApp() {
 
 // start when DOM is ready
 document.addEventListener('DOMContentLoaded', function (/*event*/) {
-  startApp();
+  // start
+  startApp('simpl0');
 });

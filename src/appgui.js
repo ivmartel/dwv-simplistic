@@ -40,7 +40,7 @@ dwvsimple.getToolButton = function (toolName, appGui) {
   svg.setAttributeNS(null, 'viewBox', '0 -960 960 960');
   svg.appendChild(path);
   var button = document.createElement('button');
-  button.id = toolName;
+  button.id = appGui.getToolId(toolName);
   button.title = toolName;
   button.appendChild(svg);
   // onclick callback
@@ -72,7 +72,7 @@ dwvsimple.getSelect = function (toolName, appGui) {
   option.value = '';
   option.appendChild(document.createTextNode('Preset...'));
   var select = document.createElement('select');
-  select.id = toolName;
+  select.id = appGui.getToolId(toolName);
   select.appendChild(option);
   select.onchange = function () {
     appGui.onChangePreset(this.value);
@@ -86,8 +86,9 @@ dwvsimple.getSelect = function (toolName, appGui) {
  * @class
  * @param {object} app The associated app.
  * @param {Array} tools The list of tools.
+ * @param {string} uid The GUI unique id.
  */
-dwvsimple.Gui = function (app, tools) {
+dwvsimple.Gui = function (app, tools, uid) {
 
   var self = this;
 
@@ -98,7 +99,7 @@ dwvsimple.Gui = function (app, tools) {
    * Initialise the GUI: fill the toolbar.
    */
   this.init = function () {
-    var toolbar = document.getElementById('toolbar');
+    var toolbar = document.getElementById('toolbar-' + uid);
     for (var i = 0; i < tools.length; ++i) {
       if (tools[i] === 'presets') {
         toolbar.appendChild(dwvsimple.getSelect(tools[i], self));
@@ -109,13 +110,24 @@ dwvsimple.Gui = function (app, tools) {
   };
 
   /**
+   * Get a tool id from its name.
+   *
+   * @param {string} toolName tool name.
+   * @returns {string} The id.
+   */
+  this.getToolId = function (toolName) {
+    return toolName.toLowerCase() + '-' + uid;
+  };
+
+  /**
    * Enable or not a tool.
    *
    * @param {string} name The tool name.
    * @param {boolean} flag True to enable.
    */
   this.enableTool = function (name, flag) {
-    document.getElementById(name).disabled = !flag;
+    var toolId = this.getToolId(name);
+    document.getElementById(toolId).disabled = !flag;
   };
 
   /**
@@ -136,10 +148,11 @@ dwvsimple.Gui = function (app, tools) {
    * @param {boolean} flag True to activate.
    */
   this.activateTool = function (name, flag) {
+    var toolId = this.getToolId(name);
     if (flag) {
-      document.getElementById(name).classList.add('active');
+      document.getElementById(toolId).classList.add('active');
     } else {
-      document.getElementById(name).classList.remove('active');
+      document.getElementById(toolId).classList.remove('active');
     }
   };
 
@@ -186,7 +199,8 @@ dwvsimple.Gui = function (app, tools) {
   this.onDisplayReset = function () {
     app.resetDisplay();
     // reset preset dropdown
-    var domPresets = document.getElementById('presets');
+    var presetsId = this.getToolId('presets');
+    var domPresets = document.getElementById(presetsId);
     domPresets.selectedIndex = 0;
   };
 
@@ -229,7 +243,8 @@ dwvsimple.Gui = function (app, tools) {
  * @param {Array} presets The list of presets to use as options.
  */
 dwvsimple.Gui.prototype.updatePresets = function (presets) {
-  var domPresets = document.getElementById('presets');
+  var presetsId = this.getToolId('presets');
+  var domPresets = document.getElementById(presetsId);
   // clear previous
   while (domPresets.hasChildNodes()) {
     domPresets.removeChild(domPresets.firstChild);
@@ -249,7 +264,8 @@ dwvsimple.Gui.prototype.updatePresets = function (presets) {
  * @param {string} name The name of the preset to select.
  */
 dwvsimple.Gui.prototype.setSelectedPreset = function (name) {
-  var domPresets = document.getElementById('presets');
+  var presetsId = this.getToolId('presets');
+  var domPresets = document.getElementById(presetsId);
   // find the index
   var index = 0;
   for (index in domPresets.options) {
