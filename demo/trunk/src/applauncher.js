@@ -47,10 +47,6 @@ function startApp() {
   dwvAppGui.init();
   dwvAppGui.enableTools(false);
 
-  // setup the dropbox loader
-  var dropBoxLoader = new dwvsimple.gui.DropboxLoader(dwvApp);
-  dropBoxLoader.init();
-
   // abort shortcut listener
   var abortOnCrtlX = function (event) {
     if (event.ctrlKey && event.keyCode === 88) {
@@ -71,8 +67,6 @@ function startApp() {
     nReceivedLoadError = 0;
     nReceivedLoadAbort = 0;
     isFirstRender = true;
-    // hide drop box
-    dropBoxLoader.showDropbox(false);
     // allow to cancel via crtl-x
     window.addEventListener('keydown', abortOnCrtlX);
   });
@@ -121,18 +115,30 @@ function startApp() {
       }
       message += 'occured. See log for details.';
       alert(message);
-      // show the drop box if no item were received
-      if (!nLoadItem) {
-        dropBoxLoader.showDropbox(true);
-      }
     }
     // console warn for aborts
     if (nReceivedLoadAbort !== 0) {
       console.warn('Data load was aborted.');
-      dropBoxLoader.showDropbox(true);
     }
     // stop listening for crtl-x
     window.removeEventListener('keydown', abortOnCrtlX);
+  });
+
+  // setup drop box
+  var dropBoxLoader = new dwvsimple.gui.DropboxLoader(dwvApp);
+  dropBoxLoader.init();
+  // show/hide drop box
+  dwvApp.addEventListener('loadstart', function (/*event*/) {
+    // hide drop box
+    dropBoxLoader.showDropbox(false);
+  });
+  dwvApp.addEventListener('loadend', function (/*event*/) {
+    // show the drop box if no item were received or
+    // if the load was aborted
+    if (!nLoadItem ||
+      nReceivedLoadAbort !== 0) {
+      dropBoxLoader.showDropbox(true);
+    }
   });
 
   // handle key events
