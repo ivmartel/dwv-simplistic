@@ -43,6 +43,7 @@ dwvsimple.getToolButton = function (toolName, appGui) {
   button.id = toolName;
   button.title = toolName;
   button.appendChild(svg);
+  // onclick callback
   if (toolName === 'Reset') {
     button.onclick = function () {
       appGui.onDisplayReset();
