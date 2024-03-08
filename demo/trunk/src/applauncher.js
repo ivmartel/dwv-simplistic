@@ -40,6 +40,7 @@ function startApp(uid) {
   }
   guiTools.push('Reset');
   guiTools.push('ToggleOrientation');
+  guiTools.push('Fullscreen');
   var dwvAppGui = new dwvsimple.Gui(dwvApp, guiTools, uid);
   dwvAppGui.init();
   dwvAppGui.enableTools(false);
