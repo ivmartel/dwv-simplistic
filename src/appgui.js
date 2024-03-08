@@ -19,7 +19,9 @@ var _paths = {
   // refresh
   'Reset': 'M476-158q-133 0-227.5-94.5T154-480q0-133 94.5-227.5T476-802q74 0 136 30t106 82v-112h88v289H516v-87h125q-29-38-71.5-61T476-684q-85 0-144.5 59.5T272-480q0 85 59.5 144.5T476-276q78 0 134.5-52.5T677-456h121q-10 126-102 212t-220 86Z',
   // cameraswitch
-  'ToggleOrientation': 'M327-273q-35.888 0-61.444-25.556Q240-324.112 240-360v-209q0-36.3 25.15-62.15T327-657h33l48-48h144l48 48h33q36.7 0 61.85 25.85T720-569v209q0 35.888-25.556 61.444Q668.888-273 633-273H327Zm0-87h306v-209H327v209Zm153.425-40Q507-400 525.5-419.133q18.5-19.132 18.5-46Q544-492 525.075-510.5q-18.925-18.5-45.5-18.5T434.5-510.075q-18.5 18.925-18.5 45.5T434.925-419q18.925 19 45.5 19ZM336-937q35.783-11.9 73.033-17.45Q446.283-960 485-960q91 0 173.5 33.5T805-835.275q64 57.725 104.544 136.5Q950.089-620 960-528H857q-8-61-34.5-115.5t-67-97q-40.5-42.5-94-71T547-851l46 47-60 62-197-195ZM624-23q-35.783 11.9-73.033 17.45Q513.717 0 475 0q-91.92 0-174.46-33.5t-146.04-91Q91-182 49.956-261 8.91-340 0-432h103q7 61 33.5 115.5t67.5 97q41 42.5 94.5 71T413-109l-46-47 60-62L624-23ZM482-466Z'
+  'ToggleOrientation': 'M327-273q-35.888 0-61.444-25.556Q240-324.112 240-360v-209q0-36.3 25.15-62.15T327-657h33l48-48h144l48 48h33q36.7 0 61.85 25.85T720-569v209q0 35.888-25.556 61.444Q668.888-273 633-273H327Zm0-87h306v-209H327v209Zm153.425-40Q507-400 525.5-419.133q18.5-19.132 18.5-46Q544-492 525.075-510.5q-18.925-18.5-45.5-18.5T434.5-510.075q-18.5 18.925-18.5 45.5T434.925-419q18.925 19 45.5 19ZM336-937q35.783-11.9 73.033-17.45Q446.283-960 485-960q91 0 173.5 33.5T805-835.275q64 57.725 104.544 136.5Q950.089-620 960-528H857q-8-61-34.5-115.5t-67-97q-40.5-42.5-94-71T547-851l46 47-60 62-197-195ZM624-23q-35.783 11.9-73.033 17.45Q513.717 0 475 0q-91.92 0-174.46-33.5t-146.04-91Q91-182 49.956-261 8.91-340 0-432h103q7 61 33.5 115.5t67.5 97q41 42.5 94.5 71T413-109l-46-47 60-62L624-23ZM482-466Z',
+  // open in full
+  'Fullscreen': 'M110-110v-334h118v132l420-420H516v-118h334v334H732v-132L312-228h132v118H110Z'
 };
 /* eslint-enable max-len */
 
@@ -51,6 +53,10 @@ dwvsimple.getToolButton = function (toolName, appGui) {
   } else if (toolName === 'ToggleOrientation') {
     button.onclick = function () {
       appGui.toggleOrientation();
+    };
+  } else if (toolName === 'Fullscreen') {
+    button.onclick = function () {
+      toggleFullScreen(appGui.getContainerDivId());
     };
   } else {
     button.onclick = function () {
@@ -107,6 +113,15 @@ dwvsimple.Gui = function (app, tools, uid) {
         toolbar.appendChild(dwvsimple.getToolButton(tools[i], self));
       }
     }
+  };
+
+  /**
+   * Get the container div id.
+   *
+   * @returns {string} The id.
+   */
+  this.getContainerDivId = function () {
+    return 'dwv-' + uid;
   };
 
   /**
@@ -276,3 +291,17 @@ dwvsimple.Gui.prototype.setSelectedPreset = function (name) {
   // set selected
   domPresets.selectedIndex = index;
 };
+
+/**
+ * Toggle full screen for a given div.
+ *
+ * @param {string} divId The div to show in full screen.
+ */
+function toggleFullScreen(divId) {
+  if (!document.fullscreenElement) {
+    var element = document.getElementById(divId);
+    element.requestFullscreen();
+  } else if (document.exitFullscreen) {
+    document.exitFullscreen();
+  }
+}
