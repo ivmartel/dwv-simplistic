@@ -14,10 +14,13 @@ dwv.decoderScripts.rle = 'node_modules/dwv/decoders/dwv/decode-rle.js';
  * Application launcher.
  *
  * @param {string} uid The app uid.
+ * @param {object} [options] Start options:
+ * - urls (string[]): list of urls to load
+ * - wlpreset (object): default window level preset
  */
-function startApp(uid) {
-  // options
-  var options = {
+function startApp(uid, options) {
+  // app options
+  var appOptions = {
     dataViewConfigs: {'*': [{divId: 'layerGroup-' + uid}]},
     tools: {
       Scroll: {},
@@ -30,10 +33,10 @@ function startApp(uid) {
   };
   // main application
   var dwvApp = new dwv.App();
-  dwvApp.init(options);
+  dwvApp.init(appOptions);
 
   // app gui
-  var guiTools = Object.keys(options.tools);
+  var guiTools = Object.keys(appOptions.tools);
   var wlIndex = guiTools.indexOf('WindowLevel');
   if (wlIndex !== -1) {
     guiTools.splice(wlIndex + 1, 0, 'presets');
@@ -92,9 +95,28 @@ function startApp(uid) {
       var lg = dwvApp.getActiveLayerGroup();
       var vl = lg.getActiveViewLayer();
       var viewController = vl.getViewController();
+      // optional wl preset
+      var hasExtraPreset = false;
+      if (typeof options !== 'undefined' &&
+        typeof options.wlpreset !== 'undefined') {
+        hasExtraPreset = true;
+        var wlpreset = options.wlpreset;
+        var presets = {};
+        presets[wlpreset.name] = {
+          wl: [new dwv.WindowCenterAndWidth(wlpreset.center, wlpreset.width)],
+          name: wlpreset.name
+        };
+        viewController.addWindowLevelPresets(presets);
+      }
+      // update GUI
       dwvAppGui.updatePresets(
         viewController.getWindowLevelPresetsNames()
       );
+      // select optional preset
+      if (hasExtraPreset) {
+        viewController.setWindowLevelPreset(wlpreset.name);
+        dwvAppGui.setSelectedPreset(options.wlpreset.name);
+      }
     }
   });
   dwvApp.addEventListener('loaderror', function (event) {
@@ -159,8 +181,14 @@ function startApp(uid) {
     dwvAppGui.setSelectedPreset('manual');
   });
 
-  // possible load from location
-  dwvApp.loadFromUri(window.location.href);
+  // load from options.urls if defined
+  if (typeof options !== 'undefined' &&
+    typeof options.urls !== 'undefined') {
+    dwvApp.loadURLs(options.urls);
+  } else {
+    // possible load from location
+    dwvApp.loadFromUri(window.location.href);
+  }
 }
 
 // start when DOM is ready
