@@ -8,8 +8,9 @@ dwvsimple.gui = dwvsimple.gui || {};
  * uses a drop box element as first display.
  * @constructor
  * @param {Object} app The associated application.
+ * @param {string} uid The app uid.
  */
-dwvsimple.gui.DropboxLoader = function (app) {
+dwvsimple.gui.DropboxLoader = function (app, uid) {
 
   // drop box class name
   var dropboxDivId = 'dropBox';
@@ -93,7 +94,7 @@ dwvsimple.gui.DropboxLoader = function (app) {
     if (!box) {
       return;
     }
-    var layerDiv = document.getElementById('layerGroup0');
+    var layerDiv = document.getElementById('layerGroup-' + uid);
 
     if (show) {
       // reset css class

@@ -145,7 +145,7 @@ function startApp(uid, options) {
   });
 
   // setup drop box
-  var dropBoxLoader = new dwvsimple.gui.DropboxLoader(dwvApp);
+  var dropBoxLoader = new dwvsimple.gui.DropboxLoader(dwvApp, uid);
   dropBoxLoader.init();
   // show/hide drop box
   dwvApp.addEventListener('loadstart', function (/*event*/) {
