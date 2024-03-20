@@ -32,7 +32,7 @@ var _paths = {
  * @param {object} appGui The associated GUi.
  * @returns An HTML button element.
  */
-dwvsimple.getToolButton = function (toolName, appGui) {
+function getToolButton(toolName, appGui) {
   var xmlns = 'http://www.w3.org/2000/svg';
   var path = document.createElementNS(xmlns, 'path');
   path.setAttributeNS(null, 'd', _paths[toolName]);
@@ -64,7 +64,7 @@ dwvsimple.getToolButton = function (toolName, appGui) {
     };
   }
   return button;
-};
+}
 
 /**
  * Get a tool html select.
@@ -73,7 +73,7 @@ dwvsimple.getToolButton = function (toolName, appGui) {
  * @param {object} appGui The associated GUi.
  * @returns An HTML select element.
  */
-dwvsimple.getSelect = function (toolName, appGui) {
+function getSelect(toolName, appGui) {
   var option = document.createElement('option');
   option.value = '';
   option.appendChild(document.createTextNode('Preset...'));
@@ -84,7 +84,7 @@ dwvsimple.getSelect = function (toolName, appGui) {
     appGui.onChangePreset(this.value);
   };
   return select;
-};
+}
 
 /**
  * GUI class.
@@ -108,9 +108,9 @@ dwvsimple.Gui = function (app, tools, uid) {
     var toolbar = document.getElementById('toolbar-' + uid);
     for (var i = 0; i < tools.length; ++i) {
       if (tools[i] === 'presets') {
-        toolbar.appendChild(dwvsimple.getSelect(tools[i], self));
+        toolbar.appendChild(getSelect(tools[i], self));
       } else {
-        toolbar.appendChild(dwvsimple.getToolButton(tools[i], self));
+        toolbar.appendChild(getToolButton(tools[i], self));
       }
     }
   };
