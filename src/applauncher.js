@@ -74,7 +74,7 @@ function startApp(uid, options) {
     dwvAppGui.showProgressBar();
   });
   dwvApp.addEventListener('loadprogress', function (event) {
-    var percent = Math.ceil(event.loaded / event.total) * 100;
+    var percent = Math.ceil(event.loaded * 100 / event.total);
     // set progress (hides the bar is percent=100)
     dwvAppGui.setProgress(percent);
   });
