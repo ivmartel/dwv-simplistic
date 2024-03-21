@@ -70,6 +70,13 @@ function startApp(uid, options) {
     isFirstRender = true;
     // allow to cancel via crtl-x
     window.addEventListener('keydown', abortOnCrtlX);
+    // show progress bar
+    dwvAppGui.showProgressBar();
+  });
+  dwvApp.addEventListener('loadprogress', function (event) {
+    var percent = Math.ceil(event.loaded / event.total) * 100;
+    // set progress (hides the bar is percent=100)
+    dwvAppGui.setProgress(percent);
   });
   dwvApp.addEventListener('loaditem', function (/*event*/) {
     ++nLoadItem;
