@@ -116,6 +116,38 @@ dwvsimple.Gui = function (app, tools, uid) {
   };
 
   /**
+   * Show the progress bar: adds a progress to the
+   *   layerGroup div.
+   */
+  this.showProgressBar = function () {
+    var progress = document.createElement('progress');
+    progress.id = 'progress-' + uid;
+    progress.max = '100';
+    progress.value = '0';
+
+    var lg = document.getElementById('layerGroup-' + uid);
+    lg.appendChild(progress);
+  };
+
+  /**
+   * Set the progress: updates the progress bar,
+   *   hides it if percent is 100
+   * @param {number} percent The progess percent.
+   */
+  this.setProgress = function (percent) {
+    var progress = document.getElementById('progress-' + uid);
+    if (progress) {
+      if (percent === 100) {
+        // remove
+        progress.remove();
+      } else {
+        // update value
+        progress.value = percent;
+      }
+    }
+  };
+
+  /**
    * Get the container div id.
    *
    * @returns {string} The id.
