@@ -78,6 +78,10 @@ function startApp(uid, options) {
     // set progress (hides the bar is percent=100)
     dwvAppGui.setProgress(percent);
   });
+  dwvApp.addEventListener('load', function (/*event*/) {
+    // force hidding in case 100% progress was not sent
+    dwvAppGui.setProgress(100);
+  });
   dwvApp.addEventListener('loaditem', function (/*event*/) {
     ++nLoadItem;
   });
