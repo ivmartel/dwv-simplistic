@@ -9,17 +9,19 @@ var dwvsimple = dwvsimple || {};
 /* eslint-disable max-len */
 var _paths = {
   // menu
-  'Scroll': 'M2.521 15.292v-2.459h14.958v2.459Zm0-4.063V8.771h14.958v2.458Zm0-4.062V4.708h14.958v2.459Z',
+  'Scroll': 'M110-215v-118h740v118H110Zm0-206v-118h740v118H110Zm0-206v-118h740v118H110Z',
   // search
-  'ZoomAndPan': 'm15.896 17.792-5.125-5.125q-.604.375-1.344.593-.739.219-1.594.219-2.271 0-3.875-1.604T2.354 8q0-2.271 1.604-3.875t3.875-1.604q2.271 0 3.875 1.604T13.312 8q0 .875-.218 1.594-.219.718-.594 1.302l5.146 5.166Zm-8.063-6.771q1.271 0 2.146-.875T10.854 8q0-1.271-.875-2.146t-2.146-.875q-1.271 0-2.145.875-.876.875-.876 2.146t.876 2.146q.874.875 2.145.875Z',
+  'ZoomAndPan': 'M763-106 517-352q-29 18-64.292 28.5T376.035-313Q267-313 190-390t-77-186q0-109 77-186t186-77q109 0 186 77t77 186.035q0 42.381-10.5 76.673T600-437l247 248-84 83ZM376-431q61 0 103-42t42-103q0-61-42-103t-103-42q-61 0-103 42t-42 103q0 61 42 103t103 42Z',
   // contrast
-  'WindowLevel': 'M10 18.708q-1.792 0-3.375-.677t-2.781-1.875q-1.198-1.198-1.875-2.781-.677-1.583-.677-3.396 0-1.791.677-3.364t1.875-2.771q1.198-1.198 2.781-1.875 1.583-.677 3.396-.677 1.791 0 3.364.677t2.771 1.875q1.198 1.198 1.875 2.781.677 1.583.677 3.375t-.677 3.375q-.677 1.583-1.875 2.781-1.198 1.198-2.781 1.875-1.583.677-3.375.677Zm1-2.541q2.271-.375 3.76-2.063 1.49-1.687 1.49-4.104 0-2.354-1.49-4.062Q13.271 4.229 11 3.854Z',
+  'WindowLevel': 'M480.192-62Q394-62 318-94.5q-76-32.5-133.5-90t-90-133.542Q62-394.083 62-480.542 62-567 94.5-642.5t90-133q57.5-57.5 133.542-90 76.041-32.5 162.5-32.5Q567-898 642.5-865.5t133 90q57.5 57.5 90 133.308 32.5 75.807 32.5 162Q898-394 865.5-318q-32.5 76-90 133.5t-133.308 90q-75.807 32.5-162 32.5ZM528-184q109-18 180.5-99.222T780-480q0-112.818-71.5-194.909T528-775v591Z',
   // straighten
-  'Draw': 'M3.812 15.521q-1.041 0-1.75-.709-.708-.708-.708-1.75V6.938q0-1.042.708-1.75.709-.709 1.75-.709h12.376q1.041 0 1.75.709.708.708.708 1.75v6.124q0 1.042-.708 1.75-.709.709-1.75.709Zm0-2.459h12.376V6.938H14V10h-1.5V6.938h-1.75V10h-1.5V6.938H7.5V10H6V6.938H3.812v6.124ZM6 10h1.5Zm3.25 0h1.5Zm3.25 0H14ZM10 10Z',
+  'Draw': 'M183-215q-49.7 0-83.85-34.15Q65-283.3 65-333v-294q0-49.7 34.15-83.85Q133.3-745 183-745h594q49.7 0 83.85 34.15Q895-676.7 895-627v294q0 49.7-34.15 83.85Q826.7-215 777-215H183Zm0-118h594v-294H672v147h-72v-147h-84v147h-72v-147h-84v147h-72v-147H183v294Zm105-147h72-72Zm156 0h72-72Zm156 0h72-72Zm-120 0Z',
   // refresh
-  'Reset': 'M9.917 16.708q-2.771 0-4.74-1.968Q3.208 12.771 3.208 10t1.969-4.74q1.969-1.968 4.74-1.968 1.541 0 2.833.625 1.292.625 2.208 1.708V3.292h1.834v6.02H10.75V7.5h2.604q-.604-.792-1.489-1.271-.886-.479-1.948-.479-1.771 0-3.011 1.24Q5.667 8.229 5.667 10q0 1.771 1.239 3.01 1.24 1.24 3.011 1.24 1.625 0 2.802-1.094t1.385-2.656h2.521q-.208 2.625-2.125 4.417-1.917 1.791-4.583 1.791Z',
-  // refresh
-  'ToggleOrientation': 'M6.812 14.312q-.75 0-1.281-.531Q5 13.25 5 12.5V8.146q0-.75.521-1.292t1.291-.542H7.5l1-1h3l1 1h.688q.77 0 1.291.542.521.542.521 1.292V12.5q0 .75-.531 1.281-.531.531-1.281.531Zm0-1.812h6.376V8.146H6.812V12.5ZM10 11.667q.562 0 .948-.396.385-.396.385-.959 0-.562-.395-.947-.396-.386-.938-.386-.562 0-.948.396-.385.396-.385.937 0 .563.395.959.396.396.938.396ZM7 .479q.75-.25 1.521-.364Q9.292 0 10.104 0 12 0 13.719.698q1.719.698 3.052 1.896t2.177 2.844Q19.792 7.083 20 9h-2.146q-.166-1.271-.719-2.406-.552-1.136-1.395-2.021-.844-.885-1.959-1.479-1.114-.594-2.385-.823l.958.979-1.25 1.292Zm6 19.042q-.75.25-1.521.364-.771.115-1.583.115-1.917 0-3.636-.698-1.718-.698-3.041-1.896t-2.177-2.844Q.188 12.917 0 11h2.146q.146 1.271.698 2.406.552 1.136 1.406 2.021.854.885 1.969 1.479 1.114.594 2.385.823l-.958-.979 1.25-1.292Zm-2.958-9.229Z'
+  'Reset': 'M476-158q-133 0-227.5-94.5T154-480q0-133 94.5-227.5T476-802q74 0 136 30t106 82v-112h88v289H516v-87h125q-29-38-71.5-61T476-684q-85 0-144.5 59.5T272-480q0 85 59.5 144.5T476-276q78 0 134.5-52.5T677-456h121q-10 126-102 212t-220 86Z',
+  // cameraswitch
+  'ToggleOrientation': 'M327-273q-35.888 0-61.444-25.556Q240-324.112 240-360v-209q0-36.3 25.15-62.15T327-657h33l48-48h144l48 48h33q36.7 0 61.85 25.85T720-569v209q0 35.888-25.556 61.444Q668.888-273 633-273H327Zm0-87h306v-209H327v209Zm153.425-40Q507-400 525.5-419.133q18.5-19.132 18.5-46Q544-492 525.075-510.5q-18.925-18.5-45.5-18.5T434.5-510.075q-18.5 18.925-18.5 45.5T434.925-419q18.925 19 45.5 19ZM336-937q35.783-11.9 73.033-17.45Q446.283-960 485-960q91 0 173.5 33.5T805-835.275q64 57.725 104.544 136.5Q950.089-620 960-528H857q-8-61-34.5-115.5t-67-97q-40.5-42.5-94-71T547-851l46 47-60 62-197-195ZM624-23q-35.783 11.9-73.033 17.45Q513.717 0 475 0q-91.92 0-174.46-33.5t-146.04-91Q91-182 49.956-261 8.91-340 0-432h103q7 61 33.5 115.5t67.5 97q41 42.5 94.5 71T413-109l-46-47 60-62L624-23ZM482-466Z',
+  // open in full
+  'Fullscreen': 'M110-110v-334h118v132l420-420H516v-118h334v334H732v-132L312-228h132v118H110Z'
 };
 /* eslint-enable max-len */
 
@@ -30,18 +32,20 @@ var _paths = {
  * @param {object} appGui The associated GUi.
  * @returns An HTML button element.
  */
-dwvsimple.getToolButton = function (toolName, appGui) {
+function getToolButton(toolName, appGui) {
   var xmlns = 'http://www.w3.org/2000/svg';
   var path = document.createElementNS(xmlns, 'path');
   path.setAttributeNS(null, 'd', _paths[toolName]);
   var svg = document.createElementNS(xmlns, 'svg');
   svg.setAttributeNS(null, 'height', 20);
   svg.setAttributeNS(null, 'width', 20);
+  svg.setAttributeNS(null, 'viewBox', '0 -960 960 960');
   svg.appendChild(path);
   var button = document.createElement('button');
-  button.id = toolName;
+  button.id = appGui.getToolId(toolName);
   button.title = toolName;
   button.appendChild(svg);
+  // onclick callback
   if (toolName === 'Reset') {
     button.onclick = function () {
       appGui.onDisplayReset();
@@ -50,13 +54,17 @@ dwvsimple.getToolButton = function (toolName, appGui) {
     button.onclick = function () {
       appGui.toggleOrientation();
     };
+  } else if (toolName === 'Fullscreen') {
+    button.onclick = function () {
+      toggleFullScreen(appGui.getContainerDivId());
+    };
   } else {
     button.onclick = function () {
       appGui.onChangeTool(toolName);
     };
   }
   return button;
-};
+}
 
 /**
  * Get a tool html select.
@@ -65,18 +73,18 @@ dwvsimple.getToolButton = function (toolName, appGui) {
  * @param {object} appGui The associated GUi.
  * @returns An HTML select element.
  */
-dwvsimple.getSelect = function (toolName, appGui) {
+function getSelect(toolName, appGui) {
   var option = document.createElement('option');
   option.value = '';
   option.appendChild(document.createTextNode('Preset...'));
   var select = document.createElement('select');
-  select.id = toolName;
+  select.id = appGui.getToolId(toolName);
   select.appendChild(option);
   select.onchange = function () {
     appGui.onChangePreset(this.value);
   };
   return select;
-};
+}
 
 /**
  * GUI class.
@@ -84,8 +92,9 @@ dwvsimple.getSelect = function (toolName, appGui) {
  * @class
  * @param {object} app The associated app.
  * @param {Array} tools The list of tools.
+ * @param {string} uid The GUI unique id.
  */
-dwvsimple.Gui = function (app, tools) {
+dwvsimple.Gui = function (app, tools, uid) {
 
   var self = this;
 
@@ -96,14 +105,65 @@ dwvsimple.Gui = function (app, tools) {
    * Initialise the GUI: fill the toolbar.
    */
   this.init = function () {
-    var toolbar = document.getElementById('toolbar');
+    var toolbar = document.getElementById('toolbar-' + uid);
     for (var i = 0; i < tools.length; ++i) {
       if (tools[i] === 'presets') {
-        toolbar.appendChild(dwvsimple.getSelect(tools[i], self));
+        toolbar.appendChild(getSelect(tools[i], self));
       } else {
-        toolbar.appendChild(dwvsimple.getToolButton(tools[i], self));
+        toolbar.appendChild(getToolButton(tools[i], self));
       }
     }
+  };
+
+  /**
+   * Show the progress bar: adds a progress to the
+   *   layerGroup div.
+   */
+  this.showProgressBar = function () {
+    var progress = document.createElement('progress');
+    progress.id = 'progress-' + uid;
+    progress.max = '100';
+    progress.value = '0';
+
+    var lg = document.getElementById('layerGroup-' + uid);
+    lg.appendChild(progress);
+  };
+
+  /**
+   * Set the progress: updates the progress bar,
+   *   hides it if percent is 100
+   * @param {number} percent The progess percent.
+   */
+  this.setProgress = function (percent) {
+    var progress = document.getElementById('progress-' + uid);
+    if (progress) {
+      if (percent === 100) {
+        // remove
+        progress.remove();
+      } else {
+        // update value
+        progress.value = percent;
+      }
+    }
+  };
+
+  /**
+   * Get the container div id.
+   *
+   * @returns {string} The id.
+   */
+  this.getContainerDivId = function () {
+    return 'dwv-' + uid;
+  };
+
+  /**
+   * Get a tool id from its name.
+   *
+   * @param {string} toolName tool name.
+   * @returns {string} The id.
+   */
+  this.getToolId = function (toolName) {
+    return toolName.toLowerCase() + '-' + uid;
   };
 
   /**
@@ -113,7 +173,8 @@ dwvsimple.Gui = function (app, tools) {
    * @param {boolean} flag True to enable.
    */
   this.enableTool = function (name, flag) {
-    document.getElementById(name).disabled = !flag;
+    var toolId = this.getToolId(name);
+    document.getElementById(toolId).disabled = !flag;
   };
 
   /**
@@ -134,10 +195,11 @@ dwvsimple.Gui = function (app, tools) {
    * @param {boolean} flag True to activate.
    */
   this.activateTool = function (name, flag) {
+    var toolId = this.getToolId(name);
     if (flag) {
-      document.getElementById(name).classList.add('active');
+      document.getElementById(toolId).classList.add('active');
     } else {
-      document.getElementById(name).classList.remove('active');
+      document.getElementById(toolId).classList.remove('active');
     }
   };
 
@@ -184,12 +246,13 @@ dwvsimple.Gui = function (app, tools) {
   this.onDisplayReset = function () {
     app.resetDisplay();
     // reset preset dropdown
-    var domPresets = document.getElementById('presets');
+    var presetsId = this.getToolId('presets');
+    var domPresets = document.getElementById(presetsId);
     domPresets.selectedIndex = 0;
   };
 
   /**
-   * Toogle the viewer orientation.
+   * Toggle the viewer orientation.
    */
   this.toggleOrientation = function () {
     if (typeof this.orientation !== 'undefined') {
@@ -208,12 +271,12 @@ dwvsimple.Gui = function (app, tools) {
     var config = {
       '*': [
         {
-          divId: 'layerGroup0',
+          divId: 'layerGroup-' + uid,
           orientation: this.orientation
         }
       ]
     };
-    app.setDataViewConfig(config);
+    app.setDataViewConfigs(config);
     // render data
     for (var i = 0; i < app.getNumberOfLoadedData(); ++i) {
       app.render(i);
@@ -227,7 +290,8 @@ dwvsimple.Gui = function (app, tools) {
  * @param {Array} presets The list of presets to use as options.
  */
 dwvsimple.Gui.prototype.updatePresets = function (presets) {
-  var domPresets = document.getElementById('presets');
+  var presetsId = this.getToolId('presets');
+  var domPresets = document.getElementById(presetsId);
   // clear previous
   while (domPresets.hasChildNodes()) {
     domPresets.removeChild(domPresets.firstChild);
@@ -247,7 +311,8 @@ dwvsimple.Gui.prototype.updatePresets = function (presets) {
  * @param {string} name The name of the preset to select.
  */
 dwvsimple.Gui.prototype.setSelectedPreset = function (name) {
-  var domPresets = document.getElementById('presets');
+  var presetsId = this.getToolId('presets');
+  var domPresets = document.getElementById(presetsId);
   // find the index
   var index = 0;
   for (index in domPresets.options) {
@@ -258,3 +323,17 @@ dwvsimple.Gui.prototype.setSelectedPreset = function (name) {
   // set selected
   domPresets.selectedIndex = index;
 };
+
+/**
+ * Toggle full screen for a given div.
+ *
+ * @param {string} divId The div to show in full screen.
+ */
+function toggleFullScreen(divId) {
+  if (!document.fullscreenElement) {
+    var element = document.getElementById(divId);
+    element.requestFullscreen();
+  } else if (document.exitFullscreen) {
+    document.exitFullscreen();
+  }
+}

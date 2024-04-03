@@ -11,7 +11,17 @@ body {
   color: #000;
 }
 
-#dwv {
+progress {
+  appearance: none;
+  -webkit-appearance: none;
+
+  width: 100%;
+  height: 5px;
+  border: 0;
+  z-index: 100;
+}
+
+.dwv {
   height: 80%;
 }
 
@@ -41,6 +51,9 @@ body {
   margin: 20px auto;
   border: 5px dashed #cc0;
 }
+#input-file-link {
+  text-decoration-line: underline;
+}
 
 .legend {
   text-align: center;
@@ -49,13 +62,13 @@ body {
 }
 
 /* toolbar */
-#toolbar {
+.toolbar {
   font: 14px arial, sans-serif;
   margin-bottom: 5px;
   display: flex;
   justify-content: center;
 }
-#toolbar button, select {
+.toolbar button, select {
   margin: 10px 3px;
   padding: 10px 10px;
   border-radius: 4px;
@@ -66,24 +79,24 @@ body {
   background-color: #fff;
   color: #757575;
 }
-#toolbar button:enabled:hover, select:enabled:hover {
+.toolbar button:enabled:hover, select:enabled:hover {
   background-color: #f5f5f5;
   cursor: pointer;
 }
-#toolbar button:disabled, select:disabled {
+.toolbar button:disabled, select:disabled {
   color: #bdbdbd;
   cursor: default;
 }
-#toolbar .active {
+.toolbar .active {
   background-color: #f0f1f9 !important;
 }
-#toolbar button:enabled path {
+.toolbar button:enabled path {
   fill: #757575;
 }
-#toolbar button.active:enabled path {
+.toolbar button.active:enabled path {
   fill: #4a5bb9;
 }
-#toolbar button:disabled path {
+.toolbar button:disabled path {
   fill: #bdbdbd;
 }
 
@@ -95,27 +108,27 @@ body {
   .legend a {
     color: #ccc;
   }
-  #toolbar button, select {
+  .toolbar button, select {
     border: 1px solid #2f2f2f;
     background-color: #fff;
   }
-  #toolbar button, select {
+  .toolbar button, select {
     color: #fff;
     background-color: #333;
   }
-  #toolbar button:enabled:hover, select:enabled:hover {
+  .toolbar button:enabled:hover, select:enabled:hover {
     background-color: #555;
   }
-  #toolbar button:disabled, select:disabled {
+  .toolbar button:disabled, select:disabled {
     color: #aeaeae;
   }
-  #toolbar .active {
+  .toolbar .active {
     background-color: #404040 !important;
   }
-  #toolbar button:enabled path {
+  .toolbar button:enabled path {
     fill: #fff;
   }
-  #toolbar button:disabled path {
+  .toolbar button:disabled path {
     fill: #aeaeae;
   }
 }

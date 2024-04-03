@@ -8,8 +8,9 @@ dwvsimple.gui = dwvsimple.gui || {};
  * uses a drop box element as first display.
  * @constructor
  * @param {Object} app The associated application.
+ * @param {string} uid The app uid.
  */
-dwvsimple.gui.DropboxLoader = function (app) {
+dwvsimple.gui.DropboxLoader = function (app, uid) {
 
   // drop box class name
   var dropboxDivId = 'dropBox';
@@ -75,6 +76,16 @@ dwvsimple.gui.DropboxLoader = function (app) {
   }
 
   /**
+   * Handle a an input[type:file] change event.
+   * @param event The event to handle.
+   */
+  function onInputFile(event) {
+    if (event.target && event.target.files) {
+      app.loadFiles(event.target.files);
+    }
+  }
+
+  /**
    * Show or hide the data load drop box.
    * @param {boolean} show Flag to show or hide.
    */
@@ -83,7 +94,7 @@ dwvsimple.gui.DropboxLoader = function (app) {
     if (!box) {
       return;
     }
-    var layerDiv = document.getElementById('layerGroup0');
+    var layerDiv = document.getElementById('layerGroup-' + uid);
 
     if (show) {
       // reset css class
@@ -91,7 +102,23 @@ dwvsimple.gui.DropboxLoader = function (app) {
       // add content if empty
       if (box.innerHTML === '') {
         var p = document.createElement('p');
-        p.appendChild(document.createTextNode('Drag and drop data here'));
+        p.appendChild(document.createTextNode('Drag and drop data here or '));
+        // input file
+        var input = document.createElement('input');
+        input.onchange = onInputFile;
+        input.type = 'file';
+        input.multiple = true;
+        input.id = 'input-file';
+        input.style.display = 'none';
+        var label = document.createElement('label');
+        label.htmlFor = 'input-file';
+        var link = document.createElement('a');
+        link.appendChild(document.createTextNode('click here'));
+        link.id = 'input-file-link';
+        label.appendChild(link);
+        p.appendChild(input);
+        p.appendChild(label);
+
         box.appendChild(p);
       }
       // show box

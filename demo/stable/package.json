@@ -1,6 +1,6 @@
 {
   "name": "dwv-simplistic",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "Simple medical viewer using DWV (DICOM Web Viewer).",
   "keywords": [
     "DICOM",
@@ -15,15 +15,15 @@
     "url": "git://github.com/ivmartel/dwv-simplistic.git"
   },
   "dependencies": {
-    "dwv": "0.31.2"
+    "dwv": "0.32.4"
   },
   "devDependencies": {
     "grunt": "^1.4.0",
     "grunt-cli": "^1.4.2",
-    "grunt-contrib-connect": "^3.0.0",
+    "grunt-contrib-connect": "^4.0.0",
     "grunt-contrib-copy": "^1.0.0",
     "grunt-contrib-watch": "^1.1.0",
-    "grunt-eslint": "^24.0.0"
+    "grunt-eslint": "^24.3.0"
   },
   "scripts": {
     "start": "grunt start",

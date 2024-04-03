@@ -1,23 +1,27 @@
 // namespace
 var dwvsimple = dwvsimple || {};
 
+// Image decoders (for web workers)
+dwv.decoderScripts.jpeg2000 =
+  'node_modules/dwv/decoders/pdfjs/decode-jpeg2000.js';
+dwv.decoderScripts['jpeg-lossless'] =
+  'node_modules/dwv/decoders/rii-mango/decode-jpegloss.js';
+dwv.decoderScripts['jpeg-baseline'] =
+  'node_modules/dwv/decoders/pdfjs/decode-jpegbaseline.js';
+dwv.decoderScripts.rle = 'node_modules/dwv/decoders/dwv/decode-rle.js';
+
 /**
  * Application launcher.
+ *
+ * @param {string} uid The app uid.
+ * @param {object} [options] Start options:
+ * - urls (string[]): list of urls to load
+ * - wlpreset (object): default window level preset
  */
-
-// main application gui (global to be accessed from html)
-var dwvAppGui = null;
-
-// start app function
-function startApp() {
-  // update legend
-  document
-    .getElementById('dwvVersion')
-    .appendChild(document.createTextNode(dwv.getVersion()));
-
-  // options
-  var options = {
-    dataViewConfigs: {'*': [{divId: 'layerGroup0'}]},
+function startApp(uid, options) {
+  // app options
+  var appOptions = {
+    dataViewConfigs: {'*': [{divId: 'layerGroup-' + uid}]},
     tools: {
       Scroll: {},
       ZoomAndPan: {},
@@ -29,23 +33,20 @@ function startApp() {
   };
   // main application
   var dwvApp = new dwv.App();
-  dwvApp.init(options);
+  dwvApp.init(appOptions);
 
   // app gui
-  var guiTools = Object.keys(options.tools);
+  var guiTools = Object.keys(appOptions.tools);
   var wlIndex = guiTools.indexOf('WindowLevel');
   if (wlIndex !== -1) {
     guiTools.splice(wlIndex + 1, 0, 'presets');
   }
   guiTools.push('Reset');
   guiTools.push('ToggleOrientation');
-  dwvAppGui = new dwvsimple.Gui(dwvApp, guiTools);
+  guiTools.push('Fullscreen');
+  var dwvAppGui = new dwvsimple.Gui(dwvApp, guiTools, uid);
   dwvAppGui.init();
   dwvAppGui.enableTools(false);
-
-  // setup the dropbox loader
-  var dropBoxLoader = new dwvsimple.gui.DropboxLoader(dwvApp);
-  dropBoxLoader.init();
 
   // abort shortcut listener
   var abortOnCrtlX = function (event) {
@@ -67,10 +68,19 @@ function startApp() {
     nReceivedLoadError = 0;
     nReceivedLoadAbort = 0;
     isFirstRender = true;
-    // hide drop box
-    dropBoxLoader.showDropbox(false);
     // allow to cancel via crtl-x
     window.addEventListener('keydown', abortOnCrtlX);
+    // show progress bar
+    dwvAppGui.showProgressBar();
+  });
+  dwvApp.addEventListener('loadprogress', function (event) {
+    var percent = Math.ceil(event.loaded * 100 / event.total);
+    // set progress (hides the bar is percent=100)
+    dwvAppGui.setProgress(percent);
+  });
+  dwvApp.addEventListener('load', function (/*event*/) {
+    // force hidding in case 100% progress was not sent
+    dwvAppGui.setProgress(100);
   });
   dwvApp.addEventListener('loaditem', function (/*event*/) {
     ++nLoadItem;
@@ -96,9 +106,28 @@ function startApp() {
       var lg = dwvApp.getActiveLayerGroup();
       var vl = lg.getActiveViewLayer();
       var viewController = vl.getViewController();
+      // optional wl preset
+      var hasExtraPreset = false;
+      if (typeof options !== 'undefined' &&
+        typeof options.wlpreset !== 'undefined') {
+        hasExtraPreset = true;
+        var wlpreset = options.wlpreset;
+        var presets = {};
+        presets[wlpreset.name] = {
+          wl: [new dwv.WindowCenterAndWidth(wlpreset.center, wlpreset.width)],
+          name: wlpreset.name
+        };
+        viewController.addWindowLevelPresets(presets);
+      }
+      // update GUI
       dwvAppGui.updatePresets(
         viewController.getWindowLevelPresetsNames()
       );
+      // select optional preset
+      if (hasExtraPreset) {
+        viewController.setWindowLevelPreset(wlpreset.name);
+        dwvAppGui.setSelectedPreset(options.wlpreset.name);
+      }
     }
   });
   dwvApp.addEventListener('loaderror', function (event) {
@@ -117,18 +146,30 @@ function startApp() {
       }
       message += 'occured. See log for details.';
       alert(message);
-      // show the drop box if no item were received
-      if (!nLoadItem) {
-        dropBoxLoader.showDropbox(true);
-      }
     }
     // console warn for aborts
     if (nReceivedLoadAbort !== 0) {
       console.warn('Data load was aborted.');
-      dropBoxLoader.showDropbox(true);
     }
     // stop listening for crtl-x
     window.removeEventListener('keydown', abortOnCrtlX);
+  });
+
+  // setup drop box
+  var dropBoxLoader = new dwvsimple.gui.DropboxLoader(dwvApp, uid);
+  dropBoxLoader.init();
+  // show/hide drop box
+  dwvApp.addEventListener('loadstart', function (/*event*/) {
+    // hide drop box
+    dropBoxLoader.showDropbox(false);
+  });
+  dwvApp.addEventListener('loadend', function (/*event*/) {
+    // show the drop box if no item were received or
+    // if the load was aborted
+    if (!nLoadItem ||
+      nReceivedLoadAbort !== 0) {
+      dropBoxLoader.showDropbox(true);
+    }
   });
 
   // handle key events
@@ -151,22 +192,23 @@ function startApp() {
     dwvAppGui.setSelectedPreset('manual');
   });
 
-  // possible load from location
-  dwv.utils.loadFromUri(window.location.href, dwvApp);
+  // load from options.urls if defined
+  if (typeof options !== 'undefined' &&
+    typeof options.urls !== 'undefined') {
+    dwvApp.loadURLs(options.urls);
+  } else {
+    // possible load from location
+    dwvApp.loadFromUri(window.location.href);
+  }
 }
 
-// Image decoders (for web workers)
-dwv.image.decoderScripts = {
-  jpeg2000: 'node_modules/dwv/decoders/pdfjs/decode-jpeg2000.js',
-  'jpeg-lossless': 'node_modules/dwv/decoders/rii-mango/decode-jpegloss.js',
-  'jpeg-baseline': 'node_modules/dwv/decoders/pdfjs/decode-jpegbaseline.js',
-  rle: 'node_modules/dwv/decoders/dwv/decode-rle.js'
-};
-
-// check environment support
-dwv.env.check();
-
-// DOM ready?
+// start when DOM is ready
 document.addEventListener('DOMContentLoaded', function (/*event*/) {
-  startApp();
+  // update legend
+  document
+    .getElementById('dwvVersion')
+    .appendChild(document.createTextNode(dwv.getDwvVersion()));
+
+  // start
+  startApp('simpl0');
 });
