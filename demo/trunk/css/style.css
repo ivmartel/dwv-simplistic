@@ -67,6 +67,7 @@ progress {
   margin-bottom: 5px;
   display: flex;
   justify-content: center;
+  flex-wrap: wrap;
 }
 .toolbar button, select {
   margin: 10px 3px;
