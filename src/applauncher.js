@@ -44,6 +44,7 @@ function startApp(uid, options) {
   guiTools.push('Reset');
   guiTools.push('ToggleOrientation');
   guiTools.push('Fullscreen');
+  guiTools.push('Tags');
   var dwvAppGui = new dwvsimple.Gui(dwvApp, guiTools, uid);
   dwvAppGui.init();
   dwvAppGui.enableTools(false);

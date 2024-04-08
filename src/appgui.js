@@ -21,7 +21,9 @@ var _paths = {
   // cameraswitch
   'ToggleOrientation': 'M327-273q-35.888 0-61.444-25.556Q240-324.112 240-360v-209q0-36.3 25.15-62.15T327-657h33l48-48h144l48 48h33q36.7 0 61.85 25.85T720-569v209q0 35.888-25.556 61.444Q668.888-273 633-273H327Zm0-87h306v-209H327v209Zm153.425-40Q507-400 525.5-419.133q18.5-19.132 18.5-46Q544-492 525.075-510.5q-18.925-18.5-45.5-18.5T434.5-510.075q-18.5 18.925-18.5 45.5T434.925-419q18.925 19 45.5 19ZM336-937q35.783-11.9 73.033-17.45Q446.283-960 485-960q91 0 173.5 33.5T805-835.275q64 57.725 104.544 136.5Q950.089-620 960-528H857q-8-61-34.5-115.5t-67-97q-40.5-42.5-94-71T547-851l46 47-60 62-197-195ZM624-23q-35.783 11.9-73.033 17.45Q513.717 0 475 0q-91.92 0-174.46-33.5t-146.04-91Q91-182 49.956-261 8.91-340 0-432h103q7 61 33.5 115.5t67.5 97q41 42.5 94.5 71T413-109l-46-47 60-62L624-23ZM482-466Z',
   // open in full
-  'Fullscreen': 'M110-110v-334h118v132l420-420H516v-118h334v334H732v-132L312-228h132v118H110Z'
+  'Fullscreen': 'M110-110v-334h118v132l420-420H516v-118h334v334H732v-132L312-228h132v118H110Z',
+  // tags
+  'Tags': 'M406-405h177v-92H406v92Zm0-132h354v-92H406v92Zm0-132h354v-92H406v92Zm-51 440q-53 0-89.5-36.5T229-355v-456q0-53 36.5-89.5T355-937h456q53 0 89.5 36.5T937-811v456q0 53-36.5 89.5T811-229H355Zm0-126h456v-456H355v456ZM149-23q-53 0-89.5-36.5T23-149v-582h126v582h582v126H149Zm206-788v456-456Z'
 };
 /* eslint-enable max-len */
 
@@ -57,6 +59,10 @@ function getToolButton(toolName, appGui) {
   } else if (toolName === 'Fullscreen') {
     button.onclick = function () {
       toggleFullScreen(appGui.getContainerDivId());
+    };
+  } else if (toolName === 'Tags') {
+    button.onclick = function () {
+      appGui.openTagsModal();
     };
   } else {
     button.onclick = function () {
@@ -283,6 +289,93 @@ dwvsimple.Gui = function (app, tools, uid) {
     }
   };
 
+  /**
+   * Open a DICOM tags modal.
+   */
+  this.openTagsModal = function () {
+    // modal
+    var modalDiv = document.createElement('div');
+    modalDiv.className = 'modal';
+    modalDiv.id = 'modal-' + uid;
+    modalDiv.style.display = 'block';
+    // close on outside click
+    window.onclick = function (event) {
+      if (event.target === modalDiv) {
+        modalDiv.style.display = 'none';
+      }
+    };
+
+    var modalContentDiv = document.createElement('div');
+    modalContentDiv.className = 'modal-content';
+    modalContentDiv.id = 'modal-content-' + uid;
+    modalDiv.appendChild(modalContentDiv);
+
+    var modalTitle = document.createElement('h2');
+    modalTitle.appendChild(document.createTextNode('DICOM Tags'));
+    modalContentDiv.appendChild(modalTitle);
+
+    // div with enabled scroll
+    var modalScrollDiv = document.createElement('div');
+    modalScrollDiv.className = 'modal-content-scroll';
+
+    var metaData = app.getMetaData(0);
+
+    // InstanceNumber
+    var instanceElement = metaData['00200013'];
+    var instanceNumbers;
+    if (typeof instanceElement !== 'undefined') {
+      // set slider with instance numbers ('00200013')
+      var instanceNumberValue = instanceElement.value;
+      if (typeof instanceNumberValue === 'string') {
+        instanceNumberValue = [instanceNumberValue];
+      }
+      // convert string to numbers
+      instanceNumbers = instanceNumberValue.map(Number);
+      // sort
+      instanceNumbers.sort(function (a, b) {
+        return a - b;
+      });
+    }
+
+    var instanceNumber = instanceNumbers[0];
+
+    var slider = document.createElement('input');
+    slider.type = 'range';
+    slider.id = 'instancenumber-slider-' + uid;
+    slider.min = 0;
+    slider.max = instanceNumbers.length - 1;
+    slider.value = 0;
+    slider.title = 'Instance Number';
+    var sliderLabel = document.createElement('label');
+    sliderLabel.id = 'instancenumber-slider-label-' + uid;
+    sliderLabel.for = slider.id;
+    sliderLabel.appendChild(document.createTextNode(instanceNumber));
+    sliderLabel.title = slider.title;
+
+    var sliderLine = document.createElement('p');
+    sliderLine.appendChild(slider);
+    sliderLine.appendChild(sliderLabel);
+    modalContentDiv.appendChild(sliderLine);
+
+    slider.oninput = function (event) {
+      instanceNumber = instanceNumbers[event.target.value];
+      var metaArr = getMetaArray(metaData, instanceNumber);
+      var metaTab = arrayToHtmlTable(metaArr);
+      modalScrollDiv.replaceChildren(metaTab);
+      sliderLabel.replaceChildren(document.createTextNode(instanceNumber));
+    };
+
+    // get meta data html table
+    var metaArray = getMetaArray(metaData, instanceNumber);
+    var metaTable = arrayToHtmlTable(metaArray);
+    modalScrollDiv.appendChild(metaTable);
+    modalContentDiv.appendChild(modalScrollDiv);
+
+    // global container
+    var container = document.getElementById(this.getContainerDivId());
+    container.appendChild(modalDiv);
+  };
+
 }; // class dwvsimple.Gui
 
 /**
@@ -336,4 +429,156 @@ function toggleFullScreen(divId) {
   } else if (document.exitFullscreen) {
     document.exitFullscreen();
   }
+}
+
+/**
+ * Get an HTML table from a string array.
+ *
+ * @param {string[]} arr The input array.
+ * @returns {HTMLTableElement} The HTML table element.
+ */
+function arrayToHtmlTable(arr) {
+  var table = document.createElement('table');
+  var row;
+  var cell;
+
+  // check input
+  if (typeof arr === 'undefined' ||
+    arr.length === 0) {
+    row = table.insertRow(-1);
+    cell = document.createElement('td');
+    cell.appendChild(document.createTextNode('Empty input array...'));
+    row.appendChild(cell);
+    return table;
+  }
+
+  // extract keys from first element
+  var item0 = arr[0];
+  var keys = Object.keys(item0);
+
+  // table body
+  for (var i = 0; i < arr.length; ++i) {
+    row = table.insertRow(-1);
+    for (var j = 0; j < keys.length; ++j) {
+      cell = document.createElement('td');
+      cell.appendChild(document.createTextNode(arr[i][keys[j]]));
+      row.appendChild(cell);
+    }
+  }
+  // table head
+  var thead = table.createTHead();
+  var th = thead.insertRow(-1);
+  for (var k = 0; k < keys.length; ++k) {
+    var hcell = document.createElement('th');
+    var key = keys[k];
+    key = key.charAt(0).toUpperCase() + key.slice(1);
+    hcell.appendChild(document.createTextNode(key));
+    th.appendChild(hcell);
+  }
+
+  return table;
+}
+
+/**
+ * Get the meta data as an array.
+ *
+ * @param {any} meta
+ * @param {number} instanceNumber
+ * @returns {string[]} The meta data as a flat string array.
+ */
+function getMetaArray(meta, instanceNumber) {
+  var reducer;
+  if (isDicomMeta(meta)) {
+    reducer = getDicomTagReducer(meta, instanceNumber, '');
+  } else {
+    reducer = getTagReducer(meta);
+  }
+  var keys = Object.keys(meta);
+  return keys.reduce(reducer, []);
+}
+
+/**
+ * Check if a meta data is a dicom one.
+ *
+ * @param {any} meta The dicom meta data.
+ * @returns {boolean} True if the meta data is a DICOM one.
+ */
+function isDicomMeta(meta) {
+  // true if it has a Transfer Syntax
+  return typeof meta['00020010'] !== 'undefined';
+}
+
+/**
+ * Get a simple data array reducer.
+ *
+ * @param {any} tagData Simple data with a 'value' property.
+ * @returns {Function} The data recuder.
+ */
+function getTagReducer(tagData) {
+  return function (accumulator, currentValue) {
+    accumulator.push({
+      name: currentValue,
+      value: tagData[currentValue].value
+    });
+    return accumulator;
+  };
+}
+
+/**
+ * Get a DICOM data array reducer.
+ *
+ * @param {any} tagData DICOM data.
+ * @returns {Function} The data recuder.
+ */
+function getDicomTagReducer(tagData, instanceNumber, prefix) {
+  return function (accumulator, currentValue) {
+    var tag = dwv.getTagFromKey(currentValue);
+    var key = tag.getNameFromDictionary();
+    if (typeof key === 'undefined') {
+      // add 'x' to help sorting
+      key = 'x' + tag.getKey();
+    }
+    var name = key;
+    var element = tagData[currentValue];
+    var value = element.value;
+    // possible 'merged' object
+    // (use slice method as test for array and typed array)
+    if (typeof value.slice === 'undefined' &&
+      typeof value[instanceNumber] !== 'undefined') {
+      value = value[instanceNumber];
+    }
+    // force instance number (otherwise takes value in non indexed array)
+    if (name === 'InstanceNumber') {
+      value = instanceNumber;
+    }
+    // recurse for sequence
+    if (element.vr === 'SQ') {
+      // sequence tag
+      accumulator.push({
+        name: (prefix ? prefix + ' ' : '') + name,
+        value: ''
+      });
+      // sequence value
+      for (var i = 0; i < value.length; ++i) {
+        var sqItems = value[i];
+        var keys = Object.keys(sqItems);
+        var res = keys.reduce(
+          getDicomTagReducer(
+            sqItems, instanceNumber, prefix + '[' + i + ']'), []
+        );
+        accumulator = accumulator.concat(res);
+      }
+    } else {
+      // shorten long 'o'ther data
+      if (element.vr[0] === 'O' && value.length > 10) {
+        value = value.slice(0, 10).toString() +
+          '... (len:' + value.length + ')';
+      }
+      accumulator.push({
+        name: (prefix ? prefix + ' ' : '') + name,
+        value: value.toString()
+      });
+    }
+    return accumulator;
+  };
 }
