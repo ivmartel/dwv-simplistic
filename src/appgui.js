@@ -85,6 +85,7 @@ function getSelect(toolName, appGui) {
   option.appendChild(document.createTextNode('Preset...'));
   var select = document.createElement('select');
   select.id = appGui.getToolId(toolName);
+  select.title = 'Window level presets';
   select.appendChild(option);
   select.onchange = function () {
     appGui.onChangePreset(this.value);
