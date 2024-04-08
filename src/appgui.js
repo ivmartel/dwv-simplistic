@@ -104,8 +104,12 @@ dwvsimple.Gui = function (app, tools, uid) {
 
   var self = this;
 
-  // view orientation
-  this.orientation;
+  /**
+   * View orientation
+   *
+   * @type {string}
+   */
+  var orientation;
 
   /**
    * Initialise the GUI: fill the toolbar.
@@ -261,24 +265,24 @@ dwvsimple.Gui = function (app, tools, uid) {
    * Toggle the viewer orientation.
    */
   this.toggleOrientation = function () {
-    if (typeof this.orientation !== 'undefined') {
-      if (this.orientation === 'axial') {
-        this.orientation = 'coronal';
-      } else if (this.orientation === 'coronal') {
-        this.orientation = 'sagittal';
-      } else if (this.orientation === 'sagittal') {
-        this.orientation = 'axial';
+    if (typeof orientation !== 'undefined') {
+      if (orientation === 'axial') {
+        orientation = 'coronal';
+      } else if (orientation === 'coronal') {
+        orientation = 'sagittal';
+      } else if (orientation === 'sagittal') {
+        orientation = 'axial';
       }
     } else {
       // default is most probably axial
-      this.orientation = 'coronal';
+      orientation = 'coronal';
     }
     // update data view config
     var config = {
       '*': [
         {
           divId: 'layerGroup-' + uid,
-          orientation: this.orientation
+          orientation: orientation
         }
       ]
     };
