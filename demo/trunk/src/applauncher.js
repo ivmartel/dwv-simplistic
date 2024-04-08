@@ -39,7 +39,7 @@ function startApp(uid, options) {
   var guiTools = Object.keys(appOptions.tools);
   var wlIndex = guiTools.indexOf('WindowLevel');
   if (wlIndex !== -1) {
-    guiTools.splice(wlIndex + 1, 0, 'presets');
+    guiTools.splice(wlIndex + 1, 0, 'WindowLevelPresets');
   }
   guiTools.push('Reset');
   guiTools.push('ToggleOrientation');
