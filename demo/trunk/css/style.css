@@ -100,6 +100,53 @@ progress {
   fill: #bdbdbd;
 }
 
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+
+  .modal-content {
+    background-color: #fefefe;
+    margin: 5% auto; /* 5% from the top and centered */
+    padding: 20px;
+    width: 80%;
+    height: 80%;
+    overflow: auto;
+  }
+
+  input, label {
+    vertical-align: middle;
+    margin-right: 10px;
+  }
+
+  .modal-content-scroll {
+    margin-right: 20px;
+    height: 80%;
+    overflow: auto;
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    tr {
+      border: solid thin;
+      border-color: #ddd;
+    }
+    th {
+      text-align: left;
+    }
+    td, th {
+      padding: 10px;
+    }
+  }
+}
+
 @media (prefers-color-scheme: dark) {
   body {
     background: #252525;
@@ -130,5 +177,16 @@ progress {
   }
   .toolbar button:disabled path {
     fill: #aeaeae;
+  }
+  .modal {
+    .modal-content {
+      background-color: #424242;
+    }
+    .modal-content-scroll {
+      tr {
+        border: solid thin;
+        border-color: #666;
+      }
+    }
   }
 }
