@@ -136,7 +136,7 @@ dwvsimple.Gui = function (app, tools, uid) {
     progress.max = '100';
     progress.value = '0';
 
-    var lg = document.getElementById('layerGroup-' + uid);
+    var lg = document.getElementById('toolbar-' + uid);
     lg.appendChild(progress);
   };
 
