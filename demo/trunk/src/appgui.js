@@ -58,7 +58,7 @@ function getToolButton(toolName, appGui) {
     };
   } else if (toolName === 'Fullscreen') {
     button.onclick = function () {
-      toggleFullScreen(appGui.getContainerDivId());
+      appGui.toggleFullScreen();
     };
   } else if (toolName === 'Tags') {
     button.onclick = function () {
@@ -113,6 +113,13 @@ dwvsimple.Gui = function (app, tools, uid) {
   var orientation;
 
   /**
+   * Layer group div height before full screen.
+   *
+   * @type {string}
+   */
+  var lgDivHeight;
+
+  /**
    * Initialise the GUI: fill the toolbar.
    */
   this.init = function () {
@@ -159,12 +166,21 @@ dwvsimple.Gui = function (app, tools, uid) {
   };
 
   /**
-   * Get the container div id.
+   * Get the dwv div id.
    *
    * @returns {string} The id.
    */
-  this.getContainerDivId = function () {
+  this.getDwvDivId = function () {
     return 'dwv-' + uid;
+  };
+
+  /**
+   * Get the dwv div id.
+   *
+   * @returns {string} The id.
+   */
+  this.getLayerGroupDivId = function () {
+    return 'layerGroup-' + uid;
   };
 
   /**
@@ -282,7 +298,7 @@ dwvsimple.Gui = function (app, tools, uid) {
     var config = {
       '*': [
         {
-          divId: 'layerGroup-' + uid,
+          divId: this.getLayerGroupDivId(),
           orientation: orientation
         }
       ]
@@ -291,6 +307,34 @@ dwvsimple.Gui = function (app, tools, uid) {
     // render data
     for (var i = 0; i < app.getNumberOfLoadedData(); ++i) {
       app.render(i);
+    }
+  };
+
+  /**
+   * Toogle full screen on and off.
+   */
+  this.toggleFullScreen = function () {
+    var lgDivId = this.getLayerGroupDivId();
+    var lgElement = document.getElementById(lgDivId);
+
+    // the app listens on window resize (see applaucher
+    // `window.addEventListener('resize', dwvApp.onResize);`)
+    // -> no need to manually call app.fitToContainer
+
+    if (!document.fullscreenElement) {
+      var fsDivId = this.getDwvDivId();
+      var fsElement = document.getElementById(fsDivId);
+      fsElement.requestFullscreen().then(function () {
+        // if the layer group height was 0, the app set it to a fixed size.
+        // change it to 100% to trigger a resize and recalculate the
+        // fit scale to occupy the full screen
+        lgDivHeight = lgElement.style.height;
+        lgElement.style.height = '100%';
+      });
+    } else if (document.exitFullscreen) {
+      document.exitFullscreen();
+      // restore previous height
+      lgElement.style.height = lgDivHeight;
     }
   };
 
@@ -377,7 +421,7 @@ dwvsimple.Gui = function (app, tools, uid) {
     modalContentDiv.appendChild(modalScrollDiv);
 
     // global container
-    var container = document.getElementById(this.getContainerDivId());
+    var container = document.getElementById(this.getDwvDivId());
     container.appendChild(modalDiv);
   };
 
@@ -421,20 +465,6 @@ dwvsimple.Gui.prototype.setSelectedPreset = function (name) {
   // set selected
   domPresets.selectedIndex = index;
 };
-
-/**
- * Toggle full screen for a given div.
- *
- * @param {string} divId The div to show in full screen.
- */
-function toggleFullScreen(divId) {
-  if (!document.fullscreenElement) {
-    var element = document.getElementById(divId);
-    element.requestFullscreen();
-  } else if (document.exitFullscreen) {
-    document.exitFullscreen();
-  }
-}
 
 /**
  * Get an HTML table from a string array.
