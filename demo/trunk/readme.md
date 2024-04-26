@@ -13,7 +13,7 @@ dwv-simplistic is not certified for diagnostic use. Released under GNU GPL-3.0 l
  - `install`: install dependencies
  - `start`: serve at localhost:8080 with live reload
  - `dev`: serve a developement version at localhost:8080 with live reload
- - `test`: run unit tests
+ - `lint`: lint js code
 
 ## Steps to run the viewer from scratch
 
