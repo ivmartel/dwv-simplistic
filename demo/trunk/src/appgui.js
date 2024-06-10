@@ -305,8 +305,9 @@ dwvsimple.Gui = function (app, tools, uid) {
     };
     app.setDataViewConfigs(config);
     // render data
-    for (var i = 0; i < app.getNumberOfLoadedData(); ++i) {
-      app.render(i);
+    var dataIds = app.getDataIds();
+    for (var i = 0; i < dataIds.length; ++i) {
+      app.render(dataIds[i]);
     }
   };
 
@@ -367,7 +368,7 @@ dwvsimple.Gui = function (app, tools, uid) {
     var modalScrollDiv = document.createElement('div');
     modalScrollDiv.className = 'modal-content-scroll';
 
-    var metaData = app.getMetaData(0);
+    var metaData = app.getMetaData('0');
 
     // InstanceNumber
     var instanceElement = metaData['00200013'];
