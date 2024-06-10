@@ -1,5 +1,3 @@
-/* global Promise */
-
 // https://developers.google.com/web/fundamentals/primers/service-workers/
 // chrome: chrome://inspect/#service-workers
 
