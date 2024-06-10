@@ -6,7 +6,7 @@ var dwvsimple = dwvsimple || {};
 
 // icons from https://fonts.google.com/icons
 // Fill: 0 Weight: 700 Grade: 0 Optical Size: 20
-/* eslint-disable max-len */
+/* eslint-disable @stylistic/js/max-len */
 var _paths = {
   // menu
   'Scroll': 'M110-215v-118h740v118H110Zm0-206v-118h740v118H110Zm0-206v-118h740v118H110Z',
@@ -25,7 +25,7 @@ var _paths = {
   // tags
   'Tags': 'M406-405h177v-92H406v92Zm0-132h354v-92H406v92Zm0-132h354v-92H406v92Zm-51 440q-53 0-89.5-36.5T229-355v-456q0-53 36.5-89.5T355-937h456q53 0 89.5 36.5T937-811v456q0 53-36.5 89.5T811-229H355Zm0-126h456v-456H355v456ZM149-23q-53 0-89.5-36.5T23-149v-582h126v582h582v126H149Zm206-788v456-456Z'
 };
-/* eslint-enable max-len */
+/* eslint-enable @stylistic/js/max-len */
 
 /**
  * Get a tool html button.
