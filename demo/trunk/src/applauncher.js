@@ -15,8 +15,8 @@ dwv.decoderScripts.rle = 'node_modules/dwv/decoders/dwv/decode-rle.js';
  *
  * @param {string} uid The app uid.
  * @param {object} [options] Start options:
- * - urls (string[]): list of urls to load
- * - wlpreset (object): default window level preset
+ * - urls (string[]): list of urls to load,
+ * - wlpreset (object): default window level preset.
  */
 function startApp(uid, options) {
   // app options

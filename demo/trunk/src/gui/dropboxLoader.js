@@ -5,9 +5,10 @@ dwvsimple.gui = dwvsimple.gui || {};
 /**
  * Dropbox loader.
  * Listens to drag events on the layer container and
- * uses a drop box element as first display.
- * @constructor
- * @param {Object} app The associated application.
+ *   uses a drop box element as first display.
+ *
+ * @class
+ * @param {object} app The associated application.
  * @param {string} uid The app uid.
  */
 dwvsimple.gui.DropboxLoader = function (app, uid) {
@@ -26,9 +27,10 @@ dwvsimple.gui.DropboxLoader = function (app, uid) {
   };
 
   /**
-  * Basic handle drag event.
-  * @private
-  * @param {Object} event The event to handle.
+   * Basic handle drag event.
+   *
+   * @private
+   * @param {object} event The event to handle.
    */
   function defaultHandleDragEvent(event) {
     // prevent default handling
@@ -38,8 +40,9 @@ dwvsimple.gui.DropboxLoader = function (app, uid) {
 
   /**
    * Handle a drag over.
+   *
    * @private
-   * @param {Object} event The event to handle.
+   * @param {object} event The event to handle.
    */
   function onBoxDragOver(event) {
     defaultHandleDragEvent(event);
@@ -52,8 +55,9 @@ dwvsimple.gui.DropboxLoader = function (app, uid) {
 
   /**
    * Handle a drag leave.
+   *
    * @private
-   * @param {Object} event The event to handle.
+   * @param {object} event The event to handle.
    */
   function onBoxDragLeave(event) {
     defaultHandleDragEvent(event);
@@ -66,8 +70,9 @@ dwvsimple.gui.DropboxLoader = function (app, uid) {
 
   /**
    * Handle a drop event.
+   *
    * @private
-   * @param {Object} event The event to handle.
+   * @param {object} event The event to handle.
    */
   function onDrop(event) {
     defaultHandleDragEvent(event);
@@ -77,7 +82,8 @@ dwvsimple.gui.DropboxLoader = function (app, uid) {
 
   /**
    * Handle a an input[type:file] change event.
-   * @param event The event to handle.
+   *
+   * @param {object} event The event to handle.
    */
   function onInputFile(event) {
     if (event.target && event.target.files) {
@@ -87,6 +93,7 @@ dwvsimple.gui.DropboxLoader = function (app, uid) {
 
   /**
    * Show or hide the data load drop box.
+   *
    * @param {boolean} show Flag to show or hide.
    */
   this.showDropbox = function (show) {
