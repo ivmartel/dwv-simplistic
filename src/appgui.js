@@ -32,7 +32,7 @@ var _paths = {
  *
  * @param {string} toolName The tool name.
  * @param {object} appGui The associated GUi.
- * @returns An HTML button element.
+ * @returns {HTMLButtonElement} An HTML button element.
  */
 function getToolButton(toolName, appGui) {
   var xmlns = 'http://www.w3.org/2000/svg';
@@ -77,7 +77,7 @@ function getToolButton(toolName, appGui) {
  *
  * @param {string} toolName The tool name.
  * @param {object} appGui The associated GUi.
- * @returns An HTML select element.
+ * @returns {HTMLSelectElement} An HTML select element.
  */
 function getSelect(toolName, appGui) {
   var option = document.createElement('option');
@@ -106,7 +106,7 @@ dwvsimple.Gui = function (app, tools, uid) {
   var self = this;
 
   /**
-   * View orientation
+   * View orientation.
    *
    * @type {string}
    */
@@ -149,7 +149,8 @@ dwvsimple.Gui = function (app, tools, uid) {
 
   /**
    * Set the progress: updates the progress bar,
-   *   hides it if percent is 100
+   *   hides it if percent is 100.
+   *
    * @param {number} percent The progess percent.
    */
   this.setProgress = function (percent) {
@@ -186,7 +187,7 @@ dwvsimple.Gui = function (app, tools, uid) {
   /**
    * Get a tool id from its name.
    *
-   * @param {string} toolName tool name.
+   * @param {string} toolName Tool name.
    * @returns {string} The id.
    */
   this.getToolId = function (toolName) {
@@ -430,6 +431,7 @@ dwvsimple.Gui = function (app, tools, uid) {
 
 /**
  * Update preset dropdown.
+ *
  * @param {Array} presets The list of presets to use as options.
  */
 dwvsimple.Gui.prototype.updatePresets = function (presets) {
@@ -451,6 +453,7 @@ dwvsimple.Gui.prototype.updatePresets = function (presets) {
 
 /**
  * Set the selected preset in the preset dropdown.
+ *
  * @param {string} name The name of the preset to select.
  */
 dwvsimple.Gui.prototype.setSelectedPreset = function (name) {
@@ -518,8 +521,8 @@ function arrayToHtmlTable(arr) {
 /**
  * Get the meta data as an array.
  *
- * @param {any} meta
- * @param {number} instanceNumber
+ * @param {any} meta The meta data.
+ * @param {number} instanceNumber The instance number.
  * @returns {string[]} The meta data as a flat string array.
  */
 function getMetaArray(meta, instanceNumber) {
@@ -564,7 +567,9 @@ function getTagReducer(tagData) {
  * Get a DICOM data array reducer.
  *
  * @param {any} tagData DICOM data.
- * @returns {Function} The data recuder.
+ * @param {number} instanceNumber The instance number.
+ * @param {string} prefix The prefix.
+ * @returns {Function} The data reducer.
  */
 function getDicomTagReducer(tagData, instanceNumber, prefix) {
   return function (accumulator, currentValue) {
