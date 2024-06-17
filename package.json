@@ -22,7 +22,7 @@
     "@stylistic/eslint-plugin-js": "^2.2.0",
     "eslint": "^9.5.0",
     "eslint-plugin-jsdoc": "^48.2.12",
-    "globals": "^15.4.0",
+    "globals": "^15.5.0",
     "grunt": "^1.4.0",
     "grunt-cli": "^1.4.2",
     "grunt-contrib-connect": "^4.0.0",
