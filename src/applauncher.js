@@ -131,11 +131,11 @@ function startApp(uid, options) {
       }
     }
   });
-  dwvApp.addEventListener('loaderror', function (event) {
+  dwvApp.addEventListener('error', function (event) {
     console.error(event.error);
     ++nReceivedLoadError;
   });
-  dwvApp.addEventListener('loadabort', function (/*event*/) {
+  dwvApp.addEventListener('abort', function (/*event*/) {
     ++nReceivedLoadAbort;
   });
   dwvApp.addEventListener('loadend', function (/*event*/) {
