@@ -1,15 +1,6 @@
 // namespace
 var dwvsimple = dwvsimple || {};
 
-// Image decoders (for web workers)
-dwv.decoderScripts.jpeg2000 =
-  'node_modules/dwv/decoders/pdfjs/decode-jpeg2000.js';
-dwv.decoderScripts['jpeg-lossless'] =
-  'node_modules/dwv/decoders/rii-mango/decode-jpegloss.js';
-dwv.decoderScripts['jpeg-baseline'] =
-  'node_modules/dwv/decoders/pdfjs/decode-jpegbaseline.js';
-dwv.decoderScripts.rle = 'node_modules/dwv/decoders/dwv/decode-rle.js';
-
 /**
  * Application launcher.
  *
@@ -18,7 +9,7 @@ dwv.decoderScripts.rle = 'node_modules/dwv/decoders/dwv/decode-rle.js';
  * - urls (string[]): list of urls to load,
  * - wlpreset (object): default window level preset.
  */
-function startApp(uid, options) {
+dwvsimple.startApp = function (uid, options) {
   // app options
   var appOptions = {
     dataViewConfigs: {'*': [{divId: 'layerGroup-' + uid}]},
@@ -201,15 +192,4 @@ function startApp(uid, options) {
     // possible load from location
     dwvApp.loadFromUri(window.location.href);
   }
-}
-
-// start when DOM is ready
-document.addEventListener('DOMContentLoaded', function (/*event*/) {
-  // update legend
-  document
-    .getElementById('dwvVersion')
-    .appendChild(document.createTextNode(dwv.getDwvVersion()));
-
-  // start
-  startApp('simpl0');
-});
+};

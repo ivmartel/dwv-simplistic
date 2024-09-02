@@ -29,6 +29,8 @@
 <!-- Third party (dwv) -->
 <script type="text/javascript" src="node_modules/jszip/dist/jszip.min.js"></script>
 <script type="text/javascript" src="node_modules/konva/konva.min.js"></script>
+<!-- dwv -->
+<script type="text/javascript" src="node_modules/dwv/dist/dwv.min.js"></script>
 <!-- decoders -->
 <script type="text/javascript" src="node_modules/dwv/decoders/dwv/rle.js"></script>
 <script type="text/javascript" src="node_modules/dwv/decoders/pdfjs/jpx.js"></script>
@@ -36,15 +38,34 @@
 <script type="text/javascript" src="node_modules/dwv/decoders/pdfjs/arithmetic_decoder.js"></script>
 <script type="text/javascript" src="node_modules/dwv/decoders/pdfjs/jpg.js"></script>
 <script type="text/javascript" src="node_modules/dwv/decoders/rii-mango/lossless-min.js"></script>
-<!-- dwv -->
-<script type="text/javascript" src="node_modules/dwv/dist/dwv.min.js"></script>
+<script>
+// tell dwv where to find decoders
+dwv.decoderScripts.jpeg2000 =
+  'node_modules/dwv/decoders/pdfjs/decode-jpeg2000.js';
+dwv.decoderScripts['jpeg-lossless'] =
+  'node_modules/dwv/decoders/rii-mango/decode-jpegloss.js';
+dwv.decoderScripts['jpeg-baseline'] =
+  'node_modules/dwv/decoders/pdfjs/decode-jpegbaseline.js';
+dwv.decoderScripts.rle =
+  'node_modules/dwv/decoders/dwv/decode-rle.js';
+</script>
 <!-- gui -->
 <script type="text/javascript" src="src/gui/dropboxLoader.js"></script>
-
-<!-- Launch the app -->
 <script type="text/javascript" src="src/register-sw.js"></script>
 <script type="text/javascript" src="src/appgui.js"></script>
 <script type="text/javascript" src="src/applauncher.js"></script>
+<!-- Launch the app -->
+<script>
+// start app when DOM is ready
+document.addEventListener('DOMContentLoaded', function (/*event*/) {
+  // update legend
+  document
+    .getElementById('dwvVersion')
+    .appendChild(document.createTextNode(dwv.getDwvVersion()));
+  // start app
+  dwvsimple.startApp('simpl0');
+});
+</script>
 </head>
 
 <body>
