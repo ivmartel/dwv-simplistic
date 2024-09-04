@@ -23,7 +23,11 @@ jobs:
       run: yarn install --frozen-lockfile
     - name: Run lint
       run: yarn run lint
-    - name: Build (if tag or main branch)
+    - name: Build
+      run: |
+        rm -Rf ./build
+        yarn run build
+    - name: Prepare for deploy (if tag or main branch)
       if: env.IS_PUSH_MAIN == 'true' || env.IS_PUSH_TAG == 'true'
       run: |
         rm -Rf ./node_modules/*
