@@ -30,7 +30,7 @@ jobs:
         yarn install --prod
         mkdir build
         cp -Rf *.* ./build
-        cp -Rf src css dist node_modules resources ./build
+        cp -Rf css dist node_modules resources ./build
         ./resources/scripts/prep-deploy.sh -f build/index.html
     - name: Push to gh-pages (if tag or main branch)
       if: env.IS_PUSH_MAIN == 'true' || env.IS_PUSH_TAG == 'true'
