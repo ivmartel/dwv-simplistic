@@ -8,10 +8,8 @@ var urlsToCache = [
   // css
   './css/style.css',
   // js
-  './src/applauncher.js',
-  './src/appgui.js',
-  './src/register-sw.js',
-  './src/gui/dropboxLoader.js',
+  './register-sw.js',
+  './dist/dwvsimplistic.min.js',
   // images
   './resources/icons/icon-16.png',
   './resources/icons/icon-32.png',
@@ -29,6 +27,7 @@ var urlsToCache = [
 
   // js: dwv
   './node_modules/dwv/dist/dwv.min.js',
+  './node_modules/konva/konva.min.js',
   './node_modules/jszip/dist/jszip.min.js',
   // js: decoders
   './node_modules/dwv/decoders/dwv/rle.js',

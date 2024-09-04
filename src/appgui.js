@@ -1,13 +1,12 @@
-/**
- * Application GUI.
- */
-// namespace
-var dwvsimple = dwvsimple || {};
+// doc imports
+/* eslint-disable no-unused-vars */
+import {App} from 'dwv';
+/* eslint-enable no-unused-vars */
 
 // icons from https://fonts.google.com/icons
 // Fill: 0 Weight: 700 Grade: 0 Optical Size: 20
 /* eslint-disable @stylistic/js/max-len */
-var _paths = {
+const _paths = {
   // menu
   'Scroll': 'M110-215v-118h740v118H110Zm0-206v-118h740v118H110Zm0-206v-118h740v118H110Z',
   // search
@@ -43,31 +42,31 @@ function getToolButton(toolName, appGui) {
   svg.setAttributeNS(null, 'width', 20);
   svg.setAttributeNS(null, 'viewBox', '0 -960 960 960');
   svg.appendChild(path);
-  var button = document.createElement('button');
+  let button = document.createElement('button');
   button.id = appGui.getToolId(toolName);
   button.title = toolName;
   button.appendChild(svg);
   // onclick callback
   if (toolName === 'Reset') {
-    button.onclick = function () {
+    button.addEventListener('click', function () {
       appGui.onDisplayReset();
-    };
+    });
   } else if (toolName === 'ToggleOrientation') {
-    button.onclick = function () {
+    button.addEventListener('click', function () {
       appGui.toggleOrientation();
-    };
+    });
   } else if (toolName === 'Fullscreen') {
-    button.onclick = function () {
+    button.addEventListener('click', function () {
       appGui.toggleFullScreen();
-    };
+    });
   } else if (toolName === 'Tags') {
-    button.onclick = function () {
+    button.addEventListener('click', function () {
       appGui.openTagsModal();
-    };
+    });
   } else {
-    button.onclick = function () {
+    button.addEventListener('click', function () {
       appGui.onChangeTool(toolName);
-    };
+    });
   }
   return button;
 }
@@ -87,9 +86,9 @@ function getSelect(toolName, appGui) {
   select.id = appGui.getToolId(toolName);
   select.title = 'Window level presets';
   select.appendChild(option);
-  select.onchange = function () {
+  select.addEventListener('change', function () {
     appGui.onChangePreset(this.value);
-  };
+  });
   return select;
 }
 
@@ -97,38 +96,66 @@ function getSelect(toolName, appGui) {
  * GUI class.
  *
  * @class
- * @param {object} app The associated app.
- * @param {Array} tools The list of tools.
- * @param {string} uid The GUI unique id.
  */
-dwvsimple.Gui = function (app, tools, uid) {
-
-  var self = this;
+export class Gui {
 
   /**
-   * View orientation.
+   * View this.#orientation.
    *
    * @type {string}
    */
-  var orientation;
+  #orientation;
 
   /**
    * Layer group div height before full screen.
    *
    * @type {string}
    */
-  var lgDivHeight;
+  #lgDivHeight;
+
+  /**
+   * The associated app.
+   *
+   * @type {App}
+   */
+  #app;
+
+  /**
+   * The list of tools.
+   *
+   * @type {string[]}
+   */
+  #tools;
+
+  /**
+   * The GUI UID.
+   *
+   * @type {string}
+   */
+  #uid;
+
+  /**
+   *
+   * @param {App} app The associated app.
+   * @param {string[]} tools The list of tools.
+   * @param {string} uid The GUI unique id.
+   */
+  constructor(app, tools, uid) {
+    this.#app = app;
+    this.#tools = tools;
+    this.#uid = uid;
+  };
 
   /**
    * Initialise the GUI: fill the toolbar.
    */
-  this.init = function () {
-    var toolbar = document.getElementById('toolbar-' + uid);
-    for (var i = 0; i < tools.length; ++i) {
-      if (tools[i] === 'WindowLevelPresets') {
-        toolbar.appendChild(getSelect(tools[i], self));
+  init() {
+    var toolbar = document.getElementById(this.getToolbarDivId());
+    for (var i = 0; i < this.#tools.length; ++i) {
+      if (this.#tools[i] === 'WindowLevelPresets') {
+        toolbar.appendChild(getSelect(this.#tools[i], this));
       } else {
-        toolbar.appendChild(getToolButton(tools[i], self));
+        toolbar.appendChild(getToolButton(this.#tools[i], this));
       }
     }
   };
@@ -137,13 +164,13 @@ dwvsimple.Gui = function (app, tools, uid) {
    * Show the progress bar: adds a progress to the
    *   layerGroup div.
    */
-  this.showProgressBar = function () {
+  showProgressBar() {
     var progress = document.createElement('progress');
-    progress.id = 'progress-' + uid;
+    progress.id = 'progress-' + this.#uid;
     progress.max = '100';
     progress.value = '0';
 
-    var lg = document.getElementById('toolbar-' + uid);
+    var lg = document.getElementById(this.getToolbarDivId());
     lg.appendChild(progress);
   };
 
@@ -153,8 +180,8 @@ dwvsimple.Gui = function (app, tools, uid) {
    *
    * @param {number} percent The progess percent.
    */
-  this.setProgress = function (percent) {
-    var progress = document.getElementById('progress-' + uid);
+  setProgress(percent) {
+    var progress = document.getElementById('progress-' + this.#uid);
     if (progress) {
       if (percent === 100) {
         // remove
@@ -171,17 +198,26 @@ dwvsimple.Gui = function (app, tools, uid) {
    *
    * @returns {string} The id.
    */
-  this.getDwvDivId = function () {
-    return 'dwv-' + uid;
+  getDwvDivId() {
+    return 'dwv-' + this.#uid;
   };
 
   /**
-   * Get the dwv div id.
+   * Get the layer group div id.
    *
    * @returns {string} The id.
    */
-  this.getLayerGroupDivId = function () {
-    return 'layerGroup-' + uid;
+  getLayerGroupDivId() {
+    return 'layerGroup-' + this.#uid;
+  };
+
+  /**
+   * Get the toolbar div id.
+   *
+   * @returns {string} The id.
+   */
+  getToolbarDivId() {
+    return 'toolbar-' + this.#uid;
   };
 
   /**
@@ -190,8 +226,8 @@ dwvsimple.Gui = function (app, tools, uid) {
    * @param {string} toolName Tool name.
    * @returns {string} The id.
    */
-  this.getToolId = function (toolName) {
-    return toolName.toLowerCase() + '-' + uid;
+  getToolId(toolName) {
+    return toolName.toLowerCase() + '-' + this.#uid;
   };
 
   /**
@@ -200,7 +236,7 @@ dwvsimple.Gui = function (app, tools, uid) {
    * @param {string} name The tool name.
    * @param {boolean} flag True to enable.
    */
-  this.enableTool = function (name, flag) {
+  enableTool(name, flag) {
     var toolId = this.getToolId(name);
     document.getElementById(toolId).disabled = !flag;
   };
@@ -210,9 +246,9 @@ dwvsimple.Gui = function (app, tools, uid) {
    *
    * @param {boolean} flag True to enable.
    */
-  this.enableTools = function (flag) {
-    for (var i = 0; i < tools.length; ++i) {
-      this.enableTool(tools[i], flag);
+  enableTools(flag) {
+    for (var i = 0; i < this.#tools.length; ++i) {
+      this.enableTool(this.#tools[i], flag);
     }
   };
 
@@ -222,7 +258,7 @@ dwvsimple.Gui = function (app, tools, uid) {
    * @param {string} name The tool name.
    * @param {boolean} flag True to activate.
    */
-  this.activateTool = function (name, flag) {
+  activateTool(name, flag) {
     var toolId = this.getToolId(name);
     if (flag) {
       document.getElementById(toolId).classList.add('active');
@@ -236,9 +272,9 @@ dwvsimple.Gui = function (app, tools, uid) {
    *
    * @param {boolean} flag True to activate.
    */
-  this.activateTools = function (flag) {
-    for (var i = 0; i < tools.length; ++i) {
-      this.activateTool(tools[i], flag);
+  activateTools(flag) {
+    for (var i = 0; i < this.#tools.length; ++i) {
+      this.activateTool(this.#tools[i], flag);
     }
   };
 
@@ -247,9 +283,9 @@ dwvsimple.Gui = function (app, tools, uid) {
    *
    * @param {string} name The name of the new preset.
    */
-  this.onChangePreset = function (name) {
+  onChangePreset(name) {
     // update viewer
-    app.setWindowLevelPreset(name);
+    this.#app.setWindowLevelPreset(name);
     // set selected
     this.setSelectedPreset(name);
   };
@@ -259,20 +295,20 @@ dwvsimple.Gui = function (app, tools, uid) {
    *
    * @param {string} name The name of the new tool.
    */
-  this.onChangeTool = function (name) {
+  onChangeTool(name) {
     this.activateTools(false);
     this.activateTool(name, true);
-    app.setTool(name);
+    this.#app.setTool(name);
     if (name === 'Draw') {
-      app.setToolFeatures({shapeName: 'Ruler'});
+      this.#app.setToolFeatures({shapeName: 'Ruler'});
     }
   };
 
   /**
    * Handle display reset.
    */
-  this.onDisplayReset = function () {
-    app.resetDisplay();
+  onDisplayReset() {
+    this.#app.resetDisplay();
     // reset preset dropdown
     var presetsId = this.getToolId('WindowLevelPresets');
     var domPresets = document.getElementById(presetsId);
@@ -280,42 +316,42 @@ dwvsimple.Gui = function (app, tools, uid) {
   };
 
   /**
-   * Toggle the viewer orientation.
+   * Toggle the viewer this.#orientation.
    */
-  this.toggleOrientation = function () {
-    if (typeof orientation !== 'undefined') {
-      if (orientation === 'axial') {
-        orientation = 'coronal';
-      } else if (orientation === 'coronal') {
-        orientation = 'sagittal';
-      } else if (orientation === 'sagittal') {
-        orientation = 'axial';
+  toggleOrientation() {
+    if (typeof this.#orientation !== 'undefined') {
+      if (this.#orientation === 'axial') {
+        this.#orientation = 'coronal';
+      } else if (this.#orientation === 'coronal') {
+        this.#orientation = 'sagittal';
+      } else if (this.#orientation === 'sagittal') {
+        this.#orientation = 'axial';
       }
     } else {
       // default is most probably axial
-      orientation = 'coronal';
+      this.#orientation = 'coronal';
     }
     // update data view config
     var config = {
       '*': [
         {
           divId: this.getLayerGroupDivId(),
-          orientation: orientation
+          orientation: this.#orientation
         }
       ]
     };
-    app.setDataViewConfigs(config);
+    this.#app.setDataViewConfigs(config);
     // render data
-    var dataIds = app.getDataIds();
+    var dataIds = this.#app.getDataIds();
     for (var i = 0; i < dataIds.length; ++i) {
-      app.render(dataIds[i]);
+      this.#app.render(dataIds[i]);
     }
   };
 
   /**
    * Toogle full screen on and off.
    */
-  this.toggleFullScreen = function () {
+  toggleFullScreen() {
     var lgDivId = this.getLayerGroupDivId();
     var lgElement = document.getElementById(lgDivId);
 
@@ -330,35 +366,35 @@ dwvsimple.Gui = function (app, tools, uid) {
         // if the layer group height was 0, the app set it to a fixed size.
         // change it to 100% to trigger a resize and recalculate the
         // fit scale to occupy the full screen
-        lgDivHeight = lgElement.style.height;
+        this.#lgDivHeight = lgElement.style.height;
         lgElement.style.height = '100%';
       });
     } else if (document.exitFullscreen) {
       document.exitFullscreen();
       // restore previous height
-      lgElement.style.height = lgDivHeight;
+      lgElement.style.height = this.#lgDivHeight;
     }
   };
 
   /**
    * Open a DICOM tags modal.
    */
-  this.openTagsModal = function () {
+  openTagsModal() {
     // modal
     var modalDiv = document.createElement('div');
     modalDiv.className = 'modal';
-    modalDiv.id = 'modal-' + uid;
+    modalDiv.id = 'modal-' + this.#uid;
     modalDiv.style.display = 'block';
     // close on outside click
-    window.onclick = function (event) {
+    window.addEventListener('click', function (event) {
       if (event.target === modalDiv) {
         modalDiv.style.display = 'none';
       }
-    };
+    });
 
     var modalContentDiv = document.createElement('div');
     modalContentDiv.className = 'modal-content';
-    modalContentDiv.id = 'modal-content-' + uid;
+    modalContentDiv.id = 'modal-content-' + this.#uid;
     modalDiv.appendChild(modalContentDiv);
 
     var modalTitle = document.createElement('h2');
@@ -369,7 +405,7 @@ dwvsimple.Gui = function (app, tools, uid) {
     var modalScrollDiv = document.createElement('div');
     modalScrollDiv.className = 'modal-content-scroll';
 
-    var metaData = app.getMetaData('0');
+    var metaData = this.#app.getMetaData('0');
 
     // InstanceNumber
     var instanceElement = metaData['00200013'];
@@ -392,13 +428,13 @@ dwvsimple.Gui = function (app, tools, uid) {
 
     var slider = document.createElement('input');
     slider.type = 'range';
-    slider.id = 'instancenumber-slider-' + uid;
+    slider.id = 'instancenumber-slider-' + this.#uid;
     slider.min = 0;
     slider.max = instanceNumbers.length - 1;
     slider.value = 0;
     slider.title = 'Instance Number';
     var sliderLabel = document.createElement('label');
-    sliderLabel.id = 'instancenumber-slider-label-' + uid;
+    sliderLabel.id = 'instancenumber-slider-label-' + this.#uid;
     sliderLabel.for = slider.id;
     sliderLabel.appendChild(document.createTextNode(instanceNumber));
     sliderLabel.title = slider.title;
@@ -408,13 +444,13 @@ dwvsimple.Gui = function (app, tools, uid) {
     sliderLine.appendChild(sliderLabel);
     modalContentDiv.appendChild(sliderLine);
 
-    slider.oninput = function (event) {
+    slider.addEventListener('input', function (event) {
       instanceNumber = instanceNumbers[event.target.value];
       var metaArr = getMetaArray(metaData, instanceNumber);
       var metaTab = arrayToHtmlTable(metaArr);
       modalScrollDiv.replaceChildren(metaTab);
       sliderLabel.replaceChildren(document.createTextNode(instanceNumber));
-    };
+    });
 
     // get meta data html table
     var metaArray = getMetaArray(metaData, instanceNumber);
@@ -427,48 +463,49 @@ dwvsimple.Gui = function (app, tools, uid) {
     container.appendChild(modalDiv);
   };
 
+  /**
+   * Update preset dropdown.
+   *
+   * @param {Array} presets The list of presets to use as options.
+   */
+  updatePresets(presets) {
+    var presetsId = this.getToolId('WindowLevelPresets');
+    var domPresets = document.getElementById(presetsId);
+    // clear previous
+    while (domPresets.hasChildNodes()) {
+      domPresets.removeChild(domPresets.firstChild);
+    }
+    // add new
+    for (var i = 0; i < presets.length; ++i) {
+      var option = document.createElement('option');
+      option.value = presets[i];
+      var label = presets[i];
+      option.appendChild(document.createTextNode(label));
+      domPresets.appendChild(option);
+    }
+  };
+
+  /**
+   * Set the selected preset in the preset dropdown.
+   *
+   * @param {string} name The name of the preset to select.
+   */
+  setSelectedPreset(name) {
+    var presetsId = this.getToolId('WindowLevelPresets');
+    var domPresets = document.getElementById(presetsId);
+    // find the index
+    var index = 0;
+    for (index in domPresets.options) {
+      if (domPresets.options[index].value === name) {
+        break;
+      }
+    }
+    // set selected
+    domPresets.selectedIndex = index;
+  };
+
 }; // class dwvsimple.Gui
 
-/**
- * Update preset dropdown.
- *
- * @param {Array} presets The list of presets to use as options.
- */
-dwvsimple.Gui.prototype.updatePresets = function (presets) {
-  var presetsId = this.getToolId('WindowLevelPresets');
-  var domPresets = document.getElementById(presetsId);
-  // clear previous
-  while (domPresets.hasChildNodes()) {
-    domPresets.removeChild(domPresets.firstChild);
-  }
-  // add new
-  for (var i = 0; i < presets.length; ++i) {
-    var option = document.createElement('option');
-    option.value = presets[i];
-    var label = presets[i];
-    option.appendChild(document.createTextNode(label));
-    domPresets.appendChild(option);
-  }
-};
-
-/**
- * Set the selected preset in the preset dropdown.
- *
- * @param {string} name The name of the preset to select.
- */
-dwvsimple.Gui.prototype.setSelectedPreset = function (name) {
-  var presetsId = this.getToolId('WindowLevelPresets');
-  var domPresets = document.getElementById(presetsId);
-  // find the index
-  var index = 0;
-  for (index in domPresets.options) {
-    if (domPresets.options[index].value === name) {
-      break;
-    }
-  }
-  // set selected
-  domPresets.selectedIndex = index;
-};
 
 /**
  * Get an HTML table from a string array.

@@ -1,5 +1,5 @@
-// namespace
-var dwvsimple = dwvsimple || {};
+import {Gui} from './appgui';
+import {DropboxLoader} from './gui/dropboxLoader';
 
 /**
  * Application launcher.
@@ -9,7 +9,7 @@ var dwvsimple = dwvsimple || {};
  * - urls (string[]): list of urls to load,
  * - wlpreset (object): default window level preset.
  */
-dwvsimple.startApp = function (uid, options) {
+export function startApp(uid, options) {
   // app options
   var appOptions = {
     dataViewConfigs: {'*': [{divId: 'layerGroup-' + uid}]},
@@ -36,7 +36,7 @@ dwvsimple.startApp = function (uid, options) {
   guiTools.push('ToggleOrientation');
   guiTools.push('Fullscreen');
   guiTools.push('Tags');
-  var dwvAppGui = new dwvsimple.Gui(dwvApp, guiTools, uid);
+  var dwvAppGui = new Gui(dwvApp, guiTools, uid);
   dwvAppGui.init();
   dwvAppGui.enableTools(false);
 
@@ -148,7 +148,7 @@ dwvsimple.startApp = function (uid, options) {
   });
 
   // setup drop box
-  var dropBoxLoader = new dwvsimple.gui.DropboxLoader(dwvApp, uid);
+  var dropBoxLoader = new DropboxLoader(dwvApp, uid);
   dropBoxLoader.init();
   // show/hide drop box
   dwvApp.addEventListener('loadstart', function (/*event*/) {

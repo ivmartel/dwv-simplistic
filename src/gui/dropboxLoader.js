@@ -1,6 +1,7 @@
-// namespaces
-var dwvsimple = dwvsimple || {};
-dwvsimple.gui = dwvsimple.gui || {};
+// doc imports
+/* eslint-disable no-unused-vars */
+import {App} from 'dwv';
+/* eslint-enable no-unused-vars */
 
 /**
  * Dropbox loader.
@@ -8,21 +9,42 @@ dwvsimple.gui = dwvsimple.gui || {};
  *   uses a drop box element as first display.
  *
  * @class
- * @param {object} app The associated application.
- * @param {string} uid The app uid.
  */
-dwvsimple.gui.DropboxLoader = function (app, uid) {
+export class DropboxLoader {
+
+  /**
+   * The associated app.
+   *
+   * @type {App}
+   */
+  #app;
+
+  /**
+   * The GUI UID.
+   *
+   * @type {string}
+   */
+  #uid;
 
   // drop box class name
-  var dropboxDivId = 'dropBox';
-  var dropboxClassName = 'dropBox';
-  var borderClassName = 'dropBoxBorder';
-  var hoverClassName = 'hover';
+  #dropboxDivId = 'dropBox';
+  #dropboxClassName = 'dropBox';
+  #borderClassName = 'dropBoxBorder';
+  #hoverClassName = 'hover';
+
+  /**
+   * @param {App} app The associated application.
+   * @param {string} uid The GUI UID.
+   */
+  constructor(app, uid) {
+    this.#app = app;
+    this.#uid = uid;
+  }
 
   /**
    * Initialise the drop box.
    */
-  this.init = function () {
+  init() {
     this.showDropbox(true);
   };
 
@@ -32,11 +54,11 @@ dwvsimple.gui.DropboxLoader = function (app, uid) {
    * @private
    * @param {object} event The event to handle.
    */
-  function defaultHandleDragEvent(event) {
+  #defaultHandleDragEvent = (event) => {
     // prevent default handling
     event.stopPropagation();
     event.preventDefault();
-  }
+  };
 
   /**
    * Handle a drag over.
@@ -44,14 +66,14 @@ dwvsimple.gui.DropboxLoader = function (app, uid) {
    * @private
    * @param {object} event The event to handle.
    */
-  function onBoxDragOver(event) {
-    defaultHandleDragEvent(event);
+  #onBoxDragOver = (event) => {
+    this.#defaultHandleDragEvent(event);
     // update box border
-    var box = document.getElementById(dropboxDivId);
-    if (box && box.className.indexOf(hoverClassName) === -1) {
-      box.className += ' ' + hoverClassName;
+    var box = document.getElementById(this.#dropboxDivId);
+    if (box && box.className.indexOf(this.#hoverClassName) === -1) {
+      box.className += ' ' + this.#hoverClassName;
     }
-  }
+  };
 
   /**
    * Handle a drag leave.
@@ -59,14 +81,14 @@ dwvsimple.gui.DropboxLoader = function (app, uid) {
    * @private
    * @param {object} event The event to handle.
    */
-  function onBoxDragLeave(event) {
-    defaultHandleDragEvent(event);
+  #onBoxDragLeave = (event) => {
+    this.#defaultHandleDragEvent(event);
     // update box border
-    var box = document.getElementById(dropboxDivId);
-    if (box && box.className.indexOf(hoverClassName) !== -1) {
-      box.className = box.className.replace(' ' + hoverClassName, '');
+    var box = document.getElementById(this.#dropboxDivId);
+    if (box && box.className.indexOf(this.#hoverClassName) !== -1) {
+      box.className = box.className.replace(' ' + this.#hoverClassName, '');
     }
-  }
+  };
 
   /**
    * Handle a drop event.
@@ -74,45 +96,45 @@ dwvsimple.gui.DropboxLoader = function (app, uid) {
    * @private
    * @param {object} event The event to handle.
    */
-  function onDrop(event) {
-    defaultHandleDragEvent(event);
+  #onDrop = (event) => {
+    this.#defaultHandleDragEvent(event);
     // load files
-    app.loadFiles(event.dataTransfer.files);
-  }
+    this.#app.loadFiles(event.dataTransfer.files);
+  };
 
   /**
    * Handle a an input[type:file] change event.
    *
    * @param {object} event The event to handle.
    */
-  function onInputFile(event) {
+  #onInputFile = (event) => {
     if (event.target && event.target.files) {
-      app.loadFiles(event.target.files);
+      this.#app.loadFiles(event.target.files);
     }
-  }
+  };
 
   /**
    * Show or hide the data load drop box.
    *
    * @param {boolean} show Flag to show or hide.
    */
-  this.showDropbox = function (show) {
-    var box = document.getElementById(dropboxDivId);
+  showDropbox(show) {
+    var box = document.getElementById(this.#dropboxDivId);
     if (!box) {
       return;
     }
-    var layerDiv = document.getElementById('layerGroup-' + uid);
+    var layerDiv = document.getElementById('layerGroup-' + this.#uid);
 
     if (show) {
       // reset css class
-      box.className = dropboxClassName + ' ' + borderClassName;
+      box.className = this.#dropboxClassName + ' ' + this.#borderClassName;
       // add content if empty
       if (box.innerHTML === '') {
         var p = document.createElement('p');
         p.appendChild(document.createTextNode('Drag and drop data here or '));
         // input file
         var input = document.createElement('input');
-        input.onchange = onInputFile;
+        input.onchange = this.#onInputFile;
         input.type = 'file';
         input.multiple = true;
         input.id = 'input-file';
@@ -132,30 +154,30 @@ dwvsimple.gui.DropboxLoader = function (app, uid) {
       box.setAttribute('style', 'display:initial');
       // stop layer listening
       if (layerDiv) {
-        layerDiv.removeEventListener('dragover', defaultHandleDragEvent);
-        layerDiv.removeEventListener('dragleave', defaultHandleDragEvent);
-        layerDiv.removeEventListener('drop', onDrop);
+        layerDiv.removeEventListener('dragover', this.#defaultHandleDragEvent);
+        layerDiv.removeEventListener('dragleave', this.#defaultHandleDragEvent);
+        layerDiv.removeEventListener('drop', this.#onDrop);
       }
       // listen to box events
-      box.addEventListener('dragover', onBoxDragOver);
-      box.addEventListener('dragleave', onBoxDragLeave);
-      box.addEventListener('drop', onDrop);
+      box.addEventListener('dragover', this.#onBoxDragOver);
+      box.addEventListener('dragleave', this.#onBoxDragLeave);
+      box.addEventListener('drop', this.#onDrop);
     } else {
       // remove border css class
-      box.className = dropboxClassName;
+      box.className = this.#dropboxClassName;
       // remove content
       box.innerHTML = '';
       // hide box
       box.setAttribute('style', 'display:none');
       // stop box listening
-      box.removeEventListener('dragover', onBoxDragOver);
-      box.removeEventListener('dragleave', onBoxDragLeave);
-      box.removeEventListener('drop', onDrop);
+      box.removeEventListener('dragover', this.#onBoxDragOver);
+      box.removeEventListener('dragleave', this.#onBoxDragLeave);
+      box.removeEventListener('drop', this.#onDrop);
       // listen to layer events
       if (layerDiv) {
-        layerDiv.addEventListener('dragover', defaultHandleDragEvent);
-        layerDiv.addEventListener('dragleave', defaultHandleDragEvent);
-        layerDiv.addEventListener('drop', onDrop);
+        layerDiv.addEventListener('dragover', this.#defaultHandleDragEvent);
+        layerDiv.addEventListener('dragleave', this.#defaultHandleDragEvent);
+        layerDiv.addEventListener('drop', this.#onDrop);
       }
     }
   };
