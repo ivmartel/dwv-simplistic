@@ -362,7 +362,7 @@ export class Gui {
     if (!document.fullscreenElement) {
       var fsDivId = this.getDwvDivId();
       var fsElement = document.getElementById(fsDivId);
-      fsElement.requestFullscreen().then(function () {
+      fsElement.requestFullscreen().then(() => {
         // if the layer group height was 0, the app set it to a fixed size.
         // change it to 100% to trigger a resize and recalculate the
         // fit scale to occupy the full screen
