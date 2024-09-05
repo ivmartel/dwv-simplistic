@@ -6,22 +6,22 @@ const urlsToCache = [
   './',
   './index.html',
   // css
-  './css/style.css',
+  './style.css',
   // js
   './register-sw.js',
   './dist/dwvsimplistic.min.js',
   // images
-  './resources/icons/icon-16.png',
-  './resources/icons/icon-32.png',
-  './resources/icons/icon-64.png',
-  './resources/icons/icon-128.png',
-  './resources/icons/icon-256.png',
-  './resources/help/double_tap.png',
-  './resources/help/tap_and_hold.png',
-  './resources/help/tap.png',
-  './resources/help/touch_drag.png',
-  './resources/help/twotouch_drag.png',
-  './resources/help/twotouch_pinch.png',
+  './assets/icons/icon-16.png',
+  './assets/icons/icon-32.png',
+  './assets/icons/icon-64.png',
+  './assets/icons/icon-128.png',
+  './assets/icons/icon-256.png',
+  './assets/help/double_tap.png',
+  './assets/help/tap_and_hold.png',
+  './assets/help/tap.png',
+  './assets/help/touch_drag.png',
+  './assets/help/twotouch_drag.png',
+  './assets/help/twotouch_pinch.png',
 
   // third party
 
