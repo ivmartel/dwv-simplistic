@@ -9,12 +9,8 @@ module.exports = merge(common, {
     open: '/',
     static: [
       {
-        directory: './dist',
-        publicPath: '/dist'
-      },
-      {
-        directory: './css',
-        publicPath: '/css'
+        directory: './public',
+        publicPath: '/'
       },
       {
         directory: './node_modules/dwv',
@@ -32,7 +28,7 @@ module.exports = merge(common, {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: 'index.html'
+      template: 'public/index.html'
     }),
   ]
 });

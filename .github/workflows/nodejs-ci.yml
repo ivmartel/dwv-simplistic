@@ -33,8 +33,9 @@ jobs:
         rm -Rf ./node_modules/*
         yarn install --prod
         mkdir build
-        cp -Rf *.* ./build
-        cp -Rf css dist node_modules resources ./build
+        cp license.txt package.json readme.md ./build
+        cp -Rf public/* ./build
+        cp -Rf dist node_modules ./build
         ./resources/scripts/prep-deploy.sh -f build/index.html
     - name: Push to gh-pages (if tag or main branch)
       if: env.IS_PUSH_MAIN == 'true' || env.IS_PUSH_TAG == 'true'

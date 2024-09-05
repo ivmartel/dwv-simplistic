@@ -48,6 +48,19 @@ fi
 
 info "Preparing deploy for '$fileName'"
 
+if [ "$(grep -c "<!-- self -->" $fileName)" -eq 1 ]
+then
+  info "Enabling bundle"
+  # remove start comment
+  a1="\(<!-- self -->\)\(<!--\)"
+  b1="\1"
+  sed -i "s/${a1}/${b1}/g" $fileName
+  # remove end comment
+  a2="\(-->\)\(<!-- Launch the app -->\)"
+  b2="\2"
+  sed -i "s/${a2}/${b2}/g" $fileName
+fi
+
 if [ "$(grep -c "<!-- service workers -->" $fileName)" -eq 1 ]
 then
   info "Enabling service workers"

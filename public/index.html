@@ -10,34 +10,34 @@
 <link rel="icon" type="image/x-icon" href="favicon.ico">
 <meta name="theme-color" content="#f86a2d"/>
 <link rel="manifest" href="manifest.json">
-<link type="text/css" rel="stylesheet" href="css/style.css" />
+<link type="text/css" rel="stylesheet" href="style.css" />
 <!-- mobile web app -->
 <meta name="mobile-web-app-capable" content="yes" />
-<link rel="shortcut icon" sizes="16x16" href="resources/icons/icon-16.png" />
-<link rel="shortcut icon" sizes="32x32" href="resources/icons/icon-32.png" />
-<link rel="shortcut icon" sizes="64x64" href="resources/icons/icon-64.png" />
-<link rel="shortcut icon" sizes="128x128" href="resources/icons/icon-128.png" />
-<link rel="shortcut icon" sizes="256x256" href="resources/icons/icon-256.png" />
+<link rel="shortcut icon" sizes="16x16" href="assets/icons/icon-16.png" />
+<link rel="shortcut icon" sizes="32x32" href="assets/icons/icon-32.png" />
+<link rel="shortcut icon" sizes="64x64" href="assets/icons/icon-64.png" />
+<link rel="shortcut icon" sizes="128x128" href="assets/icons/icon-128.png" />
+<link rel="shortcut icon" sizes="256x256" href="assets/icons/icon-256.png" />
 <!-- apple specific -->
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-<link rel="apple-touch-icon" sizes="16x16" href="resources/icons/icon-16.png" />
-<link rel="apple-touch-icon" sizes="32x32" href="resources/icons/icon-32.png" />
-<link rel="apple-touch-icon" sizes="64x64" href="resources/icons/icon-64.png" />
-<link rel="apple-touch-icon" sizes="128x128" href="resources/icons/icon-128.png" />
-<link rel="apple-touch-icon" sizes="256x256" href="resources/icons/icon-256.png" />
+<link rel="apple-touch-icon" sizes="16x16" href="assets/icons/icon-16.png" />
+<link rel="apple-touch-icon" sizes="32x32" href="assets/icons/icon-32.png" />
+<link rel="apple-touch-icon" sizes="64x64" href="assets/icons/icon-64.png" />
+<link rel="apple-touch-icon" sizes="128x128" href="assets/icons/icon-128.png" />
+<link rel="apple-touch-icon" sizes="256x256" href="assets/icons/icon-256.png" />
 <!-- Third party (dwv) -->
 <script type="text/javascript" src="node_modules/jszip/dist/jszip.min.js"></script>
 <script type="text/javascript" src="node_modules/konva/konva.min.js"></script>
 <!-- dwv -->
 <script type="text/javascript" src="node_modules/dwv/dist/dwv.min.js"></script>
 <!-- decoders -->
-<script type="text/javascript" src="node_modules/dwv/decoders/dwv/rle.js"></script>
+<!-- <script type="text/javascript" src="node_modules/dwv/decoders/dwv/rle.js"></script>
 <script type="text/javascript" src="node_modules/dwv/decoders/pdfjs/jpx.js"></script>
 <script type="text/javascript" src="node_modules/dwv/decoders/pdfjs/util.js"></script>
 <script type="text/javascript" src="node_modules/dwv/decoders/pdfjs/arithmetic_decoder.js"></script>
 <script type="text/javascript" src="node_modules/dwv/decoders/pdfjs/jpg.js"></script>
-<script type="text/javascript" src="node_modules/dwv/decoders/rii-mango/lossless-min.js"></script>
+<script type="text/javascript" src="node_modules/dwv/decoders/rii-mango/lossless-min.js"></script> -->
 <script>
 // tell dwv where to find decoders
 dwv.decoderScripts.jpeg2000 =
@@ -49,9 +49,9 @@ dwv.decoderScripts['jpeg-baseline'] =
 dwv.decoderScripts.rle =
   'node_modules/dwv/decoders/dwv/decode-rle.js';
 </script>
-<!-- self -->
+<!-- self --><!--
 <script src="dist/dwvsimplistic.min.js"></script>
-<!-- Launch the app -->
+--><!-- Launch the app -->
 <script>
 // start app when DOM is ready
 document.addEventListener('DOMContentLoaded', function (/*event*/) {
