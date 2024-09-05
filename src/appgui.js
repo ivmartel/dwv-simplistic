@@ -96,8 +96,6 @@ function getSelect(toolName, appGui) {
 
 /**
  * GUI class.
- *
- * @class
  */
 export class Gui {
 
@@ -137,7 +135,6 @@ export class Gui {
   #uid;
 
   /**
-   *
    * @param {App} app The associated app.
    * @param {string[]} tools The list of tools.
    * @param {string} uid The GUI unique id.
@@ -506,8 +503,7 @@ export class Gui {
     domPresets.selectedIndex = index;
   };
 
-}; // class dwvsimple.Gui
-
+}; // class Gui
 
 /**
  * Get an HTML table from a string array.

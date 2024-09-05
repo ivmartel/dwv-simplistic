@@ -7,8 +7,6 @@ import {App} from 'dwv';
  * Dropbox loader.
  * Listens to drag events on the layer container and
  *   uses a drop box element as first display.
- *
- * @class
  */
 export class DropboxLoader {
 
@@ -177,4 +175,4 @@ export class DropboxLoader {
       }
     }
   };
-}; // DropboxLoader
+}; // class DropboxLoader
