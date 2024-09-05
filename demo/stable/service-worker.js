@@ -1,19 +1,15 @@
-/* global Promise */
-
 // https://developers.google.com/web/fundamentals/primers/service-workers/
 // chrome: chrome://inspect/#service-workers
 
-var CACHE_NAME = 'dwv-simplistic-cache_v0.8.0';
+var CACHE_NAME = 'dwv-simplistic-cache_v0.9.0-beta.1';
 var urlsToCache = [
   './',
   './index.html',
   // css
   './css/style.css',
   // js
-  './src/applauncher.js',
-  './src/appgui.js',
-  './src/register-sw.js',
-  './src/gui/dropboxLoader.js',
+  './register-sw.js',
+  './dist/dwvsimplistic.min.js',
   // images
   './resources/icons/icon-16.png',
   './resources/icons/icon-32.png',
@@ -31,6 +27,7 @@ var urlsToCache = [
 
   // js: dwv
   './node_modules/dwv/dist/dwv.min.js',
+  './node_modules/konva/konva.min.js',
   './node_modules/jszip/dist/jszip.min.js',
   // js: decoders
   './node_modules/dwv/decoders/dwv/rle.js',
