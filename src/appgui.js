@@ -32,7 +32,7 @@ const _paths = {
  * Get a tool html button.
  *
  * @param {string} toolName The tool name.
- * @param {object} appGui The associated GUi.
+ * @param {Gui} appGui The associated GUi.
  * @returns {HTMLButtonElement} An HTML button element.
  */
 function getToolButton(toolName, appGui) {
@@ -77,7 +77,7 @@ function getToolButton(toolName, appGui) {
  * Get a tool html select.
  *
  * @param {string} toolName The tool name.
- * @param {object} appGui The associated GUi.
+ * @param {Gui} appGui The associated GUi.
  * @returns {HTMLSelectElement} An HTML select element.
  */
 function getSelect(toolName, appGui) {
@@ -468,7 +468,7 @@ export class Gui {
   /**
    * Update preset dropdown.
    *
-   * @param {Array} presets The list of presets to use as options.
+   * @param {string[]} presets The list of presets to use as options.
    */
   updatePresets(presets) {
     const presetsId = this.getToolId('WindowLevelPresets');

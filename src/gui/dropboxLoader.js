@@ -51,7 +51,6 @@ export class DropboxLoader {
   /**
    * Basic handle drag event.
    *
-   * @private
    * @param {object} event The event to handle.
    */
   #defaultHandleDragEvent = (event) => {
@@ -63,7 +62,6 @@ export class DropboxLoader {
   /**
    * Handle a drag over.
    *
-   * @private
    * @param {object} event The event to handle.
    */
   #onBoxDragOver = (event) => {
@@ -78,7 +76,6 @@ export class DropboxLoader {
   /**
    * Handle a drag leave.
    *
-   * @private
    * @param {object} event The event to handle.
    */
   #onBoxDragLeave = (event) => {
@@ -93,7 +90,6 @@ export class DropboxLoader {
   /**
    * Handle a drop event.
    *
-   * @private
    * @param {object} event The event to handle.
    */
   #onDrop = (event) => {
