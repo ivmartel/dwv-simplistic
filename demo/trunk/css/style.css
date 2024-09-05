@@ -54,7 +54,7 @@ progress {
   text-decoration-line: underline;
 }
 
-/** legend */
+/* legend */
 .legend {
   text-align: center;
   font-size: 8pt;
@@ -101,7 +101,7 @@ progress {
   fill: #bdbdbd;
 }
 
-/** modal dialog */
+/* modal dialog */
 .modal {
   display: none; /* Hidden by default */
   position: fixed; /* Stay in place */
@@ -149,7 +149,7 @@ progress {
   }
 }
 
-/** color-scheme */
+/* color-scheme */
 @media (prefers-color-scheme: dark) {
   body {
     background: #252525;

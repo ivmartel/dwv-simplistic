@@ -2,7 +2,7 @@ const path = require('path');
 
 module.exports = {
   entry: {
-    'dwvsimplistic': './src/index.js'
+    dwvsimplistic: './src/index.js'
   },
   output: {
     filename: '[name].min.js',
