@@ -1,3 +1,8 @@
+import {
+  App,
+  WindowCenterAndWidth
+} from 'dwv';
+
 import {Gui} from './appgui';
 import {DropboxLoader} from './gui/dropboxLoader';
 
@@ -11,7 +16,7 @@ import {DropboxLoader} from './gui/dropboxLoader';
  */
 export function startApp(uid, options) {
   // app options
-  var appOptions = {
+  const appOptions = {
     dataViewConfigs: {'*': [{divId: 'layerGroup-' + uid}]},
     tools: {
       Scroll: {},
@@ -23,12 +28,12 @@ export function startApp(uid, options) {
     }
   };
   // main application
-  var dwvApp = new dwv.App();
+  const dwvApp = new App();
   dwvApp.init(appOptions);
 
   // app gui
-  var guiTools = Object.keys(appOptions.tools);
-  var wlIndex = guiTools.indexOf('WindowLevel');
+  const guiTools = Object.keys(appOptions.tools);
+  const wlIndex = guiTools.indexOf('WindowLevel');
   if (wlIndex !== -1) {
     guiTools.splice(wlIndex + 1, 0, 'WindowLevelPresets');
   }
@@ -36,12 +41,12 @@ export function startApp(uid, options) {
   guiTools.push('ToggleOrientation');
   guiTools.push('Fullscreen');
   guiTools.push('Tags');
-  var dwvAppGui = new Gui(dwvApp, guiTools, uid);
+  const dwvAppGui = new Gui(dwvApp, guiTools, uid);
   dwvAppGui.init();
   dwvAppGui.enableTools(false);
 
   // abort shortcut listener
-  var abortOnCrtlX = function (event) {
+  const abortOnCrtlX = function (event) {
     if (event.ctrlKey && event.keyCode === 88) {
       // crtl-x
       console.log('Abort load received from user (crtl-x).');
@@ -50,10 +55,10 @@ export function startApp(uid, options) {
   };
 
   // handle load events
-  var nLoadItem = null;
-  var nReceivedLoadError = null;
-  var nReceivedLoadAbort = null;
-  var isFirstRender = null;
+  let nLoadItem;
+  let nReceivedLoadError;
+  let nReceivedLoadAbort;
+  let isFirstRender;
   dwvApp.addEventListener('loadstart', function (/*event*/) {
     // reset counts
     nLoadItem = 0;
@@ -66,7 +71,7 @@ export function startApp(uid, options) {
     dwvAppGui.showProgressBar();
   });
   dwvApp.addEventListener('loadprogress', function (event) {
-    var percent = Math.ceil(event.loaded * 100 / event.total);
+    const percent = Math.ceil(event.loaded * 100 / event.total);
     // set progress (hides the bar is percent=100)
     dwvAppGui.setProgress(percent);
   });
@@ -83,7 +88,7 @@ export function startApp(uid, options) {
       // enable tools
       dwvAppGui.enableTools(true);
       // set the selected tool
-      var selectedTool = 'ZoomAndPan';
+      let selectedTool = 'ZoomAndPan';
       if (dwvApp.canScroll()) {
         selectedTool = 'Scroll';
       } else {
@@ -95,18 +100,19 @@ export function startApp(uid, options) {
       dwvApp.setTool(selectedTool);
       dwvAppGui.activateTool(selectedTool, true);
       // update presets
-      var lg = dwvApp.getActiveLayerGroup();
-      var vl = lg.getActiveViewLayer();
-      var viewController = vl.getViewController();
+      const lg = dwvApp.getActiveLayerGroup();
+      const vl = lg.getActiveViewLayer();
+      const viewController = vl.getViewController();
       // optional wl preset
-      var hasExtraPreset = false;
+      let hasExtraPreset = false;
+      let wlpreset;
       if (typeof options !== 'undefined' &&
         typeof options.wlpreset !== 'undefined') {
         hasExtraPreset = true;
-        var wlpreset = options.wlpreset;
-        var presets = {};
+        wlpreset = options.wlpreset;
+        const presets = {};
         presets[wlpreset.name] = {
-          wl: [new dwv.WindowCenterAndWidth(wlpreset.center, wlpreset.width)],
+          wl: [new WindowCenterAndWidth(wlpreset.center, wlpreset.width)],
           name: wlpreset.name
         };
         viewController.addWindowLevelPresets(presets);
@@ -132,7 +138,7 @@ export function startApp(uid, options) {
   dwvApp.addEventListener('loadend', function (/*event*/) {
     // show alert for errors
     if (nReceivedLoadError) {
-      var message = 'A load error has ';
+      let message = 'A load error has ';
       if (nReceivedLoadError > 1) {
         message = nReceivedLoadError + ' load errors have ';
       }
@@ -148,7 +154,7 @@ export function startApp(uid, options) {
   });
 
   // setup drop box
-  var dropBoxLoader = new DropboxLoader(dwvApp, uid);
+  const dropBoxLoader = new DropboxLoader(dwvApp, uid);
   dropBoxLoader.init();
   // show/hide drop box
   dwvApp.addEventListener('loadstart', function (/*event*/) {
@@ -174,9 +180,9 @@ export function startApp(uid, options) {
   // listen to 'wlchange'
   dwvApp.addEventListener('wlchange', function (/*event*/) {
     // update presets (in case new was added)
-    var lg = dwvApp.getActiveLayerGroup();
-    var vl = lg.getActiveViewLayer();
-    var viewController = vl.getViewController();
+    const lg = dwvApp.getActiveLayerGroup();
+    const vl = lg.getActiveViewLayer();
+    const viewController = vl.getViewController();
     dwvAppGui.updatePresets(
       viewController.getWindowLevelPresetsNames()
     );

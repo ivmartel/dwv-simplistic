@@ -1,8 +1,8 @@
 // https://developers.google.com/web/fundamentals/primers/service-workers/
 // chrome: chrome://inspect/#service-workers
 
-var CACHE_NAME = 'dwv-simplistic-cache_v0.9.0-beta.1';
-var urlsToCache = [
+const CACHE_NAME = 'dwv-simplistic-cache_v0.9.0-beta.1';
+const urlsToCache = [
   './',
   './index.html',
   // css
@@ -70,8 +70,8 @@ self.addEventListener('fetch', function (event) {
 // activate
 self.addEventListener('activate', function (event) {
   // delete caches which name starts with the same root as this one
-  var cacheRootName = CACHE_NAME;
-  var uPos = cacheRootName.lastIndexOf('_');
+  let cacheRootName = CACHE_NAME;
+  const uPos = cacheRootName.lastIndexOf('_');
   if (uPos !== -1) {
     cacheRootName = cacheRootName.substr(0, uPos);
   }

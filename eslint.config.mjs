@@ -8,8 +8,7 @@ export default [
     languageOptions: {
       globals: {
         ...globals.browser,
-        ...globals.node,
-        dwv: 'readonly',
+        ...globals.node
       },
     },
     plugins: {
@@ -22,6 +21,15 @@ export default [
       // force using curly braces
       // https://eslint.org/docs/rules/curly
       curly: 'error',
+      // no var
+      // https://eslint.org/docs/rules/no-var
+      'no-var': 'error',
+      // prefer const
+      // https://eslint.org/docs/rules/prefer-const
+      'prefer-const': 'error',
+      // allow for some unused args
+      // https://eslint.org/docs/rules/no-unused-vars
+      'no-unused-vars': ['error', {argsIgnorePattern: '^_'}],
 
       // formatting rules
 
@@ -107,7 +115,10 @@ export default [
       '@stylistic/js/no-multiple-empty-lines': 'error',
       // linebreak after operator
       // https://eslint.style/rules/js/operator-linebreak
-      '@stylistic/js/operator-linebreak': 'error'
+      '@stylistic/js/operator-linebreak': 'error',
+      // quotes around object property names
+      // https://eslint.style/rules/js/quote-props
+      '@stylistic/js/quote-props': ['error', 'as-needed']
     },
   }
 ];

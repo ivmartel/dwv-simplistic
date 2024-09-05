@@ -69,7 +69,7 @@ export class DropboxLoader {
   #onBoxDragOver = (event) => {
     this.#defaultHandleDragEvent(event);
     // update box border
-    var box = document.getElementById(this.#dropboxDivId);
+    const box = document.getElementById(this.#dropboxDivId);
     if (box && box.className.indexOf(this.#hoverClassName) === -1) {
       box.className += ' ' + this.#hoverClassName;
     }
@@ -84,7 +84,7 @@ export class DropboxLoader {
   #onBoxDragLeave = (event) => {
     this.#defaultHandleDragEvent(event);
     // update box border
-    var box = document.getElementById(this.#dropboxDivId);
+    const box = document.getElementById(this.#dropboxDivId);
     if (box && box.className.indexOf(this.#hoverClassName) !== -1) {
       box.className = box.className.replace(' ' + this.#hoverClassName, '');
     }
@@ -119,29 +119,29 @@ export class DropboxLoader {
    * @param {boolean} show Flag to show or hide.
    */
   showDropbox(show) {
-    var box = document.getElementById(this.#dropboxDivId);
+    const box = document.getElementById(this.#dropboxDivId);
     if (!box) {
       return;
     }
-    var layerDiv = document.getElementById('layerGroup-' + this.#uid);
+    const layerDiv = document.getElementById('layerGroup-' + this.#uid);
 
     if (show) {
       // reset css class
       box.className = this.#dropboxClassName + ' ' + this.#borderClassName;
       // add content if empty
       if (box.innerHTML === '') {
-        var p = document.createElement('p');
+        const p = document.createElement('p');
         p.appendChild(document.createTextNode('Drag and drop data here or '));
         // input file
-        var input = document.createElement('input');
+        const input = document.createElement('input');
         input.onchange = this.#onInputFile;
         input.type = 'file';
         input.multiple = true;
         input.id = 'input-file';
         input.style.display = 'none';
-        var label = document.createElement('label');
+        const label = document.createElement('label');
         label.htmlFor = 'input-file';
-        var link = document.createElement('a');
+        const link = document.createElement('a');
         link.appendChild(document.createTextNode('click here'));
         link.id = 'input-file-link';
         label.appendChild(link);
