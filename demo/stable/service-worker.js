@@ -1,27 +1,27 @@
 // https://developers.google.com/web/fundamentals/primers/service-workers/
 // chrome: chrome://inspect/#service-workers
 
-var CACHE_NAME = 'dwv-simplistic-cache_v0.9.0-beta.1';
-var urlsToCache = [
+const CACHE_NAME = 'dwv-simplistic-cache_v0.9.0-beta.2';
+const urlsToCache = [
   './',
   './index.html',
   // css
-  './css/style.css',
+  './style.css',
   // js
   './register-sw.js',
   './dist/dwvsimplistic.min.js',
   // images
-  './resources/icons/icon-16.png',
-  './resources/icons/icon-32.png',
-  './resources/icons/icon-64.png',
-  './resources/icons/icon-128.png',
-  './resources/icons/icon-256.png',
-  './resources/help/double_tap.png',
-  './resources/help/tap_and_hold.png',
-  './resources/help/tap.png',
-  './resources/help/touch_drag.png',
-  './resources/help/twotouch_drag.png',
-  './resources/help/twotouch_pinch.png',
+  './assets/icons/icon-16.png',
+  './assets/icons/icon-32.png',
+  './assets/icons/icon-64.png',
+  './assets/icons/icon-128.png',
+  './assets/icons/icon-256.png',
+  './assets/help/double_tap.png',
+  './assets/help/tap_and_hold.png',
+  './assets/help/tap.png',
+  './assets/help/touch_drag.png',
+  './assets/help/twotouch_drag.png',
+  './assets/help/twotouch_pinch.png',
 
   // third party
 
@@ -70,8 +70,8 @@ self.addEventListener('fetch', function (event) {
 // activate
 self.addEventListener('activate', function (event) {
   // delete caches which name starts with the same root as this one
-  var cacheRootName = CACHE_NAME;
-  var uPos = cacheRootName.lastIndexOf('_');
+  let cacheRootName = CACHE_NAME;
+  const uPos = cacheRootName.lastIndexOf('_');
   if (uPos !== -1) {
     cacheRootName = cacheRootName.substr(0, uPos);
   }
