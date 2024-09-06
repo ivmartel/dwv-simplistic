@@ -19,8 +19,8 @@
     "dwv": "0.33.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.24.7",
-    "@babel/preset-env": "^7.24.7",
+    "@babel/core": "^7.25.2",
+    "@babel/preset-env": "^7.25.4",
     "@eslint/js": "^9.9.1",
     "@stylistic/eslint-plugin-js": "^2.7.2",
     "babel-loader": "^9.1.3",
