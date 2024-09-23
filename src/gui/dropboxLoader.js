@@ -24,6 +24,13 @@ export class DropboxLoader {
    */
   #uid;
 
+  /**
+   * The root document.
+   *
+   * @type {Document}
+   */
+  #rootDoc = document;
+
   // drop box class name
   #dropboxDivId = 'dropBox';
   #dropboxClassName = 'dropBox';
@@ -33,10 +40,15 @@ export class DropboxLoader {
   /**
    * @param {App} app The associated application.
    * @param {string} uid The GUI UID.
+   * @param {Document} [rootDoc] Optional root document,
+   *   defaults to `window.document`.
    */
-  constructor(app, uid) {
+  constructor(app, uid, rootDoc) {
     this.#app = app;
     this.#uid = uid;
+    if (typeof rootDoc !== 'undefined') {
+      this.#rootDoc = rootDoc;
+    }
   }
 
   /**
@@ -65,7 +77,7 @@ export class DropboxLoader {
   #onBoxDragOver = (event) => {
     this.#defaultHandleDragEvent(event);
     // update box border
-    const box = document.getElementById(this.#dropboxDivId);
+    const box = this.#rootDoc.getElementById(this.#dropboxDivId);
     if (box && box.className.indexOf(this.#hoverClassName) === -1) {
       box.className += ' ' + this.#hoverClassName;
     }
@@ -79,7 +91,7 @@ export class DropboxLoader {
   #onBoxDragLeave = (event) => {
     this.#defaultHandleDragEvent(event);
     // update box border
-    const box = document.getElementById(this.#dropboxDivId);
+    const box = this.#rootDoc.getElementById(this.#dropboxDivId);
     if (box && box.className.indexOf(this.#hoverClassName) !== -1) {
       box.className = box.className.replace(' ' + this.#hoverClassName, '');
     }
@@ -113,11 +125,11 @@ export class DropboxLoader {
    * @param {boolean} show Flag to show or hide.
    */
   showDropbox(show) {
-    const box = document.getElementById(this.#dropboxDivId);
+    const box = this.#rootDoc.getElementById(this.#dropboxDivId);
     if (!box) {
       return;
     }
-    const layerDiv = document.getElementById('layerGroup-' + this.#uid);
+    const layerDiv = this.#rootDoc.getElementById('layerGroup-' + this.#uid);
 
     if (show) {
       // reset css class

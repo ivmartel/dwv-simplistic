@@ -135,21 +135,33 @@ export class Gui {
   #uid;
 
   /**
+   * The root document.
+   *
+   * @type {Document}
+   */
+  #rootDoc = document;
+
+  /**
    * @param {App} app The associated app.
    * @param {string[]} tools The list of tools.
    * @param {string} uid The GUI unique id.
+   * @param {Document} [rootDoc] Optional root document,
+   *   defaults to `window.document`.
    */
-  constructor(app, tools, uid) {
+  constructor(app, tools, uid, rootDoc) {
     this.#app = app;
     this.#tools = tools;
     this.#uid = uid;
+    if (typeof rootDoc !== 'undefined') {
+      this.#rootDoc = rootDoc;
+    }
   };
 
   /**
    * Initialise the GUI: fill the toolbar.
    */
   init() {
-    const toolbar = document.getElementById(this.getToolbarDivId());
+    const toolbar = this.#rootDoc.getElementById(this.getToolbarDivId());
     for (let i = 0; i < this.#tools.length; ++i) {
       if (this.#tools[i] === 'WindowLevelPresets') {
         toolbar.appendChild(getSelect(this.#tools[i], this));
@@ -169,7 +181,7 @@ export class Gui {
     progress.max = '100';
     progress.value = '0';
 
-    const lg = document.getElementById(this.getToolbarDivId());
+    const lg = this.#rootDoc.getElementById(this.getToolbarDivId());
     lg.appendChild(progress);
   };
 
@@ -180,7 +192,7 @@ export class Gui {
    * @param {number} percent The progess percent.
    */
   setProgress(percent) {
-    const progress = document.getElementById('progress-' + this.#uid);
+    const progress = this.#rootDoc.getElementById('progress-' + this.#uid);
     if (progress) {
       if (percent === 100) {
         // remove
@@ -237,7 +249,7 @@ export class Gui {
    */
   enableTool(name, flag) {
     const toolId = this.getToolId(name);
-    document.getElementById(toolId).disabled = !flag;
+    this.#rootDoc.getElementById(toolId).disabled = !flag;
   };
 
   /**
@@ -260,9 +272,9 @@ export class Gui {
   activateTool(name, flag) {
     const toolId = this.getToolId(name);
     if (flag) {
-      document.getElementById(toolId).classList.add('active');
+      this.#rootDoc.getElementById(toolId).classList.add('active');
     } else {
-      document.getElementById(toolId).classList.remove('active');
+      this.#rootDoc.getElementById(toolId).classList.remove('active');
     }
   };
 
@@ -310,7 +322,7 @@ export class Gui {
     this.#app.resetDisplay();
     // reset preset dropdown
     const presetsId = this.getToolId('WindowLevelPresets');
-    const domPresets = document.getElementById(presetsId);
+    const domPresets = this.#rootDoc.getElementById(presetsId);
     domPresets.selectedIndex = 0;
   };
 
@@ -352,7 +364,7 @@ export class Gui {
    */
   toggleFullScreen() {
     const lgDivId = this.getLayerGroupDivId();
-    const lgElement = document.getElementById(lgDivId);
+    const lgElement = this.#rootDoc.getElementById(lgDivId);
 
     // the app listens on window resize (see applaucher
     // `window.addEventListener('resize', dwvApp.onResize);`)
@@ -360,7 +372,7 @@ export class Gui {
 
     if (!document.fullscreenElement) {
       const fsDivId = this.getDwvDivId();
-      const fsElement = document.getElementById(fsDivId);
+      const fsElement = this.#rootDoc.getElementById(fsDivId);
       fsElement.requestFullscreen().then(() => {
         // if the layer group height was 0, the app set it to a fixed size.
         // change it to 100% to trigger a resize and recalculate the
@@ -458,7 +470,7 @@ export class Gui {
     modalContentDiv.appendChild(modalScrollDiv);
 
     // global container
-    const container = document.getElementById(this.getDwvDivId());
+    const container = this.#rootDoc.getElementById(this.getDwvDivId());
     container.appendChild(modalDiv);
   };
 
@@ -469,7 +481,7 @@ export class Gui {
    */
   updatePresets(presets) {
     const presetsId = this.getToolId('WindowLevelPresets');
-    const domPresets = document.getElementById(presetsId);
+    const domPresets = this.#rootDoc.getElementById(presetsId);
     // clear previous
     while (domPresets.hasChildNodes()) {
       domPresets.removeChild(domPresets.firstChild);
@@ -491,7 +503,7 @@ export class Gui {
    */
   setSelectedPreset(name) {
     const presetsId = this.getToolId('WindowLevelPresets');
-    const domPresets = document.getElementById(presetsId);
+    const domPresets = this.#rootDoc.getElementById(presetsId);
     // find the index
     let index = 0;
     for (index in domPresets.options) {
