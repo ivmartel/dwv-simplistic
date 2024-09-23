@@ -195,12 +195,16 @@ export function startApp(uid, options, rootDoc) {
     dwvAppGui.setSelectedPreset('manual');
   });
 
-  // load from options.urls if defined
-  if (typeof options !== 'undefined' &&
-    typeof options.urls !== 'undefined') {
-    dwvApp.loadURLs(options.urls);
+  // load from options if defined
+  if (typeof options !== 'undefined') {
+    if (typeof options.uri !== 'undefined') {
+      dwvApp.loadFromUri(options.uri);
+    } else if (typeof options.urls !== 'undefined') {
+      dwvApp.loadURLs(options.urls);
+    } else {
+      dropBoxLoader.showDropbox(true);
+    }
   } else {
-    // possible load from location
-    dwvApp.loadFromUri(window.location.href);
+    dropBoxLoader.showDropbox(true);
   }
 };
