@@ -397,7 +397,7 @@ export class Gui {
     modalDiv.id = 'modal-' + this.#uid;
     modalDiv.style.display = 'block';
     // close on outside click
-    window.addEventListener('click', function (event) {
+    this.#rootDoc.addEventListener('click', function (event) {
       if (event.target === modalDiv) {
         modalDiv.style.display = 'none';
       }
