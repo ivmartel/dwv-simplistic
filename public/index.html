@@ -10,7 +10,27 @@
 <link rel="icon" type="image/x-icon" href="favicon.ico">
 <meta name="theme-color" content="#f86a2d"/>
 <link rel="manifest" href="manifest.json">
-<link type="text/css" rel="stylesheet" href="style.css" />
+<style>
+html, body {
+  height: 100%;
+}
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #fff;
+  color: #000;
+}
+dwv-simple {
+  height: 70%;
+}
+@media (prefers-color-scheme: dark) {
+  body {
+    background: #252525;
+    color: #fff;
+  }
+}
+</style>
 <!-- mobile web app -->
 <meta name="mobile-web-app-capable" content="yes" />
 <link rel="shortcut icon" sizes="16x16" href="assets/icons/icon-16.png" />
@@ -56,12 +76,6 @@ dwv.decoderScripts.rle =
 <script>
 // start app when DOM is ready
 document.addEventListener('DOMContentLoaded', function (/*event*/) {
-  // update legend
-  document
-    .getElementById('dwvVersion')
-    .appendChild(document.createTextNode(dwv.getDwvVersion()));
-  // start app
-  dwvsimplistic.startApp('simpl0');
 });
 </script>
 <!-- service workers --><!--
@@ -71,23 +85,15 @@ document.addEventListener('DOMContentLoaded', function (/*event*/) {
 
 <body>
 
-<!-- DWV -->
-<div id="dwv-simpl0" class="dwv">
+<dwv-simple showLegend="true"></dwv-simple>
 
-  <!-- Toolbar -->
-  <div id="toolbar-simpl0" class="toolbar"></div>
-
-  <!-- Layer Container -->
-  <div id="layerGroup-simpl0" class="layerGroup">
-    <div id="dropBox"></div>
-  </div>
-
-  <div id="legend" class="legend"><p>Powered by <a
-    href="https://github.com/ivmartel/dwv"
-    title="dwv on github">dwv</a> <span id="dwvVersion"></span>.</p>
-  </div>
-
-</div><!-- /dwv -->
+<script>
+// pass window location if there are search parameters
+if (window.location.search !== '') {
+  const dwvSimple = document.getElementsByTagName('dwv-simple')[0];
+  dwvSimple.setAttribute('uri', window.location.href);
+}
+</script>
 
 </body>
 </html>
