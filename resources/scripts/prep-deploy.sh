@@ -56,7 +56,7 @@ then
   b1="\1"
   sed -i "s/${a1}/${b1}/g" $fileName
   # remove end comment
-  a2="\(-->\)\(<!-- /self -->\)"
+  a2="\(-->\)\(<!-- \/self -->\)"
   b2="\2"
   sed -i "s/${a2}/${b2}/g" $fileName
 fi
