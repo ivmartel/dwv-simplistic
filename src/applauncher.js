@@ -10,11 +10,13 @@ import {DropboxLoader} from './gui/dropboxLoader';
  * Application launcher.
  *
  * @param {string} uid The app uid.
- * @param {object} [options] Start options:
+ * @param {object} options Start options:
  * - urls (string[]): list of urls to load,
  * - wlpreset (object): default window level preset.
+ * @param {Document} [rootDoc] Optional root document,
+ *   defaults to `window.document`.
  */
-export function startApp(uid, options) {
+export function startApp(uid, options, rootDoc) {
   // app options
   const appOptions = {
     dataViewConfigs: {'*': [{divId: 'layerGroup-' + uid}]},
@@ -27,6 +29,9 @@ export function startApp(uid, options) {
       }
     }
   };
+  if (typeof rootDoc !== 'undefined') {
+    appOptions.rootDocument = rootDoc;
+  }
   // main application
   const dwvApp = new App();
   dwvApp.init(appOptions);
@@ -41,7 +46,7 @@ export function startApp(uid, options) {
   guiTools.push('ToggleOrientation');
   guiTools.push('Fullscreen');
   guiTools.push('Tags');
-  const dwvAppGui = new Gui(dwvApp, guiTools, uid);
+  const dwvAppGui = new Gui(dwvApp, guiTools, uid, rootDoc);
   dwvAppGui.init();
   dwvAppGui.enableTools(false);
 
@@ -154,7 +159,7 @@ export function startApp(uid, options) {
   });
 
   // setup drop box
-  const dropBoxLoader = new DropboxLoader(dwvApp, uid);
+  const dropBoxLoader = new DropboxLoader(dwvApp, uid, rootDoc);
   dropBoxLoader.init();
   // show/hide drop box
   dwvApp.addEventListener('loadstart', function (/*event*/) {
