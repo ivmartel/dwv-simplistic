@@ -1,7 +1,46 @@
 import {getDwvVersion} from 'dwv';
 import {startApp} from './applauncher';
 
-// Create a class for the element
+/**
+ * DWV component: display DICOM data using DWV (DICOM Web Viewer). Default
+ * (no arguments) shows a dropbox to manually load dicom data from the
+ * local system. The arguments are
+ * - uri: an input string URI to load the data from
+ * - urls: comma separeted list of urls to load the data from
+ * - showLegend: (boolean) defaults to false
+ * - wlpresetname, wlpresetcenter and wlpresetwidth: used
+ *   to start the viewer with a specific window level setting
+ *   (only applied if all three values are present)
+ *
+ * The dropbox is shown if no uri nor urls are provided.
+ *
+ * ref: {@link https://github.com/ivmartel/dwv}.
+ *
+ * Usage example:
+ * @example
+ * <dwv-simple showLegend="true"></dwv-simple>
+ * @example
+ * <dwv-simple
+ *   uri="https://www.demo.com/index.html?input=file.dcm"
+ * ></dwv-simple>
+ * @example
+ * <dwv-simple
+ *   urls="
+ *     https://raw.githubusercontent.com/ivmartel/dwv/master/tests/data/bbmri-53323851.dcm,
+ *     https://raw.githubusercontent.com/ivmartel/dwv/master/tests/data/bbmri-53323707.dcm
+ *   "
+ * ></dwv-simple>
+ * @example
+ * <dwv-simple
+ *   urls="
+ *     https://raw.githubusercontent.com/ivmartel/dwv/master/tests/data/bbmri-53323851.dcm,
+ *     https://raw.githubusercontent.com/ivmartel/dwv/master/tests/data/bbmri-53323707.dcm
+ *   "
+ *   wlpresetname="preset0"
+ *   wlpresetcenter="0"
+ *   wlpresetwidth="2500"
+ * ></dwv-simple> -->
+ */
 export class DwvComponent extends HTMLElement {
   constructor() {
     // Always call super first in constructor
