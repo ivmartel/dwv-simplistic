@@ -2,21 +2,20 @@ import {getDwvVersion} from 'dwv';
 import {startApp} from './applauncher';
 
 /**
- * DWV component: display DICOM data using DWV (DICOM Web Viewer). Default
- * (no arguments) shows a dropbox to manually load dicom data from the
- * local system. The arguments are
- * - uri: an input string URI to load the data from
- * - urls: comma separeted list of urls to load the data from
- * - showLegend: (boolean) defaults to false
- * - wlpresetname, wlpresetcenter and wlpresetwidth: used
+ * DWV component: display DICOM data using DWV (DICOM Web Viewer).
+ * Possible arguments are:
+ * - uri: an input string URI to load the data from,
+ * - urls: comma separated list of urls to load the data from,
+ * - showLegend: (optional) show or not the legend (defaults to false),
+ * - wlpresetname, wlpresetcenter and wlpresetwidth: (optional) used
  *   to start the viewer with a specific window level setting
- *   (only applied if all three values are present)
+ *   (only applied if all three values are present).
  *
- * The dropbox is shown if no uri nor urls are provided.
+ * A dropbox is shown if no uri nor urls are provided, it allows to
+ * manually load dicom data from the local system.
  *
- * ref: {@link https://github.com/ivmartel/dwv}.
+ * Ref: {@link https://github.com/ivmartel/dwv}.
  *
- * Usage example:
  * @example
  * <dwv-simple showLegend="true"></dwv-simple>
  * @example
@@ -39,7 +38,7 @@ import {startApp} from './applauncher';
  *   wlpresetname="preset0"
  *   wlpresetcenter="0"
  *   wlpresetwidth="2500"
- * ></dwv-simple> -->
+ * ></dwv-simple>
  */
 export class DwvComponent extends HTMLElement {
   constructor() {
