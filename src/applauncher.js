@@ -1,6 +1,6 @@
 import {
   App,
-  WindowCenterAndWidth
+  WindowLevel
 } from 'dwv';
 
 import {Gui} from './appgui';
@@ -10,11 +10,14 @@ import {DropboxLoader} from './gui/dropboxLoader';
  * Application launcher.
  *
  * @param {string} uid The app uid.
- * @param {object} [options] Start options:
+ * @param {object} options Start options:
+ * - uri (string): an URI with search parameters,
  * - urls (string[]): list of urls to load,
  * - wlpreset (object): default window level preset.
+ * @param {Document} [rootDoc] Optional root document,
+ *   defaults to `window.document`.
  */
-export function startApp(uid, options) {
+export function startApp(uid, options, rootDoc) {
   // app options
   const appOptions = {
     dataViewConfigs: {'*': [{divId: 'layerGroup-' + uid}]},
@@ -27,6 +30,9 @@ export function startApp(uid, options) {
       }
     }
   };
+  if (typeof rootDoc !== 'undefined') {
+    appOptions.rootDocument = rootDoc;
+  }
   // main application
   const dwvApp = new App();
   dwvApp.init(appOptions);
@@ -41,7 +47,7 @@ export function startApp(uid, options) {
   guiTools.push('ToggleOrientation');
   guiTools.push('Fullscreen');
   guiTools.push('Tags');
-  const dwvAppGui = new Gui(dwvApp, guiTools, uid);
+  const dwvAppGui = new Gui(dwvApp, guiTools, uid, rootDoc);
   dwvAppGui.init();
   dwvAppGui.enableTools(false);
 
@@ -112,7 +118,7 @@ export function startApp(uid, options) {
         wlpreset = options.wlpreset;
         const presets = {};
         presets[wlpreset.name] = {
-          wl: [new WindowCenterAndWidth(wlpreset.center, wlpreset.width)],
+          wl: [new WindowLevel(wlpreset.center, wlpreset.width)],
           name: wlpreset.name
         };
         viewController.addWindowLevelPresets(presets);
@@ -154,7 +160,7 @@ export function startApp(uid, options) {
   });
 
   // setup drop box
-  const dropBoxLoader = new DropboxLoader(dwvApp, uid);
+  const dropBoxLoader = new DropboxLoader(dwvApp, uid, rootDoc);
   dropBoxLoader.init();
   // show/hide drop box
   dwvApp.addEventListener('loadstart', function (/*event*/) {
@@ -190,12 +196,17 @@ export function startApp(uid, options) {
     dwvAppGui.setSelectedPreset('manual');
   });
 
-  // load from options.urls if defined
-  if (typeof options !== 'undefined' &&
-    typeof options.urls !== 'undefined') {
-    dwvApp.loadURLs(options.urls);
+  // load from options if defined
+  if (typeof options !== 'undefined') {
+    if (typeof options.uri !== 'undefined') {
+      dwvApp.loadFromUri(options.uri);
+    } else if (typeof options.urls !== 'undefined') {
+      console.log('urls', options.urls);
+      dwvApp.loadURLs(options.urls);
+    } else {
+      dropBoxLoader.showDropbox(true);
+    }
   } else {
-    // possible load from location
-    dwvApp.loadFromUri(window.location.href);
+    dropBoxLoader.showDropbox(true);
   }
 };

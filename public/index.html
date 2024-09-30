@@ -10,7 +10,27 @@
 <link rel="icon" type="image/x-icon" href="favicon.ico">
 <meta name="theme-color" content="#f86a2d"/>
 <link rel="manifest" href="manifest.json">
-<link type="text/css" rel="stylesheet" href="style.css" />
+<style>
+html, body {
+  height: 100%;
+}
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #fff;
+  color: #000;
+}
+dwv-simple {
+  height: 70%;
+}
+@media (prefers-color-scheme: dark) {
+  body {
+    background: #252525;
+    color: #fff;
+  }
+}
+</style>
 <!-- mobile web app -->
 <meta name="mobile-web-app-capable" content="yes" />
 <link rel="shortcut icon" sizes="16x16" href="assets/icons/icon-16.png" />
@@ -52,42 +72,42 @@ dwv.decoderScripts.rle =
 </script>
 <!-- self --><!--
 <script src="dist/dwvsimplistic.min.js"></script>
---><!-- Launch the app -->
-<script>
-// start app when DOM is ready
-document.addEventListener('DOMContentLoaded', function (/*event*/) {
-  // update legend
-  document
-    .getElementById('dwvVersion')
-    .appendChild(document.createTextNode(dwv.getDwvVersion()));
-  // start app
-  dwvsimplistic.startApp('simpl0');
-});
-</script>
-<!-- service workers --><!--
 <script src="register-sw.js"></script>
---><!-- service workers end -->
+--><!-- /self -->
 </head>
 
 <body>
 
-<!-- DWV -->
-<div id="dwv-simpl0" class="dwv">
+<!-- default -->
+<dwv-simple showLegend="true"></dwv-simple>
 
-  <!-- Toolbar -->
-  <div id="toolbar-simpl0" class="toolbar"></div>
+<!-- example with urls -->
+<!-- <dwv-simple showLegend="true"
+  urls="
+    https://raw.githubusercontent.com/ivmartel/dwv/master/tests/data/bbmri-53323851.dcm,
+    https://raw.githubusercontent.com/ivmartel/dwv/master/tests/data/bbmri-53323707.dcm
+  "
+></dwv-simple> -->
 
-  <!-- Layer Container -->
-  <div id="layerGroup-simpl0" class="layerGroup">
-    <div id="dropBox"></div>
-  </div>
+<!-- example with urls and preset -->
+<!-- <dwv-simple showLegend="true"
+  urls="
+    https://raw.githubusercontent.com/ivmartel/dwv/master/tests/data/bbmri-53323851.dcm,
+    https://raw.githubusercontent.com/ivmartel/dwv/master/tests/data/bbmri-53323707.dcm
+  "
+  wlpresetname="preset0"
+  wlpresetcenter="0"
+  wlpresetwidth="2500"
+></dwv-simple> -->
 
-  <div id="legend" class="legend"><p>Powered by <a
-    href="https://github.com/ivmartel/dwv"
-    title="dwv on github">dwv</a> <span id="dwvVersion"></span>.</p>
-  </div>
-
-</div><!-- /dwv -->
+<script>
+// pass window location if there are search parameters
+// example: localhost:8080/index.html?input=https%3A%2F%2Fraw.githubusercontent.com%2Fivmartel%2Fdwv%2Fmaster%2Ftests%2Fdata%2F%3Ffile%3Dbbmri-53323851.dcm%26file%3Dbbmri-53323707.dcm%26file%3Dbbmri-53323563.dcm%26file%3Dbbmri-53323419.dcm%26file%3Dbbmri-53323275.dcm%26file%3Dbbmri-53323131.dcm&dwvReplaceMode=void
+if (window.location.search !== '') {
+  const dwvSimple = document.getElementsByTagName('dwv-simple')[0];
+  dwvSimple.setAttribute('uri', window.location.href);
+}
+</script>
 
 </body>
 </html>

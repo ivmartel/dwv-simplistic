@@ -56,20 +56,7 @@ then
   b1="\1"
   sed -i "s/${a1}/${b1}/g" $fileName
   # remove end comment
-  a2="\(-->\)\(<!-- Launch the app -->\)"
-  b2="\2"
-  sed -i "s/${a2}/${b2}/g" $fileName
-fi
-
-if [ "$(grep -c "<!-- service workers -->" $fileName)" -eq 1 ]
-then
-  info "Enabling service workers"
-  # remove start comment
-  a1="\(<!-- service workers -->\)\(<!--\)"
-  b1="\1"
-  sed -i "s/${a1}/${b1}/g" $fileName
-  # remove end comment
-  a2="\(-->\)\(<!-- service workers end -->\)"
+  a2="\(-->\)\(<!-- \/self -->\)"
   b2="\2"
   sed -i "s/${a2}/${b2}/g" $fileName
 fi
