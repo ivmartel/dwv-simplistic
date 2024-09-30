@@ -66,13 +66,27 @@ export class DwvComponent extends HTMLElement {
     shadow.appendChild(style);
     shadow.appendChild(container);
 
-    // start app
+    // create options from attributes
     const options = {};
     if (this.hasAttribute('uri')) {
       options.uri = this.getAttribute('uri');
     } else if (this.hasAttribute('urls')) {
-      options.urls = this.getAttribute('urls');
+      const trimItem = function (item) {
+        return item.trim();
+      };
+      options.urls = this.getAttribute('urls').split(',').map(trimItem);
     }
+    if (this.hasAttribute('wlpresetname') &&
+      this.hasAttribute('wlpresetcenter') &&
+      this.hasAttribute('wlpresetwidth')) {
+      options.wlpreset = {
+        name: this.getAttribute('wlpresetname'),
+        center: this.getAttribute('wlpresetcenter'),
+        width: this.getAttribute('wlpresetwidth')
+      };
+    }
+
+    // start app
     startApp(appId, options, shadow);
   }
 
