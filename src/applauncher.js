@@ -11,6 +11,7 @@ import {DropboxLoader} from './gui/dropboxLoader';
  *
  * @param {string} uid The app uid.
  * @param {object} options Start options:
+ * - uri (string): an URI with search parameters,
  * - urls (string[]): list of urls to load,
  * - wlpreset (object): default window level preset.
  * @param {Document} [rootDoc] Optional root document,
@@ -200,6 +201,7 @@ export function startApp(uid, options, rootDoc) {
     if (typeof options.uri !== 'undefined') {
       dwvApp.loadFromUri(options.uri);
     } else if (typeof options.urls !== 'undefined') {
+      console.log('urls', options.urls);
       dwvApp.loadURLs(options.urls);
     } else {
       dropBoxLoader.showDropbox(true);
