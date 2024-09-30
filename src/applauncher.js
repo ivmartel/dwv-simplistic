@@ -1,6 +1,6 @@
 import {
   App,
-  WindowCenterAndWidth
+  WindowLevel
 } from 'dwv';
 
 import {Gui} from './appgui';
@@ -117,7 +117,7 @@ export function startApp(uid, options, rootDoc) {
         wlpreset = options.wlpreset;
         const presets = {};
         presets[wlpreset.name] = {
-          wl: [new WindowCenterAndWidth(wlpreset.center, wlpreset.width)],
+          wl: [new WindowLevel(wlpreset.center, wlpreset.width)],
           name: wlpreset.name
         };
         viewController.addWindowLevelPresets(presets);
