@@ -67,29 +67,29 @@ export class DwvComponent extends HTMLElement {
     dropBox.id = 'dropBox';
     layerGroup.appendChild(dropBox);
 
-    // legend
-    const legend = document.createElement('div');
-    legend.id = 'legend-' + appId;
-    legend.className = 'legend';
-
-    const dwvLink = document.createElement('a');
-    dwvLink.href = 'https://github.com/ivmartel/dwv';
-    dwvLink.title = 'dwv on github';
-    dwvLink.appendChild(document.createTextNode('dwv'));
-
-    const para = document.createElement('p');
-    para.appendChild(document.createTextNode('Powered by '));
-    para.appendChild(dwvLink);
-    para.appendChild(document.createTextNode(
-      ' ' + getDwvVersion() + '.'));
-
-    legend.appendChild(para);
-
     // fill container
     container.appendChild(toolbar);
     container.appendChild(layerGroup);
+
+    // legend
     if (this.hasAttribute('showLegend') &&
       this.getAttribute('showLegend') === 'true') {
+      const dwvLink = document.createElement('a');
+      dwvLink.href = 'https://github.com/ivmartel/dwv';
+      dwvLink.title = 'dwv on github';
+      dwvLink.appendChild(document.createTextNode('dwv'));
+
+      const para = document.createElement('p');
+      para.appendChild(document.createTextNode('Powered by '));
+      para.appendChild(dwvLink);
+      para.appendChild(document.createTextNode(
+        ' ' + getDwvVersion() + '.'));
+
+      const legend = document.createElement('div');
+      legend.id = 'legend-' + appId;
+      legend.className = 'legend';
+      legend.appendChild(para);
+
       container.appendChild(legend);
     }
 
