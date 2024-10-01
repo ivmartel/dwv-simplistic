@@ -8,6 +8,8 @@ import styles from './dwv-component.css';
  * Possible arguments are:
  * - uri: an input string URI to load the data from,
  * - urls: comma separated list of urls to load the data from,
+ * - loadFromWindowLocation: (boolean) use the window location
+ *   as input uri,
  * - showLegend: (optional) show or not the legend (defaults to false),
  * - wlpresetname, wlpresetcenter and wlpresetwidth: (optional) used
  *   to start the viewer with a specific window level setting
@@ -114,6 +116,10 @@ export class DwvComponent extends HTMLElement {
         return item.trim();
       };
       options.urls = this.getAttribute('urls').split(',').map(trimItem);
+    } else if (this.hasAttribute('loadFromWindowLocation')) {
+      if (window.location.search !== '') {
+        options.uri = window.location.href;
+      }
     }
     if (this.hasAttribute('wlpresetname') &&
       this.hasAttribute('wlpresetcenter') &&
