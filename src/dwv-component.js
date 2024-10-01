@@ -56,7 +56,14 @@ export class DwvComponent extends HTMLElement {
   }
 
   connectedCallback() {
-    const appId = 'simple0';
+    // use element id as appId if present or
+    // generate random
+    let appId;
+    if (this.hasAttribute('id')) {
+      appId = this.getAttribute('id');
+    } else {
+      appId = window.crypto.randomUUID().substring(0, 8);
+    }
 
     // main container
     const container = document.createElement('div');
