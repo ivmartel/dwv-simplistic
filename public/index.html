@@ -78,11 +78,19 @@ dwv.decoderScripts.rle =
 
 <body>
 
-<!-- default -->
-<dwv-simple showLegend loadFromWindowLocation></dwv-simple>
+<!-- simplest -->
+<!-- <dwv-simple></dwv-simple> -->
+
+<!-- demo -->
+<dwv-simple showlegend loadfromwindowlocation></dwv-simple>
+
+<!-- example with uri -->
+<!-- <dwv-simple
+  uri="localhost:8080/index.html?input=https%3A%2F%2Fraw.githubusercontent.com%2Fivmartel%2Fdwv%2Fmaster%2Ftests%2Fdata%2F%3Ffile%3Dbbmri-53323851.dcm%26file%3Dbbmri-53323707.dcm%26file%3Dbbmri-53323563.dcm%26file%3Dbbmri-53323419.dcm%26file%3Dbbmri-53323275.dcm%26file%3Dbbmri-53323131.dcm&dwvReplaceMode=void"
+></dwv-simple> -->
 
 <!-- example with urls -->
-<!-- <dwv-simple showLegend
+<!-- <dwv-simple
   urls="
     https://raw.githubusercontent.com/ivmartel/dwv/master/tests/data/bbmri-53323851.dcm,
     https://raw.githubusercontent.com/ivmartel/dwv/master/tests/data/bbmri-53323707.dcm
@@ -90,7 +98,7 @@ dwv.decoderScripts.rle =
 ></dwv-simple> -->
 
 <!-- example with urls and preset -->
-<!-- <dwv-simple showLegend
+<!-- <dwv-simple
   urls="
     https://raw.githubusercontent.com/ivmartel/dwv/master/tests/data/bbmri-53323851.dcm,
     https://raw.githubusercontent.com/ivmartel/dwv/master/tests/data/bbmri-53323707.dcm

@@ -5,23 +5,28 @@ import styles from './dwv-component.css';
 
 /**
  * DWV component: display DICOM data using DWV (DICOM Web Viewer).
- * Possible arguments are:
+ * Possible attributes are:
  * - uri: an input string URI to load the data from,
  * - urls: comma separated list of urls to load the data from,
- * - loadFromWindowLocation: (boolean) use the window location
- *   as input uri,
- * - showLegend: (optional) show or not the legend (defaults to false),
- * - wlpresetname, wlpresetcenter and wlpresetwidth: (optional) used
- *   to start the viewer with a specific window level setting
- *   (only applied if all three values are present).
+ * - loadfromwindowlocation: (boolean) use the window location
+ *   as input uri if it contains search arguments,
+ * - showlegend: (boolean) show or not the legend (defaults to false),
+ * - wlpresetname, wlpresetcenter and wlpresetwidth: start
+ *   the viewer with a specific window level setting instead of the one
+ *   present in the DICOM file (only applied if all three values are present).
  *
- * A dropbox is shown if no uri nor urls are provided, it allows to
+ * Attributes are case insensitive. Boolean type are considered true if
+ * present whatever the value.
+ *
+ * A dropbox is shown if no uri nor urls are provided. It allows to
  * manually load dicom data from the local system.
  *
  * Ref: {@link https://github.com/ivmartel/dwv}.
  *
  * @example
- * <dwv-simple showLegend></dwv-simple>
+ * <dwv-simple></dwv-simple>
+ * @example
+ * <dwv-simple showlegend loadfromwindowlocation></dwv-simple>
  * @example
  * <dwv-simple
  *   uri="https://www.demo.com/index.html?input=file.dcm"
@@ -78,7 +83,7 @@ export class DwvComponent extends HTMLElement {
     container.appendChild(layerGroup);
 
     // legend
-    if (this.hasAttribute('showLegend')) {
+    if (this.hasAttribute('showlegend')) {
       const dwvLink = document.createElement('a');
       dwvLink.href = 'https://github.com/ivmartel/dwv';
       dwvLink.title = 'dwv on github';
@@ -109,6 +114,7 @@ export class DwvComponent extends HTMLElement {
 
     // create options from attributes
     const options = {};
+    // load
     if (this.hasAttribute('uri')) {
       options.uri = this.getAttribute('uri');
     } else if (this.hasAttribute('urls')) {
@@ -116,11 +122,12 @@ export class DwvComponent extends HTMLElement {
         return item.trim();
       };
       options.urls = this.getAttribute('urls').split(',').map(trimItem);
-    } else if (this.hasAttribute('loadFromWindowLocation')) {
+    } else if (this.hasAttribute('loadfromwindowlocation')) {
       if (window.location.search !== '') {
         options.uri = window.location.href;
       }
     }
+    // window level
     if (this.hasAttribute('wlpresetname') &&
       this.hasAttribute('wlpresetcenter') &&
       this.hasAttribute('wlpresetwidth')) {
