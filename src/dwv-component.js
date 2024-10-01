@@ -1,6 +1,8 @@
 import {getDwvVersion} from 'dwv';
 import {startApp} from './applauncher';
 
+import styles from './dwv-component.css';
+
 /**
  * DWV component: display DICOM data using DWV (DICOM Web Viewer).
  * Possible arguments are:
@@ -93,15 +95,13 @@ export class DwvComponent extends HTMLElement {
       container.appendChild(legend);
     }
 
+    // style
+    const stylesheet = document.createElement('style');
+    stylesheet.innerHTML = styles.toString();
+
     // shadow root
     const shadow = this.attachShadow({mode: 'open'});
-    // style
-    const style = document.createElement('link');
-    style.setAttribute('rel', 'stylesheet');
-    style.setAttribute('type', 'text/css');
-    style.setAttribute('href', 'style.css');
-    // fill shadow root
-    shadow.appendChild(style);
+    shadow.appendChild(stylesheet);
     shadow.appendChild(container);
 
     // create options from attributes
