@@ -201,7 +201,6 @@ export function startApp(uid, options, rootDoc) {
     if (typeof options.uri !== 'undefined') {
       dwvApp.loadFromUri(options.uri);
     } else if (typeof options.urls !== 'undefined') {
-      console.log('urls', options.urls);
       dwvApp.loadURLs(options.urls);
     } else {
       dropBoxLoader.showDropbox(true);
