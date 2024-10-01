@@ -56,8 +56,6 @@ export class DwvComponent extends HTMLElement {
   }
 
   connectedCallback() {
-    console.log('has uri', this.hasAttribute('uri'));
-
     const appId = 'simple0';
 
     // main container
