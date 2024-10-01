@@ -19,7 +19,7 @@ import styles from './dwv-component.css';
  * Ref: {@link https://github.com/ivmartel/dwv}.
  *
  * @example
- * <dwv-simple showLegend="true"></dwv-simple>
+ * <dwv-simple showLegend></dwv-simple>
  * @example
  * <dwv-simple
  *   uri="https://www.demo.com/index.html?input=file.dcm"
@@ -76,8 +76,7 @@ export class DwvComponent extends HTMLElement {
     container.appendChild(layerGroup);
 
     // legend
-    if (this.hasAttribute('showLegend') &&
-      this.getAttribute('showLegend') === 'true') {
+    if (this.hasAttribute('showLegend')) {
       const dwvLink = document.createElement('a');
       dwvLink.href = 'https://github.com/ivmartel/dwv';
       dwvLink.title = 'dwv on github';
