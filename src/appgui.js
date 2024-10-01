@@ -388,13 +388,35 @@ export class Gui {
   };
 
   /**
-   * Open a DICOM tags modal.
+   * Open the DICOM tags modal.
    */
   openTagsModal() {
-    // modal
+    const modalId = 'modal-' + this.#uid;
+    let modalDiv = this.#rootDoc.getElementById(modalId);
+
+    // create div if not present
+    if (!modalDiv) {
+      modalDiv = this.#getTagsModal(modalId);
+      // global container
+      const container = this.#rootDoc.getElementById(this.getDwvDivId());
+      container.appendChild(modalDiv);
+    }
+
+    // display modal
+    modalDiv.style.display = 'block';
+  };
+
+  /**
+   * Get the tags modal.
+   *
+   * @param {string} modalId The modal div id.
+   * @returns {HTMLElement} The modal div.
+   */
+  #getTagsModal(modalId) {
+    // create div
     const modalDiv = document.createElement('div');
     modalDiv.className = 'modal';
-    modalDiv.id = 'modal-' + this.#uid;
+    modalDiv.id = modalId;
     modalDiv.style.display = 'block';
     // close on outside click
     this.#rootDoc.addEventListener('click', function (event) {
@@ -469,9 +491,7 @@ export class Gui {
     modalScrollDiv.appendChild(metaTable);
     modalContentDiv.appendChild(modalScrollDiv);
 
-    // global container
-    const container = this.#rootDoc.getElementById(this.getDwvDivId());
-    container.appendChild(modalDiv);
+    return modalDiv;
   };
 
   /**
