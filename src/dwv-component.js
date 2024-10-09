@@ -21,7 +21,9 @@ import styles from './dwv-component.css';
  * A dropbox is shown if no uri nor urls are provided. It allows to
  * manually load dicom data from the local system.
  *
- * Ref: {@link https://github.com/ivmartel/dwv}.
+ * Ref:
+ * - {@link https://developer.mozilla.org/en-US/docs/Web/API/Web_components},
+ * - {@link https://github.com/ivmartel/dwv}.
  *
  * @example
  * <dwv-simple></dwv-simple>
@@ -55,6 +57,9 @@ export class DwvComponent extends HTMLElement {
     super();
   }
 
+  /**
+   * Invoked when the custom element is first connected to the document's DOM.
+   */
   connectedCallback() {
     // use element id as appId if present or
     // generate random
@@ -150,4 +155,5 @@ export class DwvComponent extends HTMLElement {
 }
 
 // Define the new element
+// https://developer.mozilla.org/en-US/docs/Web/API/Window/customElements
 customElements.define('dwv-simple', DwvComponent);
