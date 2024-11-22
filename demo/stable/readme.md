@@ -1,6 +1,10 @@
 # dwv-simplistic
 
-Simple medical viewer using [DWV](https://github.com/ivmartel/dwv) (DICOM Web Viewer).
+Simple medical viewer using [DWV](https://github.com/ivmartel/dwv) (DICOM Web Viewer). Provides
+the `<dwv-simple>` web component and related app code.
+
+Simple usage: in an HTML document, import the library and add `<dwv-simple urls="..."></dwv-simple>` to
+its body. This will display the image and a toolbar with basic tools (scroll, zoom, window level...). See it live in the [demo page](https://ivmartel.github.io/dwv-simplistic/).
 
 All coding/implementation contributions and comments are welcome. Releases should be ready for deployment.
 
