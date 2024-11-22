@@ -1,7 +1,7 @@
 // https://developers.google.com/web/fundamentals/primers/service-workers/
 // chrome: chrome://inspect/#service-workers
 
-const CACHE_NAME = 'dwv-simplistic-cache_v0.9.0-beta.6';
+const CACHE_NAME = 'dwv-simplistic-cache_v0.9.0';
 const urlsToCache = [
   './',
   './index.html',
