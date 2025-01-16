@@ -1,4 +1,11 @@
 --
+-- ********** WARNING **********
+--
+-- This file is outdated and needs to be updated to use the
+--   <dwv-simple> web component.
+--
+-- *****************************
+--
 -- dwv-simplistic (medical viewer using DWV) lua script
 --  for integration in a Conquest PACS server.
 --
