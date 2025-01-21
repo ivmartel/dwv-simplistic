@@ -21,6 +21,15 @@ import styles from './dwv-component.css';
  * A dropbox is shown if no uri nor urls are provided. It allows to
  * manually load dicom data from the local system.
  *
+ * The inner div structure is:
+ * <div class='dwv'>
+ *   <div class='toolbar'></div>
+ *   <div class='layerGroup'></div>
+ *   <div class='legend'></div>
+ * </div>
+ * Each div css is overridable via `dwv-simple::part(dwv)` (replace `dwv`
+ * by the desired div class name).
+ *
  * Ref:
  * - {@link https://developer.mozilla.org/en-US/docs/Web/API/Web_components},
  * - {@link https://github.com/ivmartel/dwv}.
@@ -74,16 +83,19 @@ export class DwvComponent extends HTMLElement {
     const container = document.createElement('div');
     container.id = 'dwv-' + appId;
     container.className = 'dwv';
+    container.part = 'dwv';
 
     // toolbar
     const toolbar = document.createElement('div');
     toolbar.id = 'toolbar-' + appId;
     toolbar.className = 'toolbar';
+    toolbar.part = 'toolbar';
 
     // layer group
     const layerGroup = document.createElement('div');
     layerGroup.id = 'layerGroup-' + appId;
     layerGroup.className = 'layerGroup';
+    layerGroup.part = 'layerGroup';
     const dropBox = document.createElement('div');
     dropBox.id = 'dropBox';
     layerGroup.appendChild(dropBox);
@@ -108,6 +120,7 @@ export class DwvComponent extends HTMLElement {
       const legend = document.createElement('div');
       legend.id = 'legend-' + appId;
       legend.className = 'legend';
+      legend.part = 'legend';
       legend.appendChild(para);
 
       container.appendChild(legend);
