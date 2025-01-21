@@ -4,6 +4,7 @@
 
 # ignore resources
 /resources
+/public
 
 # root files (will keep package, license and readme)
 /*.*
