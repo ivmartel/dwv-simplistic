@@ -10,7 +10,6 @@ progress {
 
 /* dwv */
 .dwv {
-  height: 80%;
   display: flex;
   flex-direction: column;
 }

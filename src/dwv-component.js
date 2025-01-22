@@ -13,7 +13,9 @@ import styles from './dwv-component.css';
  * - showlegend: (boolean) show or not the legend (defaults to false),
  * - wlpresetname, wlpresetcenter and wlpresetwidth: start
  *   the viewer with a specific window level setting instead of the one
- *   present in the DICOM file (only applied if all three values are present).
+ *   present in the DICOM file (only applied if all three values are present),
+ * - height: the css height of the component,
+ * - width: the css width of the component.
  *
  * Attributes are case insensitive. Boolean type are considered true if
  * present whatever the value.
@@ -126,13 +128,24 @@ export class DwvComponent extends HTMLElement {
       container.appendChild(legend);
     }
 
+    // extra css for height and width
+    let extraCss = '';
+    if (this.hasAttribute('height')) {
+      extraCss += 'height: ' + this.getAttribute('height') + ';';
+    } else {
+      extraCss += 'height: 90%;';
+    }
+    if (this.hasAttribute('width')) {
+      extraCss += 'width: ' + this.getAttribute('width') + ';';
+    }
     // style
-    const stylesheet = document.createElement('style');
-    stylesheet.innerHTML = styles.toString();
+    const styleElement = document.createElement('style');
+    styleElement.innerHTML += '.dwv {' + extraCss + '}\n\n';
+    styleElement.innerHTML += styles.toString();
 
     // shadow root
     const shadow = this.attachShadow({mode: 'open'});
-    shadow.appendChild(stylesheet);
+    shadow.appendChild(styleElement);
     shadow.appendChild(container);
 
     // create options from attributes
