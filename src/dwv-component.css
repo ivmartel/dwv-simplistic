@@ -11,13 +11,16 @@ progress {
 /* dwv */
 .dwv {
   height: 80%;
+  display: flex;
+  flex-direction: column;
 }
 .layerGroup {
   position: relative;
   padding: 0;
   display: flex;
   justify-content: center;
-  height: 100%;
+  /* occupy space left by toolbar and legend */
+  flex: 1;
 }
 .layer {
   position: absolute;
