@@ -22,7 +22,7 @@
     "@babel/core": "^7.26.0",
     "@babel/preset-env": "^7.26.0",
     "@eslint/js": "^9.15.0",
-    "@stylistic/eslint-plugin-js": "^2.10.1",
+    "@stylistic/eslint-plugin-js": "^3.0.0",
     "babel-loader": "^9.2.1",
     "css-loader": "^7.1.2",
     "eslint": "^9.15.0",
