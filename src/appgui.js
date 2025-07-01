@@ -296,7 +296,10 @@ export class Gui {
    */
   onChangePreset(name) {
     // update viewer
-    this.#app.setWindowLevelPreset(name);
+    const lg = this.#app.getActiveLayerGroup();
+    const vl = lg.getViewLayersFromActive()[0];
+    const vc = vl.getViewController();
+    vc.setWindowLevelPreset(name);
     // set selected
     this.setSelectedPreset(name);
   };
@@ -312,6 +315,11 @@ export class Gui {
     this.#app.setTool(name);
     if (name === 'Draw') {
       this.#app.setToolFeatures({shapeName: 'Ruler'});
+    } else {
+      // if draw was created, active is now a draw layer...
+      // reset to view layer
+      const lg = this.#app.getActiveLayerGroup();
+      lg?.setActiveLayer(0);
     }
   };
 
@@ -319,7 +327,11 @@ export class Gui {
    * Handle display reset.
    */
   onDisplayReset() {
-    this.#app.resetDisplay();
+    this.#app.resetZoomPan();
+    // reset window level
+    const lg = this.#app.getActiveLayerGroup();
+    const vl = lg.getViewLayersFromActive()[0];
+    vl.getViewController().initialise();
     // reset preset dropdown
     const presetsId = this.getToolId('WindowLevelPresets');
     const domPresets = this.#rootDoc.getElementById(presetsId);

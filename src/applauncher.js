@@ -88,27 +88,25 @@ export function startApp(uid, options, rootDoc) {
   dwvApp.addEventListener('loaditem', function (/*event*/) {
     ++nLoadItem;
   });
-  dwvApp.addEventListener('renderend', function (/*event*/) {
+  dwvApp.addEventListener('renderend', function (event) {
     if (isFirstRender) {
       isFirstRender = false;
+      const vl = dwvApp.getViewLayersByDataId(event.dataid)[0];
+      const vc = vl.getViewController();
       // enable tools
       dwvAppGui.enableTools(true);
       // set the selected tool
       let selectedTool = 'ZoomAndPan';
-      if (dwvApp.canScroll()) {
+      if (vc.canScroll()) {
         selectedTool = 'Scroll';
       } else {
         dwvAppGui.enableTool('Scroll', false);
       }
-      if (!dwvApp.canWindowLevel()) {
+      if (!vc.isMonochrome()) {
         dwvAppGui.enableTool('WindowLevel', false);
       }
       dwvApp.setTool(selectedTool);
       dwvAppGui.activateTool(selectedTool, true);
-      // update presets
-      const lg = dwvApp.getActiveLayerGroup();
-      const vl = lg.getActiveViewLayer();
-      const viewController = vl.getViewController();
       // optional wl preset
       let hasExtraPreset = false;
       let wlpreset;
@@ -121,15 +119,15 @@ export function startApp(uid, options, rootDoc) {
           wl: [new WindowLevel(wlpreset.center, wlpreset.width)],
           name: wlpreset.name
         };
-        viewController.addWindowLevelPresets(presets);
+        vc.addWindowLevelPresets(presets);
       }
       // update GUI
       dwvAppGui.updatePresets(
-        viewController.getWindowLevelPresetsNames()
+        vc.getWindowLevelPresetsNames()
       );
       // select optional preset
       if (hasExtraPreset) {
-        viewController.setWindowLevelPreset(wlpreset.name);
+        vc.setWindowLevelPreset(wlpreset.name);
         dwvAppGui.setSelectedPreset(options.wlpreset.name);
       }
     }
@@ -187,7 +185,7 @@ export function startApp(uid, options, rootDoc) {
   dwvApp.addEventListener('wlchange', function (/*event*/) {
     // update presets (in case new was added)
     const lg = dwvApp.getActiveLayerGroup();
-    const vl = lg.getActiveViewLayer();
+    const vl = lg.getViewLayersFromActive()[0];
     const viewController = vl.getViewController();
     dwvAppGui.updatePresets(
       viewController.getWindowLevelPresetsNames()

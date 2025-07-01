@@ -14,8 +14,8 @@ export default merge(common, {
         publicPath: '/'
       },
       {
-        directory: './node_modules/dwv',
-        publicPath: '/node_modules/dwv'
+        directory: './node_modules/dwv/dist/assets',
+        publicPath: '/assets'
       },
     ]
   },

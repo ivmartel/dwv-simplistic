@@ -58,25 +58,6 @@ body {
     }
   }
 </script>
-<!-- decoders -->
-<!-- TODO: make it work with webpack for dev... -->
-<script type="text/javascript" src="node_modules/dwv/decoders/dwv/rle.js"></script>
-<script type="text/javascript" src="node_modules/dwv/decoders/pdfjs/jpx.js"></script>
-<script type="text/javascript" src="node_modules/dwv/decoders/pdfjs/util.js"></script>
-<script type="text/javascript" src="node_modules/dwv/decoders/pdfjs/arithmetic_decoder.js"></script>
-<script type="text/javascript" src="node_modules/dwv/decoders/pdfjs/jpg.js"></script>
-<script type="text/javascript" src="node_modules/dwv/decoders/rii-mango/lossless-min.js"></script>
-<script>
-// tell dwv where to find decoders
-dwv.decoderScripts.jpeg2000 =
-  'node_modules/dwv/decoders/pdfjs/decode-jpeg2000.js';
-dwv.decoderScripts['jpeg-lossless'] =
-  'node_modules/dwv/decoders/rii-mango/decode-jpegloss.js';
-dwv.decoderScripts['jpeg-baseline'] =
-  'node_modules/dwv/decoders/pdfjs/decode-jpegbaseline.js';
-dwv.decoderScripts.rle =
-  'node_modules/dwv/decoders/dwv/decode-rle.js';
-</script>
 <!-- self --><!--
 <script type="module" src="dist/dwvsimplistic.min.js"></script>
 <script src="register-sw.js"></script>
