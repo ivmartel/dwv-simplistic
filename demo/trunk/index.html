@@ -48,10 +48,15 @@ body {
 <link rel="apple-touch-icon" sizes="128x128" href="assets/icons/icon-128.png" />
 <link rel="apple-touch-icon" sizes="256x256" href="assets/icons/icon-256.png" />
 <!-- Third party (dwv) -->
-<script type="text/javascript" src="node_modules/jszip/dist/jszip.min.js"></script>
-<script type="text/javascript" src="node_modules/konva/konva.min.js"></script>
-<!-- dwv -->
-<script type="text/javascript" src="node_modules/dwv/dist/dwv.min.js"></script>
+<script type="importmap">
+  {
+    "imports": {
+      "konva": "./node_modules/konva/konva.min.js",
+      "jszip": "./node_modules/jszip/dist/jszip.min.js",
+      "magic-wand-tool": "./node_modules/magic-wand-tool/dist/magic-wand-tool.min.js"
+    }
+  }
+</script>
 <!-- decoders -->
 <!-- TODO: make it work with webpack for dev... -->
 <script type="text/javascript" src="node_modules/dwv/decoders/dwv/rle.js"></script>
