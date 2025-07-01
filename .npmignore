@@ -1,10 +1,8 @@
-# ignore source folders
-/css
-/src
-
-# ignore resources
-/resources
+# ignore folders
+/config
 /public
+/resources
+/src
 
 # root files (will keep package, license and readme)
 /*.*

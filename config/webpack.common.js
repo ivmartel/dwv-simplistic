@@ -15,7 +15,7 @@ export const common = {
     environment: {
       module: true
     },
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, '../dist'),
     // clean output folder at each build
     clean: true,
   },
