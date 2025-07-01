@@ -14,7 +14,4 @@ export default merge(common, {
       }
     ]
   },
-  externals: {
-    dwv: 'dwv'
-  }
 });
