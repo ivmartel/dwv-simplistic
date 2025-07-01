@@ -1,10 +1,9 @@
-const {merge} = require('webpack-merge');
-const common = require('./webpack.common.js');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+import {merge} from 'webpack-merge';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
 
-// TODO: fix dwv web workers
+import {common} from './webpack.common.js';
 
-module.exports = merge(common, {
+export default merge(common, {
   mode: 'development',
   devtool: 'inline-source-map',
   devServer: {
@@ -18,19 +17,12 @@ module.exports = merge(common, {
         directory: './node_modules/dwv',
         publicPath: '/node_modules/dwv'
       },
-      {
-        directory: './node_modules/konva',
-        publicPath: '/node_modules/konva'
-      },
-      {
-        directory: './node_modules/jszip',
-        publicPath: '/node_modules/jszip'
-      }
     ]
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: 'public/index.html'
+      template: 'public/index.html',
+      scriptLoading: 'module',
     }),
   ]
 });

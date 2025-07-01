@@ -3,8 +3,8 @@ import {
   WindowLevel
 } from 'dwv';
 
-import {Gui} from './appgui';
-import {DropboxLoader} from './gui/dropboxLoader';
+import {Gui} from './appgui.js';
+import {DropboxLoader} from './gui/dropboxLoader.js';
 
 /**
  * Application launcher.

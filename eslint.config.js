@@ -47,11 +47,11 @@ export default [
       '@stylistic/js/space-before-function-paren': ['error', {named: 'never'}],
       // newline at object curly
       // https://eslint.style/rules/js/object-curly-newline
-      '@stylistic/js/object-curly-newline': ['error', {'consistent': true}],
+      '@stylistic/js/object-curly-newline': ['error', {consistent: true}],
       // newline at object properties
       // https://eslint.style/rules/js/object-property-newline
       '@stylistic/js/object-property-newline': [
-        'error', {'allowAllPropertiesOnSameLine': true}
+        'error', {allowAllPropertiesOnSameLine: true}
       ],
       // newline at array brackets
       // https://eslint.style/rules/js/array-bracket-newline
@@ -65,7 +65,7 @@ export default [
       // give error for long lines (default: 80)
       // https://eslint.style/rules/js/max-len
       '@stylistic/js/max-len': [
-        'error', {'ignoreRegExpLiterals': true, 'ignoreUrls': true}
+        'error', {ignoreRegExpLiterals: true, ignoreUrls: true}
       ],
       // spaces in parenthesis (default: never)
       // https://eslint.style/rules/js/space-in-parens

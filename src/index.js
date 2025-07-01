@@ -1,5 +1,5 @@
-import {startApp} from './applauncher';
-import {DwvComponent} from './dwv-component';
+import {startApp} from './applauncher.js';
+import {DwvComponent} from './dwv-component.js';
 
 export {
   startApp,

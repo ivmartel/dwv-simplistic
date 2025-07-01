@@ -1,5 +1,5 @@
 import {getDwvVersion} from 'dwv';
-import {startApp} from './applauncher';
+import {startApp} from './applauncher.js';
 
 import styles from './dwv-component.css';
 
