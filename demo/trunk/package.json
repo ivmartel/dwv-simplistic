@@ -18,7 +18,7 @@
   "sideEffects": false,
   "main": "dist/dwvsimplistic.min.js",
   "dependencies": {
-    "dwv": "0.35.0"
+    "dwv": "0.35.1"
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",
