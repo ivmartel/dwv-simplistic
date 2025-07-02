@@ -8,6 +8,7 @@ const urlsToCache = [
   // js
   './register-sw.js',
   './dist/dwvsimplistic.min.js',
+  './dist/dwvsimplistic.min.js.map',
   // images
   './assets/icons/icon-16.png',
   './assets/icons/icon-32.png',
@@ -25,19 +26,21 @@ const urlsToCache = [
 
   // js: dwv
   './node_modules/dwv/dist/dwv.min.js',
+  './node_modules/dwv/dist/dwv.min.js.map',
   './node_modules/konva/konva.min.js',
   './node_modules/jszip/dist/jszip.min.js',
-  // js: decoders
-  './node_modules/dwv/decoders/dwv/rle.js',
-  './node_modules/dwv/decoders/dwv/decode-rle.js',
-  './node_modules/dwv/decoders/pdfjs/jpx.js',
-  './node_modules/dwv/decoders/pdfjs/arithmetic_decoder.js',
-  './node_modules/dwv/decoders/pdfjs/decode-jpeg2000.js',
-  './node_modules/dwv/decoders/pdfjs/util.js',
-  './node_modules/dwv/decoders/pdfjs/jpg.js',
-  './node_modules/dwv/decoders/pdfjs/decode-jpegbaseline.js',
-  './node_modules/dwv/decoders/rii-mango/lossless-min.js',
-  './node_modules/dwv/decoders/rii-mango/decode-jpegloss.js'
+  './node_modules/magic-wand-tool/dist/magic-wand.min.js',
+  // js: workers
+  './node_modules/dwv/dist/assets/workers/jpeg2000.worker.min.js',
+  './node_modules/dwv/dist/assets/workers/jpeg2000.worker.min.js.map',
+  './node_modules/dwv/dist/assets/workers/jpegbaseline.worker.min.js',
+  './node_modules/dwv/dist/assets/workers/jpegbaseline.worker.min.js.map',
+  './node_modules/dwv/dist/assets/workers/jpegloss.worker.min.js',
+  './node_modules/dwv/dist/assets/workers/jpegloss.worker.min.js.map',
+  './node_modules/dwv/dist/assets/workers/labeling.worker.min.js',
+  './node_modules/dwv/dist/assets/workers/labeling.worker.min.js.map',
+  './node_modules/dwv/dist/assets/workers/rle.worker.min.js',
+  './node_modules/dwv/dist/assets/workers/rle.worker.min.js.map',
 ];
 
 // install
