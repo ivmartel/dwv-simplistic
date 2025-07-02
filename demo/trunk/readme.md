@@ -37,6 +37,6 @@ yarn run start
 You can now open a browser at http://localhost:8080 and enjoy!
 
 ## DWVs' Web workers
-Web workers used in dwv do not get automatically imported in client environments,
-they need to be available in the `/assets/workers` folder. Scripts of this project
-copy them automatically and clients of dwv-simplistic must do it to.
+Web workers used in dwv need to be available in the `./assets/workers` folder
+(relative to calling html). Scripts of this project copy them automatically and
+clients of dwv-simplistic must do it to.
