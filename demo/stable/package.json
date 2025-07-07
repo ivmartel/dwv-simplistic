@@ -1,6 +1,6 @@
 {
   "name": "dwv-simplistic",
-  "version": "0.9.3",
+  "version": "0.10.0",
   "description": "Simple medical viewer using DWV (DICOM Web Viewer).",
   "keywords": [
     "DICOM",
@@ -12,32 +12,34 @@
   "homepage": "https://ivmartel.github.io/dwv-simplistic/",
   "repository": {
     "type": "git",
-    "url": "git://github.com/ivmartel/dwv-simplistic.git"
+    "url": "https://github.com/ivmartel/dwv-simplistic"
   },
+  "type": "module",
+  "sideEffects": false,
   "main": "dist/dwvsimplistic.min.js",
   "dependencies": {
-    "dwv": "0.34.0"
+    "dwv": "0.35.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.26.0",
-    "@babel/preset-env": "^7.26.0",
-    "@eslint/js": "^9.14.0",
-    "@stylistic/eslint-plugin-js": "^2.10.1",
-    "babel-loader": "^9.2.1",
+    "@babel/core": "^7.28.0",
+    "@babel/preset-env": "^7.28.0",
+    "@eslint/js": "^9.30.1",
+    "@stylistic/eslint-plugin": "^5.1.0",
+    "babel-loader": "^10.0.0",
     "css-loader": "^7.1.2",
-    "eslint": "^9.14.0",
-    "eslint-plugin-jsdoc": "^50.2.2",
-    "globals": "^15.12.0",
+    "eslint": "^9.30.1",
+    "eslint-plugin-jsdoc": "^51.3.3",
+    "globals": "^16.3.0",
     "html-webpack-plugin": "^5.6.3",
-    "webpack": "^5.96.1",
-    "webpack-cli": "^5.1.4",
-    "webpack-dev-server": "^5.1.0",
+    "webpack": "^5.99.9",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.2",
     "webpack-merge": "^6.0.1"
 
   },
   "scripts": {
-    "start": "webpack serve --config webpack.dev.js",
-    "build": "webpack --config webpack.prod.js",
-    "lint": "eslint -c 'eslint.config-full.mjs' 'src/**/*.js' '*.js'"
+    "start": "webpack serve --config config/webpack.dev.js",
+    "build": "webpack --config config/webpack.prod.js",
+    "lint": "eslint -c config/eslint.config-full.js 'src/**/*.js' '*.js'"
   }
 }
