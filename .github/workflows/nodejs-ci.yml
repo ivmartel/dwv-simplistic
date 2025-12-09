@@ -33,7 +33,7 @@ jobs:
       if: env.IS_PUSH_MAIN == 'true' || env.IS_PUSH_TAG == 'true'
       run: |
         rm -Rf ./node_modules/*
-        yarn install --prod
+        yarn workspaces focus --all --production
         mkdir build
         cp license.txt package.json readme.md ./build
         cp -Rf public/* ./build
