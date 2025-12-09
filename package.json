@@ -35,11 +35,11 @@
     "webpack-cli": "^6.0.1",
     "webpack-dev-server": "^5.2.2",
     "webpack-merge": "^6.0.1"
-
   },
   "scripts": {
     "start": "webpack serve --config config/webpack.dev.js",
     "build": "webpack --config config/webpack.prod.js",
     "lint": "eslint -c config/eslint.config-full.js 'src/**/*.js' '*.js'"
-  }
+  },
+  "packageManager": "yarn@4.12.0"
 }
