@@ -37,17 +37,11 @@ export function startApp(uid, options, rootDoc) {
   const dwvApp = new App();
   dwvApp.init(appOptions);
 
+  const guiTools = ['Reset', 'ToggleOrientation', 'Fullscreen', 'Tags'];
+
   // app gui
-  const guiTools = Object.keys(appOptions.tools);
-  const wlIndex = guiTools.indexOf('WindowLevel');
-  if (wlIndex !== -1) {
-    guiTools.splice(wlIndex + 1, 0, 'WindowLevelPresets');
-  }
-  guiTools.push('Reset');
-  guiTools.push('ToggleOrientation');
-  guiTools.push('Fullscreen');
-  guiTools.push('Tags');
-  const dwvAppGui = new Gui(dwvApp, guiTools, uid, rootDoc);
+  const dwvAppGui = new Gui(
+    dwvApp, appOptions.tools, guiTools, uid, rootDoc);
   dwvAppGui.init();
   dwvAppGui.enableTools(false);
 

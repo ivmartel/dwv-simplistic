@@ -29,6 +29,37 @@ const _paths = {
 /* eslint-enable @stylistic/js/max-len */
 
 /**
+ * Get a SVG element for a given name.
+ *
+ * @param {string} name The key in the _paths list.
+ * @returns {SVGSVGElement} The element.
+ */
+function getSvg(name) {
+  const xmlns = 'http://www.w3.org/2000/svg';
+  const path = document.createElementNS(xmlns, 'path');
+  path.setAttributeNS(null, 'd', _paths[name]);
+  const svg = document.createElementNS(xmlns, 'svg');
+  svg.setAttributeNS(null, 'height', 20);
+  svg.setAttributeNS(null, 'width', 20);
+  svg.setAttributeNS(null, 'viewBox', '0 -960 960 960');
+  svg.appendChild(path);
+  return svg;
+}
+
+/**
+ * Get a SVG button for a given name.
+ *
+ * @param {string} name The key in the _paths list.
+ * @returns {HTMLButtonElement} The element.
+ */
+function getSvgButton(name) {
+  const button = document.createElement('button');
+  button.title = name;
+  button.appendChild(getSvg(name));
+  return button;
+}
+
+/**
  * Get a tool html button.
  *
  * @param {string} toolName The tool name.
@@ -36,18 +67,9 @@ const _paths = {
  * @returns {HTMLButtonElement} An HTML button element.
  */
 function getToolButton(toolName, appGui) {
-  const xmlns = 'http://www.w3.org/2000/svg';
-  const path = document.createElementNS(xmlns, 'path');
-  path.setAttributeNS(null, 'd', _paths[toolName]);
-  const svg = document.createElementNS(xmlns, 'svg');
-  svg.setAttributeNS(null, 'height', 20);
-  svg.setAttributeNS(null, 'width', 20);
-  svg.setAttributeNS(null, 'viewBox', '0 -960 960 960');
-  svg.appendChild(path);
-  const button = document.createElement('button');
+  const button = getSvgButton(toolName);
   button.id = appGui.getToolId(toolName);
-  button.title = toolName;
-  button.appendChild(svg);
+
   // onclick callback
   if (toolName === 'Reset') {
     button.addEventListener('click', function () {
@@ -74,18 +96,17 @@ function getToolButton(toolName, appGui) {
 }
 
 /**
- * Get a tool html select.
+ * Get a window level preset html select.
  *
- * @param {string} toolName The tool name.
  * @param {Gui} appGui The associated GUi.
  * @returns {HTMLSelectElement} An HTML select element.
  */
-function getSelect(toolName, appGui) {
+function getWindowLevelSelect(appGui) {
   const option = document.createElement('option');
   option.value = '';
   option.appendChild(document.createTextNode('Preset...'));
   const select = document.createElement('select');
-  select.id = appGui.getToolId(toolName);
+  select.id = appGui.getToolId('WindowLevelPresets');
   select.title = 'Window level presets';
   select.appendChild(option);
   select.addEventListener('change', function () {
@@ -121,11 +142,11 @@ export class Gui {
   #app;
 
   /**
-   * The list of tools.
+   * The list of tool names.
    *
    * @type {string[]}
    */
-  #tools;
+  #toolNames;
 
   /**
    * The GUI UID.
@@ -143,18 +164,27 @@ export class Gui {
 
   /**
    * @param {App} app The associated app.
-   * @param {string[]} tools The list of tools.
+   * @param {object[]} appTools The list of app tools.
+   * @param {string[]} guiTools The list of gui tools.
    * @param {string} uid The GUI unique id.
    * @param {Document} [rootDoc] Optional root document,
    *   defaults to `window.document`.
    */
-  constructor(app, tools, uid, rootDoc) {
+  constructor(app, appTools, guiTools, uid, rootDoc) {
     this.#app = app;
-    this.#tools = tools;
     this.#uid = uid;
     if (typeof rootDoc !== 'undefined') {
       this.#rootDoc = rootDoc;
     }
+
+    // build tool names
+    const tools = Object.keys(appTools);
+    // add preset if we have window level
+    const wlIndex = tools.indexOf('WindowLevel');
+    if (wlIndex !== -1) {
+      tools.splice(wlIndex + 1, 0, 'WindowLevelPresets');
+    }
+    this.#toolNames = tools.concat(guiTools);
   };
 
   /**
@@ -162,12 +192,14 @@ export class Gui {
    */
   init() {
     const toolbar = this.#rootDoc.getElementById(this.getToolbarDivId());
-    for (let i = 0; i < this.#tools.length; ++i) {
-      if (this.#tools[i] === 'WindowLevelPresets') {
-        toolbar.appendChild(getSelect(this.#tools[i], this));
+    for (const toolName of this.#toolNames) {
+      let element;
+      if (toolName === 'WindowLevelPresets') {
+        element = getWindowLevelSelect(this);
       } else {
-        toolbar.appendChild(getToolButton(this.#tools[i], this));
+        element = getToolButton(toolName, this);
       }
+      toolbar.appendChild(element);
     }
   };
 
@@ -258,8 +290,8 @@ export class Gui {
    * @param {boolean} flag True to enable.
    */
   enableTools(flag) {
-    for (let i = 0; i < this.#tools.length; ++i) {
-      this.enableTool(this.#tools[i], flag);
+    for (const toolName of this.#toolNames) {
+      this.enableTool(toolName, flag);
     }
   };
 
@@ -284,8 +316,8 @@ export class Gui {
    * @param {boolean} flag True to activate.
    */
   activateTools(flag) {
-    for (let i = 0; i < this.#tools.length; ++i) {
-      this.activateTool(this.#tools[i], flag);
+    for (const toolName of this.#toolNames) {
+      this.activateTool(toolName, flag);
     }
   };
 
