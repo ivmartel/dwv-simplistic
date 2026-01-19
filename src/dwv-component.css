@@ -61,6 +61,10 @@ progress {
 .toolbar-item {
   margin: 10px 3px;
   height: 40px;
+
+  display: flex;
+  align-items: center;
+  gap: 0;
 }
 .toolbar-item button {
   height: 100%;
@@ -68,24 +72,42 @@ progress {
   border-radius: 4px;
   padding: 10px;
 }
-.toolbar select {
-  font-size: 16px;
-  font-weight: 600;
 
-  padding: 10px 10px;
-  border-radius: 4px;
-  height: 40px;
+.select-wrapper {
+  height: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.toolbar button, .toolbar select {
+.select-wrapper select {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  appearance: none;
+  -webkit-appearance: none;
+}
+.select-wrapper button {
+  padding: 0;
+  margin: 0 0 0 1px;
+}
+.select-wrapper select:enabled:hover {
+  cursor: pointer;
+}
+
+.toolbar button {
   border: 1px solid #e0e0e0;
   background-color: #fff;
   color: #757575;
 }
-.toolbar button:enabled:hover, .toolbar select:enabled:hover {
+.toolbar button:enabled:hover {
   background-color: #f5f5f5;
   cursor: pointer;
 }
-.toolbar button:disabled, .toolbar select:disabled {
+.toolbar button:disabled {
   color: #bdbdbd;
 }
 .toolbar .active {
@@ -154,18 +176,18 @@ progress {
   .legend a {
     color: #ccc;
   }
-  .toolbar button, .toolbar select {
+  .toolbar button {
     border: 1px solid #2f2f2f;
     background-color: #fff;
   }
-  .toolbar button, .toolbar select {
+  .toolbar button {
     color: #fff;
     background-color: #333;
   }
-  .toolbar button:enabled:hover, .toolbar select:enabled:hover {
+  .toolbar button:enabled:hover {
     background-color: #555;
   }
-  .toolbar button:disabled, .toolbar select:disabled {
+  .toolbar button:disabled {
     color: #aeaeae;
   }
   .toolbar .active {

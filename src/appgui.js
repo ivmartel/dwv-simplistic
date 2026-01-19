@@ -24,7 +24,9 @@ const _paths = {
   // open in full
   Fullscreen: 'M110-110v-334h118v132l420-420H516v-118h334v334H732v-132L312-228h132v118H110Z',
   // tags
-  Tags: 'M406-405h177v-92H406v92Zm0-132h354v-92H406v92Zm0-132h354v-92H406v92Zm-51 440q-53 0-89.5-36.5T229-355v-456q0-53 36.5-89.5T355-937h456q53 0 89.5 36.5T937-811v456q0 53-36.5 89.5T811-229H355Zm0-126h456v-456H355v456ZM149-23q-53 0-89.5-36.5T23-149v-582h126v582h582v126H149Zm206-788v456-456Z'
+  Tags: 'M406-405h177v-92H406v92Zm0-132h354v-92H406v92Zm0-132h354v-92H406v92Zm-51 440q-53 0-89.5-36.5T229-355v-456q0-53 36.5-89.5T355-937h456q53 0 89.5 36.5T937-811v456q0 53-36.5 89.5T811-229H355Zm0-126h456v-456H355v456ZM149-23q-53 0-89.5-36.5T23-149v-582h126v582h582v126H149Zm206-788v456-456Z',
+  // keyboard arrow down
+  Arrow: 'M480-333 240-573l51-51 189 189 189-189 51 51-240 240Z'
 };
 /* eslint-enable @stylistic/js/max-len */
 
@@ -96,23 +98,45 @@ function getToolButton(toolName, appGui) {
 }
 
 /**
- * Get a window level preset html select.
+ * Get a window level preset html div.
  *
  * @param {Gui} appGui The associated GUi.
- * @returns {HTMLSelectElement} An HTML select element.
+ * @returns {HTMLDivElement} An HTML div element.
  */
 function getWindowLevelSelect(appGui) {
-  const option = document.createElement('option');
-  option.value = '';
-  option.appendChild(document.createTextNode('Preset...'));
   const select = document.createElement('select');
   select.id = appGui.getToolId('WindowLevelPresets');
-  select.title = 'Window level presets';
-  select.appendChild(option);
+  select.title = 'WindowLevel presets';
   select.addEventListener('change', function () {
     appGui.onChangePreset(this.value);
   });
-  return select;
+
+  const div = document.createElement('div');
+  div.className = 'select-wrapper';
+  div.appendChild(getSvgButton('Arrow'));
+  div.appendChild(select);
+
+  return div;
+}
+
+/**
+ * Get the tool elements.
+ *
+ * @param {string} toolName The tool name.
+ * @param {Gui} appGui The associated GUi.
+ * @returns {HTMLElement[]} A list of HTML elements.
+ */
+function getToolElements(toolName, appGui) {
+  const elements = [];
+
+  // button
+  elements.push(getToolButton(toolName, appGui));
+  // extra
+  if (toolName === 'WindowLevel') {
+    elements.push(getWindowLevelSelect(appGui));
+  }
+
+  return elements;
 }
 
 /**
@@ -123,16 +147,13 @@ function getWindowLevelSelect(appGui) {
  * @returns {HTMLDivElement} An HTML div element.
  */
 function getToolbarItem(toolName, appGui) {
-  let element;
-  if (toolName === 'WindowLevelPresets') {
-    element = getWindowLevelSelect(appGui);
-  } else {
-    element = getToolButton(toolName, appGui);
-  }
-
   const div = document.createElement('div');
   div.className = 'toolbar-item';
-  div.appendChild(element);
+
+  const toolElements = getToolElements(toolName, appGui);
+  for (const element of toolElements) {
+    div.appendChild(element);
+  }
 
   return div;
 }
@@ -201,11 +222,6 @@ export class Gui {
 
     // build tool names
     const tools = Object.keys(appTools);
-    // add preset if we have window level
-    const wlIndex = tools.indexOf('WindowLevel');
-    if (wlIndex !== -1) {
-      tools.splice(wlIndex + 1, 0, 'WindowLevelPresets');
-    }
     this.#toolNames = tools.concat(guiTools);
   };
 
@@ -298,6 +314,14 @@ export class Gui {
   enableTool(name, flag) {
     const toolId = this.getToolId(name);
     this.#rootDoc.getElementById(toolId).disabled = !flag;
+
+    if (name === 'WindowLevel') {
+      const selectId = this.getToolId('WindowLevelPresets');
+      const select = this.#rootDoc.getElementById(selectId);
+      select.disabled = !flag;
+      // select button
+      select.previousElementSibling.disabled = !flag;
+    }
   };
 
   /**
