@@ -116,6 +116,28 @@ function getWindowLevelSelect(appGui) {
 }
 
 /**
+ * Get a toolbar item div.
+ *
+ * @param {string} toolName The tool name.
+ * @param {Gui} appGui The associated GUi.
+ * @returns {HTMLDivElement} An HTML div element.
+ */
+function getToolbarItem(toolName, appGui) {
+  let element;
+  if (toolName === 'WindowLevelPresets') {
+    element = getWindowLevelSelect(appGui);
+  } else {
+    element = getToolButton(toolName, appGui);
+  }
+
+  const div = document.createElement('div');
+  div.className = 'toolbar-item';
+  div.appendChild(element);
+
+  return div;
+}
+
+/**
  * GUI class.
  */
 export class Gui {
@@ -193,13 +215,7 @@ export class Gui {
   init() {
     const toolbar = this.#rootDoc.getElementById(this.getToolbarDivId());
     for (const toolName of this.#toolNames) {
-      let element;
-      if (toolName === 'WindowLevelPresets') {
-        element = getWindowLevelSelect(this);
-      } else {
-        element = getToolButton(toolName, this);
-      }
-      toolbar.appendChild(element);
+      toolbar.appendChild(getToolbarItem(toolName, this));
     }
   };
 

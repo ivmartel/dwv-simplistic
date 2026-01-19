@@ -58,13 +58,25 @@ progress {
   justify-content: center;
   flex-wrap: wrap;
 }
-.toolbar button, .toolbar select {
+.toolbar-item {
   margin: 10px 3px;
-  padding: 10px 10px;
+  height: 40px;
+}
+.toolbar-item button {
+  height: 100%;
+  border: 1px solid;
   border-radius: 4px;
+  padding: 10px;
+}
+.toolbar select {
   font-size: 16px;
   font-weight: 600;
+
+  padding: 10px 10px;
+  border-radius: 4px;
   height: 40px;
+}
+.toolbar button, .toolbar select {
   border: 1px solid #e0e0e0;
   background-color: #fff;
   color: #757575;
@@ -75,7 +87,6 @@ progress {
 }
 .toolbar button:disabled, .toolbar select:disabled {
   color: #bdbdbd;
-  cursor: default;
 }
 .toolbar .active {
   background-color: #f0f1f9 !important;
