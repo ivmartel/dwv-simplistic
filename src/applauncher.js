@@ -26,7 +26,7 @@ export function startApp(uid, options, rootDoc) {
       ZoomAndPan: {},
       WindowLevel: {},
       Draw: {
-        options: ['Ruler']
+        options: ['Ruler', 'Rectangle']
       }
     }
   };

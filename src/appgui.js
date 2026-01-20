@@ -16,7 +16,9 @@ const _paths = {
   // contrast
   WindowLevel: 'M480.192-62Q394-62 318-94.5q-76-32.5-133.5-90t-90-133.542Q62-394.083 62-480.542 62-567 94.5-642.5t90-133q57.5-57.5 133.542-90 76.041-32.5 162.5-32.5Q567-898 642.5-865.5t133 90q57.5 57.5 90 133.308 32.5 75.807 32.5 162Q898-394 865.5-318q-32.5 76-90 133.5t-133.308 90q-75.807 32.5-162 32.5ZM528-184q109-18 180.5-99.222T780-480q0-112.818-71.5-194.909T528-775v591Z',
   // straighten
-  Draw: 'M183-215q-49.7 0-83.85-34.15Q65-283.3 65-333v-294q0-49.7 34.15-83.85Q133.3-745 183-745h594q49.7 0 83.85 34.15Q895-676.7 895-627v294q0 49.7-34.15 83.85Q826.7-215 777-215H183Zm0-118h594v-294H672v147h-72v-147h-84v147h-72v-147h-84v147h-72v-147H183v294Zm105-147h72-72Zm156 0h72-72Zm156 0h72-72Zm-120 0Z',
+  Ruler: 'M183-215q-49.7 0-83.85-34.15Q65-283.3 65-333v-294q0-49.7 34.15-83.85Q133.3-745 183-745h594q49.7 0 83.85 34.15Q895-676.7 895-627v294q0 49.7-34.15 83.85Q826.7-215 777-215H183Zm0-118h594v-294H672v147h-72v-147h-84v147h-72v-147h-84v147h-72v-147H183v294Zm105-147h72-72Zm156 0h72-72Zm156 0h72-72Zm-120 0Z',
+  // rectangle
+  Rectangle: 'M96-192v-576h768v576H96Zm72-72h624v-432H168v432Zm0 0v-432 432Z',
   // refresh
   Reset: 'M476-158q-133 0-227.5-94.5T154-480q0-133 94.5-227.5T476-802q74 0 136 30t106 82v-112h88v289H516v-87h125q-29-38-71.5-61T476-684q-85 0-144.5 59.5T272-480q0 85 59.5 144.5T476-276q78 0 134.5-52.5T677-456h121q-10 126-102 212t-220 86Z',
   // cameraswitch
@@ -69,7 +71,11 @@ function getSvgButton(name) {
  * @returns {HTMLButtonElement} An HTML button element.
  */
 function getToolButton(toolName, appGui) {
-  const button = getSvgButton(toolName);
+  let name = toolName;
+  if (name === 'Draw') {
+    name = appGui.getCurrentShape();
+  }
+  const button = getSvgButton(name);
   button.id = appGui.getToolId(toolName);
 
   // onclick callback
@@ -104,13 +110,45 @@ function getToolButton(toolName, appGui) {
  * @returns {HTMLDivElement} An HTML div element.
  */
 function getWindowLevelSelect(appGui) {
+  // select
   const select = document.createElement('select');
-  select.id = appGui.getToolId('WindowLevelPresets');
+  select.id = appGui.getToolId(appGui.getToolExtra('WindowLevel'));
   select.title = 'WindowLevel presets';
   select.addEventListener('change', function () {
     appGui.onChangePreset(this.value);
   });
+  // select wrapper (only arrow)
+  const div = document.createElement('div');
+  div.className = 'select-wrapper';
+  div.appendChild(getSvgButton('Arrow'));
+  div.appendChild(select);
 
+  return div;
+}
+
+/**
+ * Get a draw shape html div.
+ *
+ * @param {Gui} appGui The associated GUi.
+ * @returns {HTMLDivElement} An HTML div element.
+ */
+function getDrawSelect(appGui) {
+  // select
+  const select = document.createElement('select');
+  select.id = appGui.getToolId(appGui.getToolExtra('Draw'));
+  select.title = 'Draw shapes';
+  select.addEventListener('change', function () {
+    appGui.onChangeShape(this.value);
+  });
+  // draw shapes
+  const shapes = appGui.getDrawShapes();
+  for (const shape of shapes) {
+    const option = document.createElement('option');
+    option.value = shape;
+    option.appendChild(document.createTextNode(shape));
+    select.appendChild(option);
+  }
+  // select wrapper (only arrow)
   const div = document.createElement('div');
   div.className = 'select-wrapper';
   div.appendChild(getSvgButton('Arrow'));
@@ -134,6 +172,8 @@ function getToolElements(toolName, appGui) {
   // extra
   if (toolName === 'WindowLevel') {
     elements.push(getWindowLevelSelect(appGui));
+  } else if (toolName === 'Draw') {
+    elements.push(getDrawSelect(appGui));
   }
 
   return elements;
@@ -192,6 +232,13 @@ export class Gui {
   #toolNames;
 
   /**
+   * List of tool extra names.
+   *
+   * @type {Object<string, string>}
+   */
+  #toolExtras = {};
+
+  /**
    * The GUI UID.
    *
    * @type {string}
@@ -204,6 +251,20 @@ export class Gui {
    * @type {Document}
    */
   #rootDoc = document;
+
+  /**
+   * List of draw shapes
+   *
+   * @type {string[]}
+   */
+  #shapes;
+
+  /**
+   * Current shape name.
+   *
+   * @type {string}
+   */
+  #currentShape;
 
   /**
    * @param {App} app The associated app.
@@ -223,7 +284,44 @@ export class Gui {
     // build tool names
     const tools = Object.keys(appTools);
     this.#toolNames = tools.concat(guiTools);
+
+    if (typeof appTools['WindowLevel'] !== 'undefined') {
+      this.#toolExtras['WindowLevel'] = 'WindowLevelPresets';
+    }
+    if (typeof appTools['Draw'] !== 'undefined') {
+      this.#toolExtras['Draw'] = 'DrawShapes';
+      this.#shapes = appTools['Draw'].options;
+      this.#currentShape = this.#shapes[0];
+    }
   };
+
+  /**
+   * Get the name of the extra of a tool.
+   *
+   * @param {string} toolName
+   * @returns {string} The name of the extra.
+   */
+  getToolExtra(toolName) {
+    return this.#toolExtras[toolName];
+  }
+
+  /**
+   * Get the list of draw shapes.
+   *
+   * @returns {string[]}
+   */
+  getDrawShapes() {
+    return this.#shapes;
+  }
+
+  /**
+   * Get the current selected shape.
+   *
+   * @returns {string}
+   */
+  getCurrentShape() {
+    return this.#currentShape;
+  }
 
   /**
    * Initialise the GUI: fill the toolbar.
@@ -315,8 +413,10 @@ export class Gui {
     const toolId = this.getToolId(name);
     this.#rootDoc.getElementById(toolId).disabled = !flag;
 
-    if (name === 'WindowLevel') {
-      const selectId = this.getToolId('WindowLevelPresets');
+    // enable extra
+    const extraName = this.getToolExtra(name);
+    if (typeof extraName !== 'undefined') {
+      const selectId = this.getToolId(extraName);
       const select = this.#rootDoc.getElementById(selectId);
       select.disabled = !flag;
       // select button
@@ -377,6 +477,22 @@ export class Gui {
   };
 
   /**
+   * Handle shape change.
+   *
+   * @param {string} name The name of the new shape.
+   */
+  onChangeShape(name) {
+    this.#currentShape = name;
+    // activate tool and set shape
+    this.onChangeTool('Draw');
+    // update draw button
+    const toolId = this.getToolId('Draw');
+    const button = this.#rootDoc.querySelector('#' + toolId);
+    button.innerHTML = '';
+    button.appendChild(getSvg(name));
+  }
+
+  /**
    * Handle tool change.
    *
    * @param {string} name The name of the new tool.
@@ -386,7 +502,7 @@ export class Gui {
     this.activateTool(name, true);
     this.#app.setTool(name);
     if (name === 'Draw') {
-      this.#app.setToolFeatures({shapeName: 'Ruler'});
+      this.#app.setToolFeatures({shapeName: this.#currentShape});
     } else {
       // if draw was created, active is now a draw layer...
       // reset to view layer
@@ -405,7 +521,8 @@ export class Gui {
     const vl = lg.getViewLayersFromActive()[0];
     vl.getViewController().initialise();
     // reset preset dropdown
-    const presetsId = this.getToolId('WindowLevelPresets');
+    const extraName = this.getToolExtra('WindowLevel');
+    const presetsId = this.getToolId(extraName);
     const domPresets = this.#rootDoc.getElementById(presetsId);
     domPresets.selectedIndex = 0;
   };
@@ -584,7 +701,8 @@ export class Gui {
    * @param {string[]} presets The list of presets to use as options.
    */
   updatePresets(presets) {
-    const presetsId = this.getToolId('WindowLevelPresets');
+    const extraName = this.getToolExtra('WindowLevel');
+    const presetsId = this.getToolId(extraName);
     const domPresets = this.#rootDoc.getElementById(presetsId);
     // clear previous
     while (domPresets.hasChildNodes()) {
@@ -606,7 +724,8 @@ export class Gui {
    * @param {string} name The name of the preset to select.
    */
   setSelectedPreset(name) {
-    const presetsId = this.getToolId('WindowLevelPresets');
+    const extraName = this.getToolExtra('WindowLevel');
+    const presetsId = this.getToolId(extraName);
     const domPresets = this.#rootDoc.getElementById(presetsId);
     // find the index
     let index = 0;
