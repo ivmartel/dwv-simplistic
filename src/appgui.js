@@ -28,7 +28,7 @@ const _paths = {
   // tags
   Tags: 'M406-405h177v-92H406v92Zm0-132h354v-92H406v92Zm0-132h354v-92H406v92Zm-51 440q-53 0-89.5-36.5T229-355v-456q0-53 36.5-89.5T355-937h456q53 0 89.5 36.5T937-811v456q0 53-36.5 89.5T811-229H355Zm0-126h456v-456H355v456ZM149-23q-53 0-89.5-36.5T23-149v-582h126v582h582v126H149Zm206-788v456-456Z',
   // keyboard arrow down
-  Arrow: 'M480-333 240-573l51-51 189 189 189-189 51 51-240 240Z'
+  ArrowDown: 'M480-333 240-573l51-51 189 189 189-189 51 51-240 240Z'
 };
 /* eslint-enable @stylistic/js/max-len */
 
@@ -120,7 +120,7 @@ function getWindowLevelSelect(appGui) {
   // select wrapper (only arrow)
   const div = document.createElement('div');
   div.className = 'select-wrapper';
-  div.appendChild(getSvgButton('Arrow'));
+  div.appendChild(getSvgButton('ArrowDown'));
   div.appendChild(select);
 
   return div;
@@ -151,7 +151,7 @@ function getDrawSelect(appGui) {
   // select wrapper (only arrow)
   const div = document.createElement('div');
   div.className = 'select-wrapper';
-  div.appendChild(getSvgButton('Arrow'));
+  div.appendChild(getSvgButton('ArrowDown'));
   div.appendChild(select);
 
   return div;
