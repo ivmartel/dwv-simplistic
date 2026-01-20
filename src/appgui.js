@@ -234,7 +234,7 @@ export class Gui {
   /**
    * List of tool extra names.
    *
-   * @type {Object<string, string>}
+   * @type {object}
    */
   #toolExtras = {};
 
@@ -253,7 +253,7 @@ export class Gui {
   #rootDoc = document;
 
   /**
-   * List of draw shapes
+   * List of draw shapes.
    *
    * @type {string[]}
    */
@@ -298,7 +298,7 @@ export class Gui {
   /**
    * Get the name of the extra of a tool.
    *
-   * @param {string} toolName
+   * @param {string} toolName The tool name.
    * @returns {string} The name of the extra.
    */
   getToolExtra(toolName) {
@@ -308,7 +308,7 @@ export class Gui {
   /**
    * Get the list of draw shapes.
    *
-   * @returns {string[]}
+   * @returns {string[]} The shape names.
    */
   getDrawShapes() {
     return this.#shapes;
@@ -317,7 +317,7 @@ export class Gui {
   /**
    * Get the current selected shape.
    *
-   * @returns {string}
+   * @returns {string} The shape name.
    */
   getCurrentShape() {
     return this.#currentShape;
