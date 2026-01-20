@@ -490,6 +490,7 @@ export class Gui {
     const button = this.#rootDoc.querySelector('#' + toolId);
     button.innerHTML = '';
     button.appendChild(getSvg(name));
+    button.title = name;
   }
 
   /**
