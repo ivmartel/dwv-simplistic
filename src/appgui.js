@@ -514,6 +514,11 @@ export class Gui {
     this.#app.setTool(name);
     if (name === 'Draw') {
       this.#app.setToolFeatures({shapeName: this.#currentShape});
+      const lg = this.#app.getActiveLayerGroup();
+      // reuse created draw layer
+      if (lg.getNumberOfLayers() > 1) {
+        lg?.setActiveLayer(1);
+      }
     } else {
       // if draw was created, active is now a draw layer...
       // reset to view layer
