@@ -18,8 +18,7 @@ progress {
   padding: 0;
   display: flex;
   justify-content: center;
-  /* occupy space left by toolbar and legend */
-  flex: 1;
+  height: 100%;
 }
 .layer {
   position: absolute;
@@ -29,7 +28,7 @@ progress {
 /* drag&drop */
 .dropBox {
   text-align: center;
-  width: 50%; height: 75%;
+  width: 50%;
 }
 .dropBoxBorder {
   margin: 20px auto;
@@ -43,15 +42,14 @@ progress {
   text-decoration-line: underline;
 }
 
-/* legend */
-.legend {
-  text-align: center;
-  font-size: 8pt;
-  margin: 1em;
+/* content */
+.content {
+  /* occupy space left by header and footer */
+  flex: 1;
 }
 
-/* toolbar */
-.toolbar {
+/* header */
+.header {
   font: 14px arial, sans-serif;
   margin-bottom: 5px;
   display: flex;
@@ -98,29 +96,36 @@ progress {
   cursor: pointer;
 }
 
-.toolbar button {
+.header button {
   border: 1px solid #e0e0e0;
   background-color: #fff;
   color: #757575;
 }
-.toolbar button:enabled:hover {
+.header button:enabled:hover {
   background-color: #f5f5f5;
   cursor: pointer;
 }
-.toolbar button:disabled {
+.header button:disabled {
   color: #bdbdbd;
 }
-.toolbar .active {
+.header .active {
   background-color: #f0f1f9 !important;
 }
-.toolbar button:enabled path {
+.header button:enabled path {
   fill: #757575;
 }
-.toolbar button.active:enabled path {
+.header button.active:enabled path {
   fill: #4a5bb9;
 }
-.toolbar button:disabled path {
+.header button:disabled path {
   fill: #bdbdbd;
+}
+
+/* footer */
+.footer {
+  text-align: center;
+  font-size: 8pt;
+  margin: 1em;
 }
 
 /* modal dialog */
@@ -173,32 +178,33 @@ progress {
 
 /* color-scheme */
 @media (prefers-color-scheme: dark) {
-  .legend a {
-    color: #ccc;
-  }
-  .toolbar button {
+  .header button {
     border: 1px solid #2f2f2f;
     background-color: #fff;
   }
-  .toolbar button {
+  .header button {
     color: #fff;
     background-color: #333;
   }
-  .toolbar button:enabled:hover {
+  .header button:enabled:hover {
     background-color: #555;
   }
-  .toolbar button:disabled {
+  .header button:disabled {
     color: #aeaeae;
   }
-  .toolbar .active {
+  .header .active {
     background-color: #404040 !important;
   }
-  .toolbar button:enabled path {
+  .header button:enabled path {
     fill: #fff;
   }
-  .toolbar button:disabled path {
+  .header button:disabled path {
     fill: #aeaeae;
   }
+  .footer a {
+    color: #ccc;
+  }
+
   .modal {
     .modal-content {
       background-color: #424242;

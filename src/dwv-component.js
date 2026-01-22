@@ -25,9 +25,11 @@ import styles from './dwv-component.css';
  *
  * The inner div structure is:
  * <div class='dwv'>
- *   <div class='toolbar'></div>
- *   <div class='layerGroup'></div>
- *   <div class='legend'></div>
+ *   <div class='header'></div>
+ *   <div class='content'>
+ *     <div class='layerGroup'></div>
+ *   </div>
+ *   <div class='footer'></div>
  * </div>
  * Each div css is overridable via `dwv-simple::part(dwv)` (replace `dwv`
  * by the desired div class name).
@@ -87,11 +89,17 @@ export class DwvComponent extends HTMLElement {
     container.className = 'dwv';
     container.part = 'dwv';
 
-    // toolbar
-    const toolbar = document.createElement('div');
-    toolbar.id = 'toolbar-' + appId;
-    toolbar.className = 'toolbar';
-    toolbar.part = 'toolbar';
+    // header
+    const header = document.createElement('div');
+    header.id = 'header-' + appId;
+    header.className = 'header';
+    header.part = 'header';
+
+    // content
+    const content = document.createElement('div');
+    content.id = 'content-' + appId;
+    content.className = 'content';
+    content.part = 'content';
 
     // layer group
     const layerGroup = document.createElement('div');
@@ -101,12 +109,13 @@ export class DwvComponent extends HTMLElement {
     const dropBox = document.createElement('div');
     dropBox.id = 'dropBox';
     layerGroup.appendChild(dropBox);
+    content.appendChild(layerGroup);
 
     // fill container
-    container.appendChild(toolbar);
-    container.appendChild(layerGroup);
+    container.appendChild(header);
+    container.appendChild(content);
 
-    // legend
+    // footer
     if (this.hasAttribute('showlegend')) {
       const dwvLink = document.createElement('a');
       dwvLink.href = 'https://github.com/ivmartel/dwv';
@@ -119,13 +128,13 @@ export class DwvComponent extends HTMLElement {
       para.appendChild(document.createTextNode(
         ' ' + getDwvVersion() + '.'));
 
-      const legend = document.createElement('div');
-      legend.id = 'legend-' + appId;
-      legend.className = 'legend';
-      legend.part = 'legend';
-      legend.appendChild(para);
+      const footer = document.createElement('div');
+      footer.id = 'footer-' + appId;
+      footer.className = 'footer';
+      footer.part = 'footer';
+      footer.appendChild(para);
 
-      container.appendChild(legend);
+      container.appendChild(footer);
     }
 
     // extra css for height and width

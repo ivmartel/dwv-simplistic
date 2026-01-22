@@ -334,12 +334,12 @@ export class Gui {
   }
 
   /**
-   * Initialise the GUI: fill the toolbar.
+   * Initialise the GUI: fill the header toolbar.
    */
   init() {
-    const toolbar = this.#rootDoc.getElementById(this.getToolbarDivId());
+    const header = this.#rootDoc.getElementById(this.getHeaderDivId());
     for (const toolName of this.#toolNames) {
-      toolbar.appendChild(getToolbarItem(toolName, this));
+      header.appendChild(getToolbarItem(toolName, this));
     }
   };
 
@@ -353,7 +353,7 @@ export class Gui {
     progress.max = '100';
     progress.value = '0';
 
-    const lg = this.#rootDoc.getElementById(this.getToolbarDivId());
+    const lg = this.#rootDoc.getElementById(this.getHeaderDivId());
     lg.appendChild(progress);
   };
 
@@ -395,12 +395,12 @@ export class Gui {
   };
 
   /**
-   * Get the toolbar div id.
+   * Get the header div id.
    *
    * @returns {string} The id.
    */
-  getToolbarDivId() {
-    return 'toolbar-' + this.#uid;
+  getHeaderDivId() {
+    return 'header-' + this.#uid;
   };
 
   /**
