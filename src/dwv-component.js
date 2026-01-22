@@ -89,52 +89,11 @@ export class DwvComponent extends HTMLElement {
     container.className = 'dwv';
     container.part = 'dwv';
 
-    // header
-    const header = document.createElement('div');
-    header.id = 'header-' + appId;
-    header.className = 'header';
-    header.part = 'header';
-
-    // content
-    const content = document.createElement('div');
-    content.id = 'content-' + appId;
-    content.className = 'content';
-    content.part = 'content';
-
-    // layer group
-    const layerGroup = document.createElement('div');
-    layerGroup.id = 'layerGroup-' + appId;
-    layerGroup.className = 'layerGroup';
-    layerGroup.part = 'layerGroup';
-    const dropBox = document.createElement('div');
-    dropBox.id = 'dropBox';
-    layerGroup.appendChild(dropBox);
-    content.appendChild(layerGroup);
-
     // fill container
-    container.appendChild(header);
-    container.appendChild(content);
-
-    // footer
+    container.appendChild(this.#getHeader(appId));
+    container.appendChild(this.#getContent(appId));
     if (this.hasAttribute('showlegend')) {
-      const dwvLink = document.createElement('a');
-      dwvLink.href = 'https://github.com/ivmartel/dwv';
-      dwvLink.title = 'dwv on github';
-      dwvLink.appendChild(document.createTextNode('dwv'));
-
-      const para = document.createElement('p');
-      para.appendChild(document.createTextNode('Powered by '));
-      para.appendChild(dwvLink);
-      para.appendChild(document.createTextNode(
-        ' ' + getDwvVersion() + '.'));
-
-      const footer = document.createElement('div');
-      footer.id = 'footer-' + appId;
-      footer.className = 'footer';
-      footer.part = 'footer';
-      footer.appendChild(para);
-
-      container.appendChild(footer);
+      container.appendChild(this.#getFooter(appId));
     }
 
     // extra css for height and width
@@ -187,6 +146,73 @@ export class DwvComponent extends HTMLElement {
     startApp(appId, options, shadow);
   }
 
+  /**
+   * Get the HTML header element.
+   *
+   * @param {string} appId The app id.
+   * @returns {HTMLElement} The element.
+   */
+  #getHeader(appId) {
+    const header = document.createElement('div');
+    header.id = 'header-' + appId;
+    header.className = 'header';
+    header.part = 'header';
+
+    return header;
+  }
+
+  /**
+   * Get the HTML content element.
+   *
+   * @param {string} appId The app id.
+   * @returns {HTMLElement} The element.
+   */
+  #getContent(appId) {
+    // layer group
+    const layerGroup = document.createElement('div');
+    layerGroup.id = 'layerGroup-' + appId;
+    layerGroup.className = 'layerGroup';
+    layerGroup.part = 'layerGroup';
+    // drop box
+    const dropBox = document.createElement('div');
+    dropBox.id = 'dropBox';
+    layerGroup.appendChild(dropBox);
+
+    const content = document.createElement('div');
+    content.id = 'content-' + appId;
+    content.className = 'content';
+    content.part = 'content';
+    content.appendChild(layerGroup);
+
+    return content;
+  }
+
+  /**
+   * Get the HTML footer element.
+   *
+   * @param {string} appId The app id.
+   * @returns {HTMLElement} The element.
+   */
+  #getFooter(appId) {
+    const dwvLink = document.createElement('a');
+    dwvLink.href = 'https://github.com/ivmartel/dwv';
+    dwvLink.title = 'dwv on github';
+    dwvLink.appendChild(document.createTextNode('dwv'));
+
+    const para = document.createElement('p');
+    para.appendChild(document.createTextNode('Powered by '));
+    para.appendChild(dwvLink);
+    para.appendChild(document.createTextNode(
+      ' ' + getDwvVersion() + '.'));
+
+    const footer = document.createElement('div');
+    footer.id = 'footer-' + appId;
+    footer.className = 'footer';
+    footer.part = 'footer';
+    footer.appendChild(para);
+
+    return footer;
+  }
 }
 
 // Define the new element
