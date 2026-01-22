@@ -51,7 +51,7 @@ export function startApp(uid, options, rootDoc) {
   const dwvAppGui = new Gui(
     dwvApp, appOptions.tools, guiTools, uid, rootDoc);
   dwvAppGui.init();
-  dwvAppGui.enableTools(false);
+  dwvAppGui.getToolbar().enableTools(false);
 
   // abort shortcut listener
   const abortOnCrtlX = function (event) {
@@ -96,19 +96,19 @@ export function startApp(uid, options, rootDoc) {
       const vl = dwvApp.getViewLayersByDataId(event.dataid)[0];
       const vc = vl.getViewController();
       // enable tools
-      dwvAppGui.enableTools(true);
+      dwvAppGui.getToolbar().enableTools(true);
       // set the selected tool
       let selectedTool = 'ZoomAndPan';
       if (vc.canScroll()) {
         selectedTool = 'Scroll';
       } else {
-        dwvAppGui.enableTool('Scroll', false);
+        dwvAppGui.getToolbar().enableTool('Scroll', false);
       }
       if (!vc.isMonochrome()) {
-        dwvAppGui.enableTool('WindowLevel', false);
+        dwvAppGui.getToolbar().enableTool('WindowLevel', false);
       }
       dwvApp.setTool(selectedTool);
-      dwvAppGui.activateTool(selectedTool, true);
+      dwvAppGui.getToolbar().activateTool(selectedTool, true);
       // optional wl preset
       let hasExtraPreset = false;
       let wlpreset;
@@ -124,13 +124,13 @@ export function startApp(uid, options, rootDoc) {
         vc.addWindowLevelPresets(presets);
       }
       // update GUI
-      dwvAppGui.updatePresets(
+      dwvAppGui.getToolbar().updatePresets(
         vc.getWindowLevelPresetsNames()
       );
       // select optional preset
       if (hasExtraPreset) {
         vc.setWindowLevelPreset(wlpreset.name);
-        dwvAppGui.setSelectedPreset(options.wlpreset.name);
+        dwvAppGui.getToolbar().setSelectedPreset(options.wlpreset.name);
       }
     }
   });
@@ -189,11 +189,11 @@ export function startApp(uid, options, rootDoc) {
     const lg = dwvApp.getActiveLayerGroup();
     const vl = lg.getViewLayersFromActive()[0];
     const viewController = vl.getViewController();
-    dwvAppGui.updatePresets(
+    dwvAppGui.getToolbar().updatePresets(
       viewController.getWindowLevelPresetsNames()
     );
     // suppose it is a manual change so switch preset to manual
-    dwvAppGui.setSelectedPreset('manual');
+    dwvAppGui.getToolbar().setSelectedPreset('manual');
   });
 
   // load from options if defined
