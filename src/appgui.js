@@ -6,6 +6,36 @@ import {App} from 'dwv';
 /* eslint-enable no-unused-vars */
 
 /**
+ * Get the dwv div id.
+ *
+ * @param {string} uid The app unique id.
+ * @returns {string} The id.
+ */
+export function getDwvDivId(uid) {
+  return 'dwv-' + uid;
+};
+
+/**
+ * Get the layer group div id.
+ *
+ * @param {string} uid The app unique id.
+ * @returns {string} The id.
+ */
+export function getLayerGroupDivId(uid) {
+  return 'layerGroup-' + uid;
+};
+
+/**
+ * Get the header div id.
+ *
+ * @param {string} uid The app unique id.
+ * @returns {string} The id.
+ */
+export function getHeaderDivId(uid) {
+  return 'header-' + uid;
+};
+
+/**
  * GUI class.
  */
 export class Gui {
@@ -69,17 +99,8 @@ export class Gui {
    *
    * @returns {string} The id.
    */
-  #getProgressId() {
+  #getProgressDivId() {
     return 'progress-' + this.#uid;
-  };
-
-  /**
-   * Get the header div id.
-   *
-   * @returns {string} The id.
-   */
-  #getHeaderDivId() {
-    return 'header-' + this.#uid;
   };
 
   /**
@@ -88,11 +109,12 @@ export class Gui {
    */
   showProgressBar() {
     const progress = document.createElement('progress');
-    progress.id = this.#getProgressId();
+    progress.id = this.#getProgressDivId();
     progress.max = '100';
     progress.value = '0';
 
-    const lg = this.#rootDoc.getElementById(this.#getHeaderDivId());
+    const lg = this.#rootDoc.getElementById(
+      getHeaderDivId(this.#uid));
     lg.appendChild(progress);
   };
 
@@ -103,7 +125,8 @@ export class Gui {
    * @param {number} percent The progess percent.
    */
   setProgress(percent) {
-    const progress = this.#rootDoc.getElementById(this.#getProgressId());
+    const progress = this.#rootDoc.getElementById(
+      this.#getProgressDivId());
     if (progress) {
       if (percent === 100) {
         // remove

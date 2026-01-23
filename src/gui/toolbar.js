@@ -1,3 +1,8 @@
+import {
+  getDwvDivId,
+  getHeaderDivId,
+  getLayerGroupDivId
+} from '../appgui.js';
 import {getMetaArray} from './meta.js';
 
 // doc imports
@@ -337,37 +342,11 @@ export class Toolbar {
    * Initialise the GUI: fill the header toolbar.
    */
   init() {
-    const header = this.#rootDoc.getElementById(this.getHeaderDivId());
+    const header = this.#rootDoc.getElementById(
+      getHeaderDivId(this.#uid));
     for (const toolName of this.#toolNames) {
       header.appendChild(getToolbarItem(toolName, this));
     }
-  };
-
-  /**
-   * Get the dwv div id.
-   *
-   * @returns {string} The id.
-   */
-  getDwvDivId() {
-    return 'dwv-' + this.#uid;
-  };
-
-  /**
-   * Get the layer group div id.
-   *
-   * @returns {string} The id.
-   */
-  getLayerGroupDivId() {
-    return 'layerGroup-' + this.#uid;
-  };
-
-  /**
-   * Get the header div id.
-   *
-   * @returns {string} The id.
-   */
-  getHeaderDivId() {
-    return 'header-' + this.#uid;
   };
 
   /**
@@ -530,7 +509,7 @@ export class Toolbar {
     const config = {
       '*': [
         {
-          divId: this.getLayerGroupDivId(),
+          divId: getLayerGroupDivId(this.#uid),
           orientation: this.#orientation
         }
       ]
@@ -547,7 +526,7 @@ export class Toolbar {
    * Toogle full screen on and off.
    */
   toggleFullScreen() {
-    const lgDivId = this.getLayerGroupDivId();
+    const lgDivId = getLayerGroupDivId(this.#uid);
     const lgElement = this.#rootDoc.getElementById(lgDivId);
 
     // the app listens on window resize (see applaucher
@@ -555,7 +534,7 @@ export class Toolbar {
     // -> no need to manually call app.fitToContainer
 
     if (!document.fullscreenElement) {
-      const fsDivId = this.getDwvDivId();
+      const fsDivId = getDwvDivId(this.#uid);
       const fsElement = this.#rootDoc.getElementById(fsDivId);
       fsElement.requestFullscreen().then(() => {
         // if the layer group height was 0, the app set it to a fixed size.
@@ -582,7 +561,8 @@ export class Toolbar {
     if (!modalDiv) {
       modalDiv = this.#getTagsModal(modalId);
       // global container
-      const container = this.#rootDoc.getElementById(this.getDwvDivId());
+      const container = this.#rootDoc.getElementById(
+        getDwvDivId(this.#uid));
       container.appendChild(modalDiv);
     }
 
