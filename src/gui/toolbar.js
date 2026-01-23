@@ -82,37 +82,37 @@ function getSvgButton(name) {
  * Get a tool html button.
  *
  * @param {string} toolName The tool name.
- * @param {Gui} appGui The associated GUi.
+ * @param {Toolbar} toolbar The associated GUi.
  * @returns {HTMLButtonElement} An HTML button element.
  */
-function getToolButton(toolName, appGui) {
+function getToolButton(toolName, toolbar) {
   let name = toolName;
   if (name === 'Draw') {
-    name = appGui.getCurrentShape();
+    name = toolbar.getCurrentShape();
   }
   const button = getSvgButton(name);
-  button.id = appGui.getToolId(toolName);
+  button.id = toolbar.getToolId(toolName);
 
   // onclick callback
   if (toolName === 'Reset') {
     button.addEventListener('click', function () {
-      appGui.onDisplayReset();
+      toolbar.onDisplayReset();
     });
   } else if (toolName === 'ToggleOrientation') {
     button.addEventListener('click', function () {
-      appGui.toggleOrientation();
+      toolbar.toggleOrientation();
     });
   } else if (toolName === 'Fullscreen') {
     button.addEventListener('click', function () {
-      appGui.toggleFullScreen();
+      toolbar.toggleFullScreen();
     });
   } else if (toolName === 'Tags') {
     button.addEventListener('click', function () {
-      appGui.openTagsModal();
+      toolbar.openTagsModal();
     });
   } else {
     button.addEventListener('click', function () {
-      appGui.onChangeTool(toolName);
+      toolbar.onChangeTool(toolName);
     });
   }
   return button;
@@ -121,16 +121,16 @@ function getToolButton(toolName, appGui) {
 /**
  * Get a window level preset html div.
  *
- * @param {Gui} appGui The associated GUi.
+ * @param {Toolbar} toolbar The associated GUi.
  * @returns {HTMLDivElement} An HTML div element.
  */
-function getWindowLevelSelect(appGui) {
+function getWindowLevelSelect(toolbar) {
   // select
   const select = document.createElement('select');
-  select.id = appGui.getToolId(appGui.getToolExtra('WindowLevel'));
+  select.id = toolbar.getToolId(toolbar.getToolExtra('WindowLevel'));
   select.title = 'WindowLevel presets';
   select.addEventListener('change', function () {
-    appGui.onChangePreset(this.value);
+    toolbar.onChangePreset(this.value);
   });
   // select wrapper (only arrow)
   const div = document.createElement('div');
@@ -144,19 +144,19 @@ function getWindowLevelSelect(appGui) {
 /**
  * Get a draw shape html div.
  *
- * @param {Gui} appGui The associated GUi.
+ * @param {Toolbar} toolbar The associated GUi.
  * @returns {HTMLDivElement} An HTML div element.
  */
-function getDrawSelect(appGui) {
+function getDrawSelect(toolbar) {
   // select
   const select = document.createElement('select');
-  select.id = appGui.getToolId(appGui.getToolExtra('Draw'));
+  select.id = toolbar.getToolId(toolbar.getToolExtra('Draw'));
   select.title = 'Draw shapes';
   select.addEventListener('change', function () {
-    appGui.onChangeShape(this.value);
+    toolbar.onChangeShape(this.value);
   });
   // draw shapes
-  const shapes = appGui.getDrawShapes();
+  const shapes = toolbar.getDrawShapes();
   for (const shape of shapes) {
     const option = document.createElement('option');
     option.value = shape;
@@ -176,19 +176,19 @@ function getDrawSelect(appGui) {
  * Get the tool elements.
  *
  * @param {string} toolName The tool name.
- * @param {Gui} appGui The associated GUi.
+ * @param {Toolbar} toolbar The associated GUi.
  * @returns {HTMLElement[]} A list of HTML elements.
  */
-function getToolElements(toolName, appGui) {
+function getToolElements(toolName, toolbar) {
   const elements = [];
 
   // button
-  elements.push(getToolButton(toolName, appGui));
+  elements.push(getToolButton(toolName, toolbar));
   // extra
   if (toolName === 'WindowLevel') {
-    elements.push(getWindowLevelSelect(appGui));
+    elements.push(getWindowLevelSelect(toolbar));
   } else if (toolName === 'Draw') {
-    elements.push(getDrawSelect(appGui));
+    elements.push(getDrawSelect(toolbar));
   }
 
   return elements;
@@ -198,14 +198,14 @@ function getToolElements(toolName, appGui) {
  * Get a toolbar item div.
  *
  * @param {string} toolName The tool name.
- * @param {Gui} appGui The associated GUi.
+ * @param {Toolbar} toolbar The associated GUi.
  * @returns {HTMLDivElement} An HTML div element.
  */
-function getToolbarItem(toolName, appGui) {
+function getToolbarItem(toolName, toolbar) {
   const div = document.createElement('div');
   div.className = 'toolbar-item';
 
-  const toolElements = getToolElements(toolName, appGui);
+  const toolElements = getToolElements(toolName, toolbar);
   for (const element of toolElements) {
     div.appendChild(element);
   }
