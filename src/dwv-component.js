@@ -178,11 +178,16 @@ export class DwvComponent extends HTMLElement {
     dropBox.id = 'dropBox';
     layerGroup.appendChild(dropBox);
 
+    // right panel
+    const panelElements = this.#getRightPanelElements(appId);
+
     const content = document.createElement('div');
     content.id = 'content-' + appId;
     content.className = 'content';
     content.part = 'content';
     content.appendChild(layerGroup);
+    content.appendChild(panelElements[0]);
+    content.appendChild(panelElements[1]);
 
     return content;
   }
@@ -213,6 +218,46 @@ export class DwvComponent extends HTMLElement {
 
     return footer;
   }
+
+  /**
+   * Get the right panel HTML elements.
+   *
+   * @param {string} appId The app id.
+   * @returns {HTMLElement[]} List of panel elements.
+   */
+  #getRightPanelElements(appId) {
+    // resizer
+    const resizer = document.createElement('div');
+    resizer.id = 'resizer-' + appId;
+    resizer.className = 'resizer';
+    resizer.part = 'resizer';
+
+    // right panel
+    const rightPanel = document.createElement('div');
+    rightPanel.id = 'right-panel-' + appId;
+    rightPanel.className = 'rightPanel sidepanel';
+    rightPanel.part = 'rightPanel';
+
+    // right panel content
+    const content = document.createElement('div');
+    content.id = 'right-panel-content-' + appId;
+    content.className = 'right-panel-content';
+    content.part = 'right-panel-content';
+
+    // toggle button
+    const toggleButton = document.createElement('button');
+    toggleButton.id = 'togglebtn-' + appId;
+    toggleButton.className = 'togglebtnl';
+    toggleButton.part = 'togglebtn';
+    toggleButton.appendChild(document.createTextNode('B'));
+
+    // fill right panel
+    rightPanel.appendChild(toggleButton);
+    rightPanel.appendChild(content);
+
+    return [resizer, rightPanel];
+  }
+
 }
 
 // Define the new element
