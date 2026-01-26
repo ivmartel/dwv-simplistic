@@ -18,9 +18,9 @@ progress {
   padding: 0;
   display: flex;
   justify-content: center;
-  height: 100%;
   /* occupy space left by panel */
   flex: 1;
+  min-height: 0;
 }
 .layer {
   position: absolute;
@@ -48,6 +48,8 @@ progress {
 .content {
   /* occupy space left by header and footer */
   flex: 1;
+  min-height: 0;
+
   display: flex;
 }
 
@@ -141,68 +143,72 @@ button:disabled path {
 
 /* side panel */
 .sidepanel {
-  padding: 5px;
-  width: 25px;
+  padding: 2px;
+  width: 24px;
 
   background-color: #efefef;
   color: black;
 
-  overflow: auto;
+  display: flex;
+  flex-direction: column;
 }
-
-.sidepanel .togglebtn {
-  border: 0;
-  background-color: #111;
-  color: white;
-  cursor: pointer;
-}
-
-.sidepanel .togglebtn:hover {
-  color: #f1f1f1;
-}
-
 .sidepanel-content {
   display: none;
-}
 
+  overflow: auto;
+  flex: 1;
+  min-height: 0;
+}
 .resizer {
   display: none;
 
   width: 5px;
-  background-color: #555;
   cursor: col-resize;
   user-select: none;
+
+  background-color: #ccc;
 }
 .resizer:hover, .resizer:active {
-  background-color: blue;
+  background-color: #4a5bb9;
 }
 
-/* annotation */
-.annotationgroup-list {
+/* right panel content */
+.data-list {
   list-style-type: none;
   padding: 5px;
 
-  .li-header {
+  .data-item-header {
     padding-bottom: 10px;
+    display: flex;
+    align-items: center;
+    .data-item-name {
+      flex: 1;
+    }
   }
 
   #addannotationgroupitem {
     display: none;
   }
 }
-.annotation-list {
+.data-item-list {
   list-style-type: none;
   padding: 0;
 }
-.annotation-list li {
+.data-item-list li {
   background-color: #dfdfdf;
   padding: 5px;
   margin-bottom: 5px;
   display: flex;
-  .annotation-text {
+  align-items: center;
+  .data-item-list-item-content {
     flex: 1;
   }
 }
+.data-item-list li:hover {
+  background-color: #ccc;
+  cursor: pointer;
+}
+
 
 /* modal dialog */
 .modal {
@@ -258,6 +264,10 @@ button:disabled path {
     background-color: #333;
     color: #fff;
   }
+  .resizer {
+    background-color: #555;
+  }
+
   input[type=color] {
     border: 1px solid #2f2f2f;
     color: #fff;
@@ -286,8 +296,11 @@ button:disabled path {
   .footer a {
     color: #ccc;
   }
-  .annotation-list li {
+  .data-item-list li {
     background-color: #444;
+  }
+  .data-item-list li:hover {
+    background-color: #555;
   }
 
   .modal {

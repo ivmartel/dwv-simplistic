@@ -1,5 +1,9 @@
 import {getDwvVersion} from 'dwv';
 import {startApp} from './applauncher.js';
+import {
+  getButton,
+  toggleButtonPressed
+} from './gui/icons.js';
 
 import styles from './dwv-component.css';
 
@@ -238,21 +242,30 @@ export class DwvComponent extends HTMLElement {
     rightPanel.className = 'rightPanel sidepanel';
     rightPanel.part = 'rightPanel';
 
-    // right panel content
-    const content = document.createElement('div');
-    content.id = 'right-panel-content-' + appId;
-    content.className = 'right-panel-content';
-    content.part = 'right-panel-content';
+    // right panel header
+    const header = document.createElement('div');
+    header.id = 'right-panel-header-' + appId;
+    header.className = 'sidepanel-header';
+    header.part = 'right-panel-header';
 
     // toggle button
-    const toggleButton = document.createElement('button');
+    const toggleButton = getButton('RightPanelOpen');
     toggleButton.id = 'togglebtn-' + appId;
     toggleButton.className = 'togglebtnl';
     toggleButton.part = 'togglebtn';
-    toggleButton.appendChild(document.createTextNode('B'));
+    toggleButton.addEventListener('click', function (event) {
+      toggleButtonPressed(event.target);
+    });
+    header.appendChild(toggleButton);
+
+    // right panel content
+    const content = document.createElement('div');
+    content.id = 'right-panel-content-' + appId;
+    content.className = 'sidepanel-content';
+    content.part = 'right-panel-content';
 
     // fill right panel
-    rightPanel.appendChild(toggleButton);
+    rightPanel.appendChild(header);
     rightPanel.appendChild(content);
 
     return [resizer, rightPanel];
