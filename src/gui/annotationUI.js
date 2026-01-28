@@ -5,6 +5,7 @@ import {
   getUID
 } from 'dwv';
 import {
+  getIconElement,
   getButton,
   setButtonPressed,
   isButtonPressed
@@ -13,6 +14,7 @@ import {
 // doc imports
 /* eslint-disable no-unused-vars */
 import {
+  Annotation,
   AnnotationGroup,
   App
 } from 'dwv';
@@ -190,6 +192,10 @@ export class AnnotationUI {
     const inputColourPrefix = 'cb-';
     inputColour.id = inputColourPrefix + annotationDivId;
     inputColour.value = annotation.colour;
+    inputColour.onclick = (event) => {
+      // do not propagate to parent that triggers goto
+      event.stopPropagation();
+    };
     inputColour.onchange = (event) => {
       const target = event.target;
       const newColour = target.value;
@@ -212,36 +218,14 @@ export class AnnotationUI {
       }
     };
 
-    const gotoButton = getButton('Goto');
-    const gbIdPrefix = 'gotob-';
-    gotoButton.id = gbIdPrefix + annotationDivId;
-    gotoButton.title = 'Goto annotation';
-    gotoButton.onclick = (event) => {
-      const target = event.target;
-      // get annotation
-      const indices =
-        splitAnnotationDivId(target.id.substring(gbIdPrefix.length));
-      const dataId = indices.dataId;
-      const annotationId = indices.annotationId;
-      const annotationGroup = this.#app.getData(dataId).annotationGroup;
-      const annotation = annotationGroup.find(annotationId);
-      const annotCentroid = annotation.getCentroid();
-      if (typeof annotCentroid !== 'undefined') {
-        const drawLayers = this.#app.getDrawLayersByDataId(dataId);
-        for (const layer of drawLayers) {
-          layer.setCurrentPosition(annotCentroid);
-        }
-      } else {
-        console.log('No centroid for annotation');
-      }
-    };
-
     const viewButton = getButton('View');
     setButtonPressed(viewButton, false);
     const vbIdPrefix = 'vb-';
     viewButton.id = vbIdPrefix + annotationDivId;
     viewButton.title = 'Show/hide annotation';
     viewButton.onclick = (event) => {
+      // do not propagate to parent (triggers goto)
+      event.stopPropagation();
       const target = event.target;
       // get annotatio
       const indices =
@@ -268,6 +252,8 @@ export class AnnotationUI {
     deleteButton.id = dbIdPrefix + annotationDivId;
     deleteButton.title = 'Delete annotation';
     deleteButton.onclick = (event) => {
+      // do not propagate to parent (triggers goto)
+      event.stopPropagation();
       const target = event.target;
       // get segment and mask
       const indices =
@@ -301,15 +287,15 @@ export class AnnotationUI {
     if (typeof annotation.getFactory() !== 'undefined') {
       factoryName = annotation.getFactory().getName();
     }
+    contentDiv.appendChild(getIconElement(factoryName));
     contentDiv.appendChild(document.createTextNode(
-      annotation.trackingId + ' (' + factoryName + ')'));
+      ' ' + annotation.trackingId));
 
     // actions
     const actionsDiv = document.createElement('div');
     actionsDiv.className = 'data-item-list-item-actions';
-    actionsDiv.appendChild(inputColour);
-    actionsDiv.appendChild(gotoButton);
     actionsDiv.appendChild(viewButton);
+    actionsDiv.appendChild(inputColour);
     actionsDiv.appendChild(deleteButton);
 
     // list item
@@ -318,6 +304,34 @@ export class AnnotationUI {
     item.className = 'data-item-list-item';
     item.appendChild(contentDiv);
     item.appendChild(actionsDiv);
+
+    // click on li to go to annotation
+    item.addEventListener('click', (event) => {
+      const target = event.currentTarget;
+
+      // remove selected class from other rows
+      const mainlist = this.#rootDoc.getElementById('annotationgroup-list');
+      const items = mainlist.querySelectorAll('.data-item-list-item');
+      items.forEach(item => item.classList.remove('selected'));
+      // mark this row as selected
+      target.classList.add('selected');
+
+      // get annotation
+      const indices = splitAnnotationDivId(target.id);
+      const dataId = indices.dataId;
+      const annotationId = indices.annotationId;
+      const annotationGroup = this.#app.getData(dataId).annotationGroup;
+      const annotation = annotationGroup.find(annotationId);
+      const annotCentroid = annotation.getCentroid();
+      if (typeof annotCentroid !== 'undefined') {
+        const drawLayers = this.#app.getDrawLayersByDataId(dataId);
+        for (const layer of drawLayers) {
+          layer.setCurrentPosition(annotCentroid);
+        }
+      } else {
+        console.log('No centroid for annotation');
+      }
+    });
 
     return item;
   }

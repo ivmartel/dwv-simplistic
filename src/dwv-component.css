@@ -109,6 +109,9 @@ input[type=color] {
   color: #757575;
 }
 
+svg {
+  fill: #757575;
+}
 button {
   border: 1px solid #e0e0e0;
   background-color: #fff;
@@ -196,17 +199,24 @@ button:disabled path {
 }
 .data-item-list li {
   background-color: #dfdfdf;
+  border: 1px solid transparent;
   padding: 5px;
   margin-bottom: 5px;
   display: flex;
   align-items: center;
   .data-item-list-item-content {
     flex: 1;
+    svg {
+      vertical-align: middle;
+    }
   }
 }
 .data-item-list li:hover {
   background-color: #ccc;
   cursor: pointer;
+}
+.data-item-list .selected {
+  border: 1px solid #4a5bb9;
 }
 
 
@@ -268,6 +278,9 @@ button:disabled path {
     background-color: #555;
   }
 
+  svg {
+    fill: #fff;
+  }
   input[type=color] {
     border: 1px solid #2f2f2f;
     color: #fff;
