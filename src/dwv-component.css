@@ -234,11 +234,12 @@ button:disabled path {
 
   .modal-content {
     background-color: #fefefe;
-    margin: 5% auto; /* 5% from the top and centered */
     padding: 20px;
-    width: 80%;
-    height: 80%;
     overflow: auto;
+  }
+
+  h2 {
+    margin-top: 0;
   }
 
   input, label {
@@ -247,8 +248,7 @@ button:disabled path {
   }
 
   .modal-content-scroll {
-    margin-right: 20px;
-    height: 80%;
+    height: 85%;
     overflow: auto;
 
     table {

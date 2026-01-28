@@ -487,6 +487,82 @@ export class Toolbar {
   };
 
   /**
+   * Get a slider div with a slider and value.
+   *
+   * @param {string} id The slider id.
+   * @param {string} title The slider title.
+   * @param {number[]} values The slider values.
+   * @param {Function} callback The slider change callback.
+   * @returns {HTMLDivElement} The slider div.
+   */
+  #getSliderDiv(id, title, values, callback) {
+    // slider input
+    const slider = document.createElement('input');
+    slider.type = 'range';
+    slider.id = id;
+    slider.title = title;
+    slider.min = 0;
+    slider.max = values.length - 1;
+    slider.value = 0;
+    // slider label
+    const sliderLabel = document.createElement('label');
+    sliderLabel.id = id + '-label';
+    sliderLabel.for = slider.id;
+    sliderLabel.appendChild(document.createTextNode(values[slider.value]));
+    sliderLabel.title = slider.title;
+    // navigate in values
+    slider.addEventListener('input', function (event) {
+      const value = values[event.target.value];
+      sliderLabel.replaceChildren(document.createTextNode(value));
+      // call input callback
+      callback(value);
+    });
+    // container div
+    const sliderDiv = document.createElement('div');
+    sliderDiv.appendChild(slider);
+    sliderDiv.appendChild(sliderLabel);
+
+    return sliderDiv;
+  }
+
+  /**
+   * Get a modal div.
+   *
+   * @param {string} id The mode div id.
+   * @param {HTMLElement[]} content The modal content.
+   * @returns {HTMLDivElement} The modal div.
+   */
+  #getModalDiv(id, content) {
+    // content
+    const contentDiv = document.createElement('div');
+    contentDiv.id = 'modal-content-' + this.#uid;
+    contentDiv.className = 'modal-content';
+    contentDiv.className = 'modal-content';
+    contentDiv.style.width = '80%';
+    contentDiv.style.height = '80%';
+    contentDiv.style.margin = '5% auto';
+    // add elements from input
+    for (const element of content) {
+      contentDiv.appendChild(element);
+    }
+    // main div
+    const modalDiv = document.createElement('div');
+    modalDiv.id = id;
+    modalDiv.className = 'modal';
+    modalDiv.style.display = 'block';
+    modalDiv.appendChild(contentDiv);
+    // close on outside click
+    const hideModal = function (event) {
+      if (event.target === modalDiv) {
+        modalDiv.style.display = 'none';
+      }
+    };
+    this.#rootDoc.addEventListener('click', hideModal);
+
+    return modalDiv;
+  }
+
+  /**
    * Open the DICOM tags modal.
    */
   openTagsModal() {
@@ -495,7 +571,8 @@ export class Toolbar {
 
     // create div if not present
     if (!modalDiv) {
-      modalDiv = this.#getTagsModal(modalId);
+      const content = this.#getTagsModalContent();
+      modalDiv = this.#getModalDiv(modalId, content);
       // global container
       const container = this.#rootDoc.getElementById(
         getDwvDivId(this.#uid));
@@ -507,44 +584,23 @@ export class Toolbar {
   };
 
   /**
-   * Get the tags modal.
+   * Get the tags modal content.
    *
-   * @param {string} modalId The modal div id.
-   * @returns {HTMLElement} The modal div.
+   * @returns {HTMLElement[]} The modal content.
    */
-  #getTagsModal(modalId) {
-    // create div
-    const modalDiv = document.createElement('div');
-    modalDiv.className = 'modal';
-    modalDiv.id = modalId;
-    modalDiv.style.display = 'block';
-    // close on outside click
-    this.#rootDoc.addEventListener('click', function (event) {
-      if (event.target === modalDiv) {
-        modalDiv.style.display = 'none';
-      }
-    });
-
-    const modalContentDiv = document.createElement('div');
-    modalContentDiv.className = 'modal-content';
-    modalContentDiv.id = 'modal-content-' + this.#uid;
-    modalDiv.appendChild(modalContentDiv);
-
+  #getTagsModalContent() {
+    // title
     const modalTitle = document.createElement('h2');
     modalTitle.appendChild(document.createTextNode('DICOM Tags'));
-    modalContentDiv.appendChild(modalTitle);
 
-    // div with enabled scroll
-    const modalScrollDiv = document.createElement('div');
-    modalScrollDiv.className = 'modal-content-scroll';
-
+    // TODO allow for different dataid
     const metaData = this.#app.getMetaData('0');
 
     // InstanceNumber
     const instanceElement = metaData['00200013'];
+    // list of possible instance numbers
     let instanceNumbers;
     if (typeof instanceElement !== 'undefined') {
-      // set slider with instance numbers ('00200013')
       let instanceNumberValue = instanceElement.value;
       if (typeof instanceNumberValue === 'string') {
         instanceNumberValue = [instanceNumberValue];
@@ -557,41 +613,30 @@ export class Toolbar {
       });
     }
 
-    let instanceNumber = instanceNumbers[0];
+    // div with enabled scroll
+    const modalScrollDiv = document.createElement('div');
+    modalScrollDiv.className = 'modal-content-scroll';
 
-    const slider = document.createElement('input');
-    slider.type = 'range';
-    slider.id = 'instancenumber-slider-' + this.#uid;
-    slider.min = 0;
-    slider.max = instanceNumbers.length - 1;
-    slider.value = 0;
-    slider.title = 'Instance Number';
-    const sliderLabel = document.createElement('label');
-    sliderLabel.id = 'instancenumber-slider-label-' + this.#uid;
-    sliderLabel.for = slider.id;
-    sliderLabel.appendChild(document.createTextNode(instanceNumber));
-    sliderLabel.title = slider.title;
-
-    const sliderLine = document.createElement('p');
-    sliderLine.appendChild(slider);
-    sliderLine.appendChild(sliderLabel);
-    modalContentDiv.appendChild(sliderLine);
-
-    slider.addEventListener('input', function (event) {
-      instanceNumber = instanceNumbers[event.target.value];
-      const metaArr = getMetaArray(metaData, instanceNumber);
+    // slider
+    const sliderCb = function (value) {
+      const metaArr = getMetaArray(metaData, value);
       const metaTab = arrayToHtmlTable(metaArr);
       modalScrollDiv.replaceChildren(metaTab);
-      sliderLabel.replaceChildren(document.createTextNode(instanceNumber));
-    });
+    };
+    const sliderDiv = this.#getSliderDiv(
+      'instancenumber-slider-' + this.#uid,
+      'Instance Number',
+      instanceNumbers,
+      sliderCb
+    );
 
-    // get meta data html table
+    // meta data html table
+    const instanceNumber = instanceNumbers[0];
     const metaArray = getMetaArray(metaData, instanceNumber);
     const metaTable = arrayToHtmlTable(metaArray);
     modalScrollDiv.appendChild(metaTable);
-    modalContentDiv.appendChild(modalScrollDiv);
 
-    return modalDiv;
+    return [modalTitle, sliderDiv, modalScrollDiv];
   };
 
   /**
