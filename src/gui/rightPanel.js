@@ -32,7 +32,7 @@ export function getRightPanelElements(appId) {
   // toggle button
   const toggleButton = getButton('RightPanelOpen');
   toggleButton.id = 'togglebtn-' + appId;
-  toggleButton.className = 'togglebtnl';
+  toggleButton.className = 'togglebtn';
   toggleButton.part = 'togglebtn';
   toggleButton.addEventListener('click', function (event) {
     toggleButtonPressed(event.target);
