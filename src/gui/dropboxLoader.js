@@ -32,7 +32,6 @@ export class DropboxLoader {
   #rootDoc = document;
 
   // drop box class name
-  #dropboxDivId = 'dropBox';
   #dropboxClassName = 'dropBox';
   #borderClassName = 'dropBoxBorder';
   #hoverClassName = 'hover';
@@ -59,6 +58,15 @@ export class DropboxLoader {
   };
 
   /**
+   * Get the drop box div id.
+   *
+   * @returns {string} The id.
+   */
+  #getDropboxDivId() {
+    return 'dropBox-' + this.#uid;
+  }
+
+  /**
    * Basic handle drag event.
    *
    * @param {object} event The event to handle.
@@ -77,7 +85,7 @@ export class DropboxLoader {
   #onBoxDragOver = (event) => {
     this.#defaultHandleDragEvent(event);
     // update box border
-    const box = this.#rootDoc.getElementById(this.#dropboxDivId);
+    const box = this.#rootDoc.getElementById(this.#getDropboxDivId());
     if (box && box.className.indexOf(this.#hoverClassName) === -1) {
       box.className += ' ' + this.#hoverClassName;
     }
@@ -91,7 +99,7 @@ export class DropboxLoader {
   #onBoxDragLeave = (event) => {
     this.#defaultHandleDragEvent(event);
     // update box border
-    const box = this.#rootDoc.getElementById(this.#dropboxDivId);
+    const box = this.#rootDoc.getElementById(this.#getDropboxDivId());
     if (box && box.className.indexOf(this.#hoverClassName) !== -1) {
       box.className = box.className.replace(' ' + this.#hoverClassName, '');
     }
@@ -125,7 +133,7 @@ export class DropboxLoader {
    * @param {boolean} show Flag to show or hide.
    */
   showDropbox(show) {
-    const box = this.#rootDoc.getElementById(this.#dropboxDivId);
+    const box = this.#rootDoc.getElementById(this.#getDropboxDivId());
     if (!box) {
       return;
     }
