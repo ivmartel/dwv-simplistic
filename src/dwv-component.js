@@ -1,9 +1,7 @@
 import {getDwvVersion} from 'dwv';
 import {startApp} from './applauncher.js';
-import {
-  getButton,
-  toggleButtonPressed
-} from './gui/icons.js';
+import {getDropboxElement} from './gui/dropboxLoader.js';
+import {getRightPanelElements} from './gui/rightPanel.js';
 
 import styles from './dwv-component.css';
 
@@ -178,18 +176,18 @@ export class DwvComponent extends HTMLElement {
     layerGroup.className = 'layerGroup';
     layerGroup.part = 'layerGroup';
     // drop box
-    const dropBox = document.createElement('div');
-    dropBox.id = 'dropBox';
+    const dropBox = getDropboxElement(appId);
     layerGroup.appendChild(dropBox);
 
-    // right panel
-    const panelElements = this.#getRightPanelElements(appId);
-
+    // main content div
     const content = document.createElement('div');
     content.id = 'content-' + appId;
     content.className = 'content';
     content.part = 'content';
     content.appendChild(layerGroup);
+
+    // right panel
+    const panelElements = getRightPanelElements(appId);
     content.appendChild(panelElements[0]);
     content.appendChild(panelElements[1]);
 
@@ -222,55 +220,6 @@ export class DwvComponent extends HTMLElement {
 
     return footer;
   }
-
-  /**
-   * Get the right panel HTML elements.
-   *
-   * @param {string} appId The app id.
-   * @returns {HTMLElement[]} List of panel elements.
-   */
-  #getRightPanelElements(appId) {
-    // resizer
-    const resizer = document.createElement('div');
-    resizer.id = 'resizer-' + appId;
-    resizer.className = 'resizer';
-    resizer.part = 'resizer';
-
-    // right panel
-    const rightPanel = document.createElement('div');
-    rightPanel.id = 'right-panel-' + appId;
-    rightPanel.className = 'rightPanel sidepanel';
-    rightPanel.part = 'rightPanel';
-
-    // right panel header
-    const header = document.createElement('div');
-    header.id = 'right-panel-header-' + appId;
-    header.className = 'sidepanel-header';
-    header.part = 'right-panel-header';
-
-    // toggle button
-    const toggleButton = getButton('RightPanelOpen');
-    toggleButton.id = 'togglebtn-' + appId;
-    toggleButton.className = 'togglebtnl';
-    toggleButton.part = 'togglebtn';
-    toggleButton.addEventListener('click', function (event) {
-      toggleButtonPressed(event.target);
-    });
-    header.appendChild(toggleButton);
-
-    // right panel content
-    const content = document.createElement('div');
-    content.id = 'right-panel-content-' + appId;
-    content.className = 'sidepanel-content';
-    content.part = 'right-panel-content';
-
-    // fill right panel
-    rightPanel.appendChild(header);
-    rightPanel.appendChild(content);
-
-    return [resizer, rightPanel];
-  }
-
 }
 
 // Define the new element

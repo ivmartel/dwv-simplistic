@@ -4,6 +4,18 @@ import {App} from 'dwv';
 /* eslint-enable no-unused-vars */
 
 /**
+ * Get the drop box HTML element.
+ *
+ * @param {string} appId The app id.
+ * @returns {HTMLElement} Drop box element.
+ */
+export function getDropboxElement(appId) {
+  const dropBoxDiv = document.createElement('div');
+  dropBoxDiv.id = 'dropBox-' + appId;
+  return dropBoxDiv;
+}
+
+/**
  * Dropbox loader.
  * Listens to drag events on the layer container and
  *   uses a drop box element as first display.
