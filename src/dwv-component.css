@@ -18,7 +18,9 @@ progress {
   padding: 0;
   display: flex;
   justify-content: center;
-  height: 100%;
+  /* occupy space left by panel */
+  flex: 1;
+  min-height: 0;
 }
 .layer {
   position: absolute;
@@ -46,6 +48,9 @@ progress {
 .content {
   /* occupy space left by header and footer */
   flex: 1;
+  min-height: 0;
+
+  display: flex;
 }
 
 /* header */
@@ -66,7 +71,6 @@ progress {
 }
 .toolbar-item button {
   height: 100%;
-  border: 1px solid;
   border-radius: 4px;
   padding: 10px;
 }
@@ -96,28 +100,40 @@ progress {
   cursor: pointer;
 }
 
-.header button {
+input[type=color] {
+  width: 27px;
+  height: 27px;
+
   border: 1px solid #e0e0e0;
   background-color: #fff;
   color: #757575;
 }
-.header button:enabled:hover {
+
+svg {
+  fill: #757575;
+}
+button {
+  border: 1px solid #e0e0e0;
+  background-color: #fff;
+  color: #757575;
+}
+button:enabled:hover {
   background-color: #f5f5f5;
   cursor: pointer;
 }
-.header button:disabled {
+button:disabled {
   color: #bdbdbd;
 }
-.header .active {
+button.active {
   background-color: #f0f1f9 !important;
 }
-.header button:enabled path {
+button:enabled path {
   fill: #757575;
 }
-.header button.active:enabled path {
+button.active:enabled path {
   fill: #4a5bb9;
 }
-.header button:disabled path {
+button:disabled path {
   fill: #bdbdbd;
 }
 
@@ -126,6 +142,86 @@ progress {
   text-align: center;
   font-size: 8pt;
   margin: 1em;
+}
+
+/* side panel */
+.sidepanel {
+  padding: 2px;
+  width: 24px;
+
+  background-color: #efefef;
+  color: black;
+
+  display: flex;
+  flex-direction: column;
+}
+.sidepanel-header {
+  button {
+    padding: 0;
+  }
+}
+.sidepanel-content {
+  display: none;
+
+  overflow: auto;
+  flex: 1;
+  min-height: 0;
+}
+.resizer {
+  display: none;
+
+  width: 5px;
+  cursor: col-resize;
+  user-select: none;
+
+  background-color: #ccc;
+}
+.resizer:hover, .resizer:active {
+  background-color: #4a5bb9;
+}
+
+/* right panel content */
+.data-list {
+  list-style-type: none;
+  padding: 5px;
+
+  .data-item-header {
+    padding-bottom: 10px;
+    display: flex;
+    align-items: center;
+    .data-item-name {
+      flex: 1;
+    }
+  }
+
+  #addannotationgroupitem {
+    display: none;
+  }
+}
+.data-item-list {
+  list-style-type: none;
+  padding: 0;
+}
+.data-item-list li {
+  background-color: #dfdfdf;
+  border: 1px solid transparent;
+  padding: 5px;
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  .data-item-list-item-content {
+    flex: 1;
+    svg {
+      vertical-align: middle;
+    }
+  }
+}
+.data-item-list li:hover {
+  background-color: #ccc;
+  cursor: pointer;
+}
+.data-item-list .selected {
+  border: 1px solid #4a5bb9;
 }
 
 /* modal dialog */
@@ -142,11 +238,12 @@ progress {
 
   .modal-content {
     background-color: #fefefe;
-    margin: 5% auto; /* 5% from the top and centered */
     padding: 20px;
-    width: 80%;
-    height: 80%;
     overflow: auto;
+  }
+
+  h2 {
+    margin-top: 0;
   }
 
   input, label {
@@ -155,8 +252,7 @@ progress {
   }
 
   .modal-content-scroll {
-    margin-right: 20px;
-    height: 80%;
+    height: 85%;
     overflow: auto;
 
     table {
@@ -178,31 +274,50 @@ progress {
 
 /* color-scheme */
 @media (prefers-color-scheme: dark) {
-  .header button {
-    border: 1px solid #2f2f2f;
-    background-color: #fff;
+  .sidepanel {
+    background-color: #333;
+    color: #fff;
   }
-  .header button {
+  .resizer {
+    background-color: #555;
+  }
+
+  svg {
+    fill: #fff;
+  }
+  input[type=color] {
+    border: 1px solid #2f2f2f;
     color: #fff;
     background-color: #333;
   }
-  .header button:enabled:hover {
+  button {
+    border: 1px solid #2f2f2f;
+    background-color: #333;
+    color: #fff;
+  }
+  button:enabled:hover {
     background-color: #555;
   }
-  .header button:disabled {
+  button:disabled {
     color: #aeaeae;
   }
-  .header .active {
+  button.active {
     background-color: #404040 !important;
   }
-  .header button:enabled path {
+  button:enabled path {
     fill: #fff;
   }
-  .header button:disabled path {
+  button:disabled path {
     fill: #aeaeae;
   }
   .footer a {
     color: #ccc;
+  }
+  .data-item-list li {
+    background-color: #444;
+  }
+  .data-item-list li:hover {
+    background-color: #555;
   }
 
   .modal {

@@ -4,79 +4,15 @@ import {
   getLayerGroupDivId
 } from '../appgui.js';
 import {getMetaArray} from './meta.js';
+import {
+  getButton,
+  getIconElement
+} from './icons.js';
 
 // doc imports
 /* eslint-disable no-unused-vars */
 import {App} from 'dwv';
 /* eslint-enable no-unused-vars */
-
-// icons from https://fonts.google.com/icons
-// Fill: 0 Weight: 700 Grade: 0 Optical Size: 20
-/* eslint-disable @stylistic/js/max-len */
-const _paths = {
-  // menu
-  Scroll: 'M110-215v-118h740v118H110Zm0-206v-118h740v118H110Zm0-206v-118h740v118H110Z',
-  // search
-  ZoomAndPan: 'M763-106 517-352q-29 18-64.292 28.5T376.035-313Q267-313 190-390t-77-186q0-109 77-186t186-77q109 0 186 77t77 186.035q0 42.381-10.5 76.673T600-437l247 248-84 83ZM376-431q61 0 103-42t42-103q0-61-42-103t-103-42q-61 0-103 42t-42 103q0 61 42 103t103 42Z',
-  // contrast
-  WindowLevel: 'M480.192-62Q394-62 318-94.5q-76-32.5-133.5-90t-90-133.542Q62-394.083 62-480.542 62-567 94.5-642.5t90-133q57.5-57.5 133.542-90 76.041-32.5 162.5-32.5Q567-898 642.5-865.5t133 90q57.5 57.5 90 133.308 32.5 75.807 32.5 162Q898-394 865.5-318q-32.5 76-90 133.5t-133.308 90q-75.807 32.5-162 32.5ZM528-184q109-18 180.5-99.222T780-480q0-112.818-71.5-194.909T528-775v591Z',
-  // straighten
-  Ruler: 'M183-215q-49.7 0-83.85-34.15Q65-283.3 65-333v-294q0-49.7 34.15-83.85Q133.3-745 183-745h594q49.7 0 83.85 34.15Q895-676.7 895-627v294q0 49.7-34.15 83.85Q826.7-215 777-215H183Zm0-118h594v-294H672v147h-72v-147h-84v147h-72v-147h-84v147h-72v-147H183v294Zm105-147h72-72Zm156 0h72-72Zm156 0h72-72Zm-120 0Z',
-  // call made
-  Arrow: 'm243-240-51-51 405-405H384v-72h336v336h-72v-213L243-240Z',
-  // rectangle
-  Rectangle: 'M96-192v-576h768v576H96Zm72-72h624v-432H168v432Zm0 0v-432 432Z',
-  // circle
-  Circle: 'M480.28-96Q401-96 331-126t-122.5-82.5Q156-261 126-330.96t-30-149.5Q96-560 126-629.5q30-69.5 82.5-122T330.96-834q69.96-30 149.5-30t149.04 30q69.5 30 122 82.5T834-629.28q30 69.73 30 149Q864-401 834-331t-82.5 122.5Q699-156 629.28-126q-69.73 30-149 30Zm-.28-72q130 0 221-91t91-221q0-130-91-221t-221-91q-130 0-221 91t-91 221q0 130 91 221t221 91Zm0-312Z',
-  // sports rugby
-  Ellipse: 'M326-144q-50 0-89-7.5T178-179q-20-20-27-58.5t-7-93.5q0-98 32.5-189T278-681q70-71 163-103t193-32q51 0 89.5 7.5T782-781q21 20 27.5 56.5T816-628q0 98-32.5 189T682-279q-70 71-163 103t-193 32ZM217-358q30-63 71-118.5T378-582q49-49 104-90t118-71q-76 5-146.5 32T329-630q-54 54-81 125t-31 147Zm143 141q76-5 146.5-32T631-330q54-54 81-125t31-147q-30 63-71 118.5T582-378q-48 50-103.5 90.5T360-217Zm-110-33q80-28 150.5-73.5T531-429q60-60 106.5-130T710-710q-80 29-150.5 74T429-531q-60 60-106.5 130T250-250Zm230-230Z',
-  // square foot
-  Protractor: 'M216-144q-30 0-51-21t-21-51v-555q0-15 14-21t25 5l102 102-39 39 34 34 39-39 90 90-39 39 34 34 39-39 90 90-39 39 34 34 39-39 91 91-39 39 34 34 39-39 95 95q11 11 5 25t-21 14H216Zm24-96h354L240-594v354Z',
-  // polyline
-  Roi: 'M600-96v-86L317-336H144v-216h152l112-132v-180h216v216H472L360-516v121l240 131v-48h216v216H600ZM480-720h72v-72h-72v72ZM216-408h72v-72h-72v72Zm456 240h72v-72h-72v72ZM516-755ZM252-444Zm455 240Z',
-  // refresh
-  Reset: 'M476-158q-133 0-227.5-94.5T154-480q0-133 94.5-227.5T476-802q74 0 136 30t106 82v-112h88v289H516v-87h125q-29-38-71.5-61T476-684q-85 0-144.5 59.5T272-480q0 85 59.5 144.5T476-276q78 0 134.5-52.5T677-456h121q-10 126-102 212t-220 86Z',
-  // cameraswitch
-  ToggleOrientation: 'M327-273q-35.888 0-61.444-25.556Q240-324.112 240-360v-209q0-36.3 25.15-62.15T327-657h33l48-48h144l48 48h33q36.7 0 61.85 25.85T720-569v209q0 35.888-25.556 61.444Q668.888-273 633-273H327Zm0-87h306v-209H327v209Zm153.425-40Q507-400 525.5-419.133q18.5-19.132 18.5-46Q544-492 525.075-510.5q-18.925-18.5-45.5-18.5T434.5-510.075q-18.5 18.925-18.5 45.5T434.925-419q18.925 19 45.5 19ZM336-937q35.783-11.9 73.033-17.45Q446.283-960 485-960q91 0 173.5 33.5T805-835.275q64 57.725 104.544 136.5Q950.089-620 960-528H857q-8-61-34.5-115.5t-67-97q-40.5-42.5-94-71T547-851l46 47-60 62-197-195ZM624-23q-35.783 11.9-73.033 17.45Q513.717 0 475 0q-91.92 0-174.46-33.5t-146.04-91Q91-182 49.956-261 8.91-340 0-432h103q7 61 33.5 115.5t67.5 97q41 42.5 94.5 71T413-109l-46-47 60-62L624-23ZM482-466Z',
-  // open in full
-  Fullscreen: 'M110-110v-334h118v132l420-420H516v-118h334v334H732v-132L312-228h132v118H110Z',
-  // tags
-  Tags: 'M406-405h177v-92H406v92Zm0-132h354v-92H406v92Zm0-132h354v-92H406v92Zm-51 440q-53 0-89.5-36.5T229-355v-456q0-53 36.5-89.5T355-937h456q53 0 89.5 36.5T937-811v456q0 53-36.5 89.5T811-229H355Zm0-126h456v-456H355v456ZM149-23q-53 0-89.5-36.5T23-149v-582h126v582h582v126H149Zm206-788v456-456Z',
-  // keyboard arrow down
-  ArrowDown: 'M480-333 240-573l51-51 189 189 189-189 51 51-240 240Z'
-};
-/* eslint-enable @stylistic/js/max-len */
-
-/**
- * Get a SVG element for a given name.
- *
- * @param {string} name The key in the _paths list.
- * @returns {SVGSVGElement} The element.
- */
-function getSvg(name) {
-  const xmlns = 'http://www.w3.org/2000/svg';
-  const path = document.createElementNS(xmlns, 'path');
-  path.setAttributeNS(null, 'd', _paths[name]);
-  const svg = document.createElementNS(xmlns, 'svg');
-  svg.setAttributeNS(null, 'height', 20);
-  svg.setAttributeNS(null, 'width', 20);
-  svg.setAttributeNS(null, 'viewBox', '0 -960 960 960');
-  svg.appendChild(path);
-  return svg;
-}
-
-/**
- * Get a SVG button for a given name.
- *
- * @param {string} name The key in the _paths list.
- * @returns {HTMLButtonElement} The element.
- */
-function getSvgButton(name) {
-  const button = document.createElement('button');
-  button.title = name;
-  button.appendChild(getSvg(name));
-  return button;
-}
 
 /**
  * Get a tool html button.
@@ -90,7 +26,7 @@ function getToolButton(toolName, toolbar) {
   if (name === 'Draw') {
     name = toolbar.getCurrentShape();
   }
-  const button = getSvgButton(name);
+  const button = getButton(name);
   button.id = toolbar.getToolId(toolName);
 
   // onclick callback
@@ -135,7 +71,7 @@ function getWindowLevelSelect(toolbar) {
   // select wrapper (only arrow)
   const div = document.createElement('div');
   div.className = 'select-wrapper';
-  div.appendChild(getSvgButton('ArrowDown'));
+  div.appendChild(getButton('ArrowDown'));
   div.appendChild(select);
 
   return div;
@@ -166,7 +102,7 @@ function getDrawSelect(toolbar) {
   // select wrapper (only arrow)
   const div = document.createElement('div');
   div.className = 'select-wrapper';
-  div.appendChild(getSvgButton('ArrowDown'));
+  div.appendChild(getButton('ArrowDown'));
   div.appendChild(select);
 
   return div;
@@ -445,7 +381,7 @@ export class Toolbar {
     const toolId = this.getToolId('Draw');
     const button = this.#rootDoc.querySelector('#' + toolId);
     button.innerHTML = '';
-    button.appendChild(getSvg(name));
+    button.appendChild(getIconElement(name));
     button.title = name;
   }
 
@@ -551,6 +487,82 @@ export class Toolbar {
   };
 
   /**
+   * Get a slider div with a slider and value.
+   *
+   * @param {string} id The slider id.
+   * @param {string} title The slider title.
+   * @param {number[]} values The slider values.
+   * @param {Function} callback The slider change callback.
+   * @returns {HTMLDivElement} The slider div.
+   */
+  #getSliderDiv(id, title, values, callback) {
+    // slider input
+    const slider = document.createElement('input');
+    slider.type = 'range';
+    slider.id = id;
+    slider.title = title;
+    slider.min = 0;
+    slider.max = values.length - 1;
+    slider.value = 0;
+    // slider label
+    const sliderLabel = document.createElement('label');
+    sliderLabel.id = id + '-label';
+    sliderLabel.for = slider.id;
+    sliderLabel.appendChild(document.createTextNode(values[slider.value]));
+    sliderLabel.title = slider.title;
+    // navigate in values
+    slider.addEventListener('input', function (event) {
+      const value = values[event.target.value];
+      sliderLabel.replaceChildren(document.createTextNode(value));
+      // call input callback
+      callback(value);
+    });
+    // container div
+    const sliderDiv = document.createElement('div');
+    sliderDiv.appendChild(slider);
+    sliderDiv.appendChild(sliderLabel);
+
+    return sliderDiv;
+  }
+
+  /**
+   * Get a modal div.
+   *
+   * @param {string} id The mode div id.
+   * @param {HTMLElement[]} content The modal content.
+   * @returns {HTMLDivElement} The modal div.
+   */
+  #getModalDiv(id, content) {
+    // content
+    const contentDiv = document.createElement('div');
+    contentDiv.id = 'modal-content-' + this.#uid;
+    contentDiv.className = 'modal-content';
+    contentDiv.className = 'modal-content';
+    contentDiv.style.width = '80%';
+    contentDiv.style.height = '80%';
+    contentDiv.style.margin = '5% auto';
+    // add elements from input
+    for (const element of content) {
+      contentDiv.appendChild(element);
+    }
+    // main div
+    const modalDiv = document.createElement('div');
+    modalDiv.id = id;
+    modalDiv.className = 'modal';
+    modalDiv.style.display = 'block';
+    modalDiv.appendChild(contentDiv);
+    // close on outside click
+    const hideModal = function (event) {
+      if (event.target === modalDiv) {
+        modalDiv.style.display = 'none';
+      }
+    };
+    this.#rootDoc.addEventListener('click', hideModal);
+
+    return modalDiv;
+  }
+
+  /**
    * Open the DICOM tags modal.
    */
   openTagsModal() {
@@ -559,7 +571,8 @@ export class Toolbar {
 
     // create div if not present
     if (!modalDiv) {
-      modalDiv = this.#getTagsModal(modalId);
+      const content = this.#getTagsModalContent();
+      modalDiv = this.#getModalDiv(modalId, content);
       // global container
       const container = this.#rootDoc.getElementById(
         getDwvDivId(this.#uid));
@@ -571,44 +584,23 @@ export class Toolbar {
   };
 
   /**
-   * Get the tags modal.
+   * Get the tags modal content.
    *
-   * @param {string} modalId The modal div id.
-   * @returns {HTMLElement} The modal div.
+   * @returns {HTMLElement[]} The modal content.
    */
-  #getTagsModal(modalId) {
-    // create div
-    const modalDiv = document.createElement('div');
-    modalDiv.className = 'modal';
-    modalDiv.id = modalId;
-    modalDiv.style.display = 'block';
-    // close on outside click
-    this.#rootDoc.addEventListener('click', function (event) {
-      if (event.target === modalDiv) {
-        modalDiv.style.display = 'none';
-      }
-    });
-
-    const modalContentDiv = document.createElement('div');
-    modalContentDiv.className = 'modal-content';
-    modalContentDiv.id = 'modal-content-' + this.#uid;
-    modalDiv.appendChild(modalContentDiv);
-
+  #getTagsModalContent() {
+    // title
     const modalTitle = document.createElement('h2');
     modalTitle.appendChild(document.createTextNode('DICOM Tags'));
-    modalContentDiv.appendChild(modalTitle);
 
-    // div with enabled scroll
-    const modalScrollDiv = document.createElement('div');
-    modalScrollDiv.className = 'modal-content-scroll';
-
+    // TODO allow for different dataid
     const metaData = this.#app.getMetaData('0');
 
     // InstanceNumber
     const instanceElement = metaData['00200013'];
+    // list of possible instance numbers
     let instanceNumbers;
     if (typeof instanceElement !== 'undefined') {
-      // set slider with instance numbers ('00200013')
       let instanceNumberValue = instanceElement.value;
       if (typeof instanceNumberValue === 'string') {
         instanceNumberValue = [instanceNumberValue];
@@ -621,41 +613,30 @@ export class Toolbar {
       });
     }
 
-    let instanceNumber = instanceNumbers[0];
+    // div with enabled scroll
+    const modalScrollDiv = document.createElement('div');
+    modalScrollDiv.className = 'modal-content-scroll';
 
-    const slider = document.createElement('input');
-    slider.type = 'range';
-    slider.id = 'instancenumber-slider-' + this.#uid;
-    slider.min = 0;
-    slider.max = instanceNumbers.length - 1;
-    slider.value = 0;
-    slider.title = 'Instance Number';
-    const sliderLabel = document.createElement('label');
-    sliderLabel.id = 'instancenumber-slider-label-' + this.#uid;
-    sliderLabel.for = slider.id;
-    sliderLabel.appendChild(document.createTextNode(instanceNumber));
-    sliderLabel.title = slider.title;
-
-    const sliderLine = document.createElement('p');
-    sliderLine.appendChild(slider);
-    sliderLine.appendChild(sliderLabel);
-    modalContentDiv.appendChild(sliderLine);
-
-    slider.addEventListener('input', function (event) {
-      instanceNumber = instanceNumbers[event.target.value];
-      const metaArr = getMetaArray(metaData, instanceNumber);
+    // slider
+    const sliderCb = function (value) {
+      const metaArr = getMetaArray(metaData, value);
       const metaTab = arrayToHtmlTable(metaArr);
       modalScrollDiv.replaceChildren(metaTab);
-      sliderLabel.replaceChildren(document.createTextNode(instanceNumber));
-    });
+    };
+    const sliderDiv = this.#getSliderDiv(
+      'instancenumber-slider-' + this.#uid,
+      'Instance Number',
+      instanceNumbers,
+      sliderCb
+    );
 
-    // get meta data html table
+    // meta data html table
+    const instanceNumber = instanceNumbers[0];
     const metaArray = getMetaArray(metaData, instanceNumber);
     const metaTable = arrayToHtmlTable(metaArray);
     modalScrollDiv.appendChild(metaTable);
-    modalContentDiv.appendChild(modalScrollDiv);
 
-    return modalDiv;
+    return [modalTitle, sliderDiv, modalScrollDiv];
   };
 
   /**

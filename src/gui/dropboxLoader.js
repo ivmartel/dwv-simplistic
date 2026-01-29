@@ -4,6 +4,18 @@ import {App} from 'dwv';
 /* eslint-enable no-unused-vars */
 
 /**
+ * Get the drop box HTML element.
+ *
+ * @param {string} appId The app id.
+ * @returns {HTMLElement} Drop box element.
+ */
+export function getDropboxElement(appId) {
+  const dropBoxDiv = document.createElement('div');
+  dropBoxDiv.id = 'dropBox-' + appId;
+  return dropBoxDiv;
+}
+
+/**
  * Dropbox loader.
  * Listens to drag events on the layer container and
  *   uses a drop box element as first display.
@@ -32,7 +44,6 @@ export class DropboxLoader {
   #rootDoc = document;
 
   // drop box class name
-  #dropboxDivId = 'dropBox';
   #dropboxClassName = 'dropBox';
   #borderClassName = 'dropBoxBorder';
   #hoverClassName = 'hover';
@@ -59,6 +70,15 @@ export class DropboxLoader {
   };
 
   /**
+   * Get the drop box div id.
+   *
+   * @returns {string} The id.
+   */
+  #getDropboxDivId() {
+    return 'dropBox-' + this.#uid;
+  }
+
+  /**
    * Basic handle drag event.
    *
    * @param {object} event The event to handle.
@@ -77,7 +97,7 @@ export class DropboxLoader {
   #onBoxDragOver = (event) => {
     this.#defaultHandleDragEvent(event);
     // update box border
-    const box = this.#rootDoc.getElementById(this.#dropboxDivId);
+    const box = this.#rootDoc.getElementById(this.#getDropboxDivId());
     if (box && box.className.indexOf(this.#hoverClassName) === -1) {
       box.className += ' ' + this.#hoverClassName;
     }
@@ -91,7 +111,7 @@ export class DropboxLoader {
   #onBoxDragLeave = (event) => {
     this.#defaultHandleDragEvent(event);
     // update box border
-    const box = this.#rootDoc.getElementById(this.#dropboxDivId);
+    const box = this.#rootDoc.getElementById(this.#getDropboxDivId());
     if (box && box.className.indexOf(this.#hoverClassName) !== -1) {
       box.className = box.className.replace(' ' + this.#hoverClassName, '');
     }
@@ -125,7 +145,7 @@ export class DropboxLoader {
    * @param {boolean} show Flag to show or hide.
    */
   showDropbox(show) {
-    const box = this.#rootDoc.getElementById(this.#dropboxDivId);
+    const box = this.#rootDoc.getElementById(this.#getDropboxDivId());
     if (!box) {
       return;
     }

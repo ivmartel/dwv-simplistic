@@ -1,4 +1,5 @@
 import {Toolbar} from './gui/toolbar.js';
+import {RightPanel} from './gui/rightPanel.js';
 
 // doc imports
 /* eslint-disable no-unused-vars */
@@ -62,6 +63,13 @@ export class Gui {
   #toolbar;
 
   /**
+   * The right panel.
+   *
+   * @type {RightPanel}
+   */
+  #rightPanel;
+
+  /**
    * @param {App} app The associated app.
    * @param {object[]} appTools The list of app tools.
    * @param {string[]} guiTools The list of gui tools.
@@ -76,6 +84,8 @@ export class Gui {
     }
 
     this.#toolbar = new Toolbar(app, appTools, guiTools, uid, rootDoc);
+
+    this.#rightPanel = new RightPanel(app, uid, rootDoc);
   };
 
   /**
@@ -83,6 +93,7 @@ export class Gui {
    */
   init() {
     this.#toolbar.init();
+    this.#rightPanel.init();
   };
 
   /**

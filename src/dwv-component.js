@@ -1,5 +1,7 @@
 import {getDwvVersion} from 'dwv';
 import {startApp} from './applauncher.js';
+import {getDropboxElement} from './gui/dropboxLoader.js';
+import {getRightPanelElements} from './gui/rightPanel.js';
 
 import styles from './dwv-component.css';
 
@@ -174,15 +176,20 @@ export class DwvComponent extends HTMLElement {
     layerGroup.className = 'layerGroup';
     layerGroup.part = 'layerGroup';
     // drop box
-    const dropBox = document.createElement('div');
-    dropBox.id = 'dropBox';
+    const dropBox = getDropboxElement(appId);
     layerGroup.appendChild(dropBox);
 
+    // main content div
     const content = document.createElement('div');
     content.id = 'content-' + appId;
     content.className = 'content';
     content.part = 'content';
     content.appendChild(layerGroup);
+
+    // right panel
+    const panelElements = getRightPanelElements(appId);
+    content.appendChild(panelElements[0]);
+    content.appendChild(panelElements[1]);
 
     return content;
   }
