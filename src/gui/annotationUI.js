@@ -72,16 +72,22 @@ export class AnnotationUI {
   #app;
 
   /**
+   * The GUI UID.
+   *
+   * @type {string}
+   */
+  #uid;
+
+  /**
    * The root document.
    *
    * @type {Document}
    */
   #rootDoc = document;
 
-  #uid;
-
   /**
    * @param {App} app The associated application.
+   * @param {string} uid The GUI unique id.
    * @param {Document} [rootDoc] Optional root document,
    *   defaults to `window.document`.
    */
