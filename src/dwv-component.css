@@ -155,6 +155,11 @@ button:disabled path {
   display: flex;
   flex-direction: column;
 }
+.sidepanel-header {
+  button {
+    padding: 0;
+  }
+}
 .sidepanel-content {
   display: none;
 
