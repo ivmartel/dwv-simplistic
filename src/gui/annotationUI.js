@@ -111,29 +111,6 @@ export class AnnotationUI {
   };
 
   /**
-   * Setup the container div.
-   */
-  #setupContainerDiv() {
-    // // fieldset
-    // const legend = document.createElement('legend');
-    // legend.appendChild(document.createTextNode('Annotation Groups'));
-
-    // const fieldset = document.createElement('fieldset');
-    // fieldset.id = 'annotationgroups-fieldset';
-    // fieldset.appendChild(legend);
-
-    // // main div
-    // const line = document.createElement('div');
-    // line.id = 'annotationgroups-line';
-    // line.className = 'line';
-    // line.appendChild(fieldset);
-
-    // // insert
-    // const detailsEl = this.#rootDoc.getElementById('layersdetails');
-    // detailsEl.parentElement.insertBefore(line, detailsEl);
-  }
-
-  /**
    * Get the container div.
    *
    * @returns {HTMLDivElement} The element.
@@ -178,7 +155,6 @@ export class AnnotationUI {
     annotList.appendChild(addItem);
 
     // setup and append
-    this.#setupContainerDiv();
     this.#getContainerDiv().appendChild(annotList);
   }
 
