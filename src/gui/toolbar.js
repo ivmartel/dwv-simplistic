@@ -4,6 +4,7 @@ import {
   getLayerGroupDivId
 } from '../appgui.js';
 import {getMetaArray} from './meta.js';
+import {Modal} from './modal.js';
 import {
   getButton,
   getIconElement
@@ -218,6 +219,13 @@ export class Toolbar {
   #currentShape;
 
   /**
+   * Modal dialog.
+   *
+   * @type {Modal}
+   */
+  #modal;
+
+  /**
    * @param {App} app The associated app.
    * @param {object[]} appTools The list of app tools.
    * @param {string[]} guiTools The list of gui tools.
@@ -244,6 +252,9 @@ export class Toolbar {
       this.#shapes = appTools['Draw'].options;
       this.#currentShape = this.#shapes[0];
     }
+
+    // modal dialog
+    this.#modal = new Modal(uid, rootDoc);
   };
 
   /**
@@ -283,6 +294,8 @@ export class Toolbar {
     for (const toolName of this.#toolNames) {
       header.appendChild(getToolbarItem(toolName, this));
     }
+    // init modal
+    this.#modal.init();
   };
 
   /**
@@ -526,61 +539,11 @@ export class Toolbar {
   }
 
   /**
-   * Get a modal div.
-   *
-   * @param {string} id The mode div id.
-   * @param {HTMLElement[]} content The modal content.
-   * @returns {HTMLDivElement} The modal div.
-   */
-  #getModalDiv(id, content) {
-    // content
-    const contentDiv = document.createElement('div');
-    contentDiv.id = 'modal-content-' + this.#uid;
-    contentDiv.className = 'modal-content';
-    contentDiv.className = 'modal-content';
-    contentDiv.style.width = '80%';
-    contentDiv.style.height = '80%';
-    contentDiv.style.margin = '5% auto';
-    // add elements from input
-    for (const element of content) {
-      contentDiv.appendChild(element);
-    }
-    // main div
-    const modalDiv = document.createElement('div');
-    modalDiv.id = id;
-    modalDiv.className = 'modal';
-    modalDiv.style.display = 'block';
-    modalDiv.appendChild(contentDiv);
-    // close on outside click
-    const hideModal = function (event) {
-      if (event.target === modalDiv) {
-        modalDiv.style.display = 'none';
-      }
-    };
-    this.#rootDoc.addEventListener('click', hideModal);
-
-    return modalDiv;
-  }
-
-  /**
    * Open the DICOM tags modal.
    */
   openTagsModal() {
-    const modalId = 'modal-' + this.#uid;
-    let modalDiv = this.#rootDoc.getElementById(modalId);
-
-    // create div if not present
-    if (!modalDiv) {
-      const content = this.#getTagsModalContent();
-      modalDiv = this.#getModalDiv(modalId, content);
-      // global container
-      const container = this.#rootDoc.getElementById(
-        getDwvDivId(this.#uid));
-      container.appendChild(modalDiv);
-    }
-
-    // display modal
-    modalDiv.style.display = 'block';
+    const content = this.#getTagsModalContent();
+    this.#modal.open(content);
   };
 
   /**

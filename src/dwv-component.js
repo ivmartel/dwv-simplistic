@@ -2,6 +2,7 @@ import {getDwvVersion} from 'dwv';
 import {startApp} from './applauncher.js';
 import {getDropboxElement} from './gui/dropboxLoader.js';
 import {getRightPanelElements} from './gui/rightPanel.js';
+import {getModalElement} from './gui/modal.js';
 
 import styles from './dwv-component.css';
 
@@ -97,6 +98,7 @@ export class DwvComponent extends HTMLElement {
     if (this.hasAttribute('showlegend')) {
       container.appendChild(this.#getFooter(appId));
     }
+    container.appendChild(this.#getExtra(appId));
 
     // extra css for height and width
     let extraCss = '';
@@ -219,6 +221,17 @@ export class DwvComponent extends HTMLElement {
     footer.appendChild(para);
 
     return footer;
+  }
+
+  /**
+   * Get extra element.
+   *
+   * @param {string} appId The app id.
+   * @returns {HTMLElement} The element.
+   */
+  #getExtra(appId) {
+    const modal = getModalElement(appId);
+    return modal;
   }
 }
 
