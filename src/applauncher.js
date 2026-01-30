@@ -7,6 +7,68 @@ import {Gui} from './appgui.js';
 import {DropboxLoader} from './gui/dropboxLoader.js';
 
 /**
+ * Get the list of app and gui tools.
+ *
+ * @param {string} optionTools User tools.
+ * @returns {object} App and gui Tools.
+ */
+function getTools(optionTools) {
+  // optional user tools
+  let userTools;
+  if (typeof optionTools !== 'undefined') {
+    userTools = optionTools.split(',').map(
+      (item) => item.trim().toLowerCase()
+    );
+  }
+
+  // app tools
+  const defaultAppTools = {
+    Scroll: {},
+    ZoomAndPan: {},
+    WindowLevel: {},
+    Draw: {}
+  };
+  let appTools = {};
+  if (typeof userTools !== 'undefined') {
+    for (const toolName of Object.keys(defaultAppTools)) {
+      if (userTools.includes(toolName.toLowerCase())) {
+        appTools[toolName] = {};
+      }
+    }
+    // in case none was found
+    if (Object.keys(appTools).length === 0) {
+      appTools = defaultAppTools;
+    }
+  } else {
+    appTools = defaultAppTools;
+  }
+
+  // draw shapes
+  const defaultShapeNames = [
+    'Ruler',
+    'Arrow',
+    'Rectangle',
+    'Circle',
+    'Ellipse',
+    'Protractor',
+    'Roi'
+  ];
+  if (typeof appTools.Draw !== 'undefined') {
+    appTools.Draw.options = defaultShapeNames;
+  }
+
+  // gui tools
+  const guiTools = [
+    'Reset',
+    'ToggleOrientation',
+    'Fullscreen',
+    'Tags'
+  ];
+
+  return {appTools, guiTools};
+}
+
+/**
  * Application launcher.
  *
  * @param {string} uid The app uid.
@@ -18,25 +80,12 @@ import {DropboxLoader} from './gui/dropboxLoader.js';
  *   defaults to `window.document`.
  */
 export function startApp(uid, options, rootDoc) {
+  // tools
+  const {appTools, guiTools} = getTools(options.tools);
   // app options
   const appOptions = {
     dataViewConfigs: {'*': [{divId: 'layerGroup-' + uid}]},
-    tools: {
-      Scroll: {},
-      ZoomAndPan: {},
-      WindowLevel: {},
-      Draw: {
-        options: [
-          'Ruler',
-          'Arrow',
-          'Rectangle',
-          'Circle',
-          'Ellipse',
-          'Protractor',
-          'Roi'
-        ]
-      }
-    }
+    tools: appTools
   };
   if (typeof rootDoc !== 'undefined') {
     appOptions.rootDocument = rootDoc;
@@ -44,8 +93,6 @@ export function startApp(uid, options, rootDoc) {
   // main application
   const dwvApp = new App();
   dwvApp.init(appOptions);
-
-  const guiTools = ['Reset', 'ToggleOrientation', 'Fullscreen', 'Tags'];
 
   // app gui
   const dwvAppGui = new Gui(
@@ -95,20 +142,26 @@ export function startApp(uid, options, rootDoc) {
       isFirstRender = false;
       const vl = dwvApp.getViewLayersByDataId(event.dataid)[0];
       const vc = vl.getViewController();
+      const toolNames = Object.keys(appTools);
       // enable tools
       dwvAppGui.getToolbar().enableTools(true);
-      // set the selected tool
-      let selectedTool = 'ZoomAndPan';
-      if (vc.canScroll()) {
-        selectedTool = 'Scroll';
-      } else {
+      // enable/disable tools
+      if (toolNames.includes('Scroll') && !vc.canScroll()) {
         dwvAppGui.getToolbar().enableTool('Scroll', false);
       }
-      if (!vc.isMonochrome()) {
+      if (toolNames.includes('WindowLevel') && !vc.isMonochrome()) {
         dwvAppGui.getToolbar().enableTool('WindowLevel', false);
+      }
+      // set selected tool
+      let selectedTool = toolNames[0];
+      if (selectedTool === 'Scroll' &&
+        !vc.canScroll() &&
+        toolNames.length > 0) {
+        selectedTool = toolNames[1];
       }
       dwvApp.setTool(selectedTool);
       dwvAppGui.getToolbar().activateTool(selectedTool, true);
+
       // optional wl preset
       let hasExtraPreset = false;
       let wlpreset;
@@ -124,13 +177,17 @@ export function startApp(uid, options, rootDoc) {
         vc.addWindowLevelPresets(presets);
       }
       // update GUI
-      dwvAppGui.getToolbar().updatePresets(
-        vc.getWindowLevelPresetsNames()
-      );
+      if (toolNames.includes('WindowLevel')) {
+        dwvAppGui.getToolbar().updatePresets(
+          vc.getWindowLevelPresetsNames()
+        );
+      }
       // select optional preset
       if (hasExtraPreset) {
         vc.setWindowLevelPreset(wlpreset.name);
-        dwvAppGui.getToolbar().setSelectedPreset(options.wlpreset.name);
+        if (toolNames.includes('WindowLevel')) {
+          dwvAppGui.getToolbar().setSelectedPreset(options.wlpreset.name);
+        }
       }
     }
   });

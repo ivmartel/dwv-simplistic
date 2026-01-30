@@ -18,7 +18,9 @@ import styles from './dwv-component.css';
  *   the viewer with a specific window level setting instead of the one
  *   present in the DICOM file (only applied if all three values are present),
  * - height: the css height of the component,
- * - width: the css width of the component.
+ * - width: the css width of the component,
+ * - tools: comma separeted list of viewer tools, available are: 'Scroll',
+ *   'ZoomAndPan', 'WindowLevel' and 'Draw' (case insensitive).
  *
  * Attributes are case insensitive. Boolean type are considered true if
  * present whatever the value.
@@ -65,6 +67,14 @@ import styles from './dwv-component.css';
  *   wlpresetname="preset0"
  *   wlpresetcenter="0"
  *   wlpresetwidth="2500"
+ * ></dwv-simple>
+ * @example
+ * <dwv-simple
+ *   urls="
+ *     https://raw.githubusercontent.com/ivmartel/dwv/master/tests/data/bbmri-53323851.dcm,
+ *     https://raw.githubusercontent.com/ivmartel/dwv/master/tests/data/bbmri-53323707.dcm
+ *   "
+ *   tools="scroll, windowlevel"
  * ></dwv-simple>
  */
 export class DwvComponent extends HTMLElement {
@@ -144,6 +154,9 @@ export class DwvComponent extends HTMLElement {
         center: this.getAttribute('wlpresetcenter'),
         width: this.getAttribute('wlpresetwidth')
       };
+    }
+    if (this.hasAttribute('tools')) {
+      options.tools = this.getAttribute('tools');
     }
 
     // start app

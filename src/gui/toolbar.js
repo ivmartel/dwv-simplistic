@@ -261,7 +261,7 @@ export class Toolbar {
    * Get the name of the extra of a tool.
    *
    * @param {string} toolName The tool name.
-   * @returns {string} The name of the extra.
+   * @returns {string|undefined} The name of the extra.
    */
   getToolExtra(toolName) {
     return this.#toolExtras[toolName];
@@ -279,7 +279,7 @@ export class Toolbar {
   /**
    * Get the current selected shape.
    *
-   * @returns {string} The shape name.
+   * @returns {string|undefined} The shape name.
    */
   getCurrentShape() {
     return this.#currentShape;
@@ -305,7 +305,11 @@ export class Toolbar {
    * @returns {string} The id.
    */
   getToolId(toolName) {
-    return toolName.toLowerCase() + '-' + this.#uid;
+    let res;
+    if (typeof toolName !== 'undefined') {
+      res = toolName.toLowerCase() + '-' + this.#uid;
+    }
+    return res;
   };
 
   /**
@@ -315,6 +319,9 @@ export class Toolbar {
    * @param {boolean} flag True to enable.
    */
   enableTool(name, flag) {
+    if (!this.#toolNames.includes(name)) {
+      return;
+    }
     const toolId = this.getToolId(name);
     this.#rootDoc.getElementById(toolId).disabled = !flag;
 
@@ -347,11 +354,30 @@ export class Toolbar {
    * @param {boolean} flag True to activate.
    */
   activateTool(name, flag) {
+    if (!this.#toolNames.includes(name)) {
+      return;
+    }
     const toolId = this.getToolId(name);
     if (flag) {
       this.#rootDoc.getElementById(toolId).classList.add('active');
     } else {
       this.#rootDoc.getElementById(toolId).classList.remove('active');
+    }
+
+    if (flag) {
+      if (name === 'Draw') {
+        this.#app.setToolFeatures({shapeName: this.#currentShape});
+        const lg = this.#app.getActiveLayerGroup();
+        // reuse created draw layer
+        if (lg.getNumberOfLayers() > 1) {
+          lg?.setActiveLayer(1);
+        }
+      } else {
+        // if draw was created, active is now a draw layer...
+        // reset to view layer
+        const lg = this.#app.getActiveLayerGroup();
+        lg?.setActiveLayer(0);
+      }
     }
   };
 
@@ -372,6 +398,10 @@ export class Toolbar {
    * @param {string} name The name of the new preset.
    */
   onChangePreset(name) {
+    if (!this.#toolNames.includes('WindowLevel')) {
+      return;
+    }
+
     // update viewer
     const lg = this.#app.getActiveLayerGroup();
     const vl = lg.getViewLayersFromActive()[0];
@@ -387,6 +417,10 @@ export class Toolbar {
    * @param {string} name The name of the new shape.
    */
   onChangeShape(name) {
+    if (!this.#toolNames.includes('Draw')) {
+      return;
+    }
+
     this.#currentShape = name;
     // activate tool and set shape
     this.onChangeTool('Draw');
@@ -407,19 +441,6 @@ export class Toolbar {
     this.activateTools(false);
     this.activateTool(name, true);
     this.#app.setTool(name);
-    if (name === 'Draw') {
-      this.#app.setToolFeatures({shapeName: this.#currentShape});
-      const lg = this.#app.getActiveLayerGroup();
-      // reuse created draw layer
-      if (lg.getNumberOfLayers() > 1) {
-        lg?.setActiveLayer(1);
-      }
-    } else {
-      // if draw was created, active is now a draw layer...
-      // reset to view layer
-      const lg = this.#app.getActiveLayerGroup();
-      lg?.setActiveLayer(0);
-    }
   };
 
   /**
@@ -431,11 +452,17 @@ export class Toolbar {
     const lg = this.#app.getActiveLayerGroup();
     const vl = lg.getViewLayersFromActive()[0];
     vl.getViewController().initialise();
+
     // reset preset dropdown
-    const extraName = this.getToolExtra('WindowLevel');
-    const presetsId = this.getToolId(extraName);
-    const domPresets = this.#rootDoc.getElementById(presetsId);
-    domPresets.selectedIndex = 0;
+    if (this.#toolNames.includes('WindowLevel')) {
+      const extraName = this.getToolExtra('WindowLevel');
+      if (typeof extraName === 'undefined') {
+        return;
+      }
+      const presetsId = this.getToolId(extraName);
+      const domPresets = this.#rootDoc.getElementById(presetsId);
+      domPresets.selectedIndex = 0;
+    }
   };
 
   /**
@@ -608,7 +635,13 @@ export class Toolbar {
    * @param {string[]} presets The list of presets to use as options.
    */
   updatePresets(presets) {
+    if (!this.#toolNames.includes('WindowLevel')) {
+      return;
+    }
     const extraName = this.getToolExtra('WindowLevel');
+    if (typeof extraName === 'undefined') {
+      return;
+    }
     const presetsId = this.getToolId(extraName);
     const domPresets = this.#rootDoc.getElementById(presetsId);
     // clear previous
@@ -631,7 +664,13 @@ export class Toolbar {
    * @param {string} name The name of the preset to select.
    */
   setSelectedPreset(name) {
+    if (!this.#toolNames.includes('WindowLevel')) {
+      return;
+    }
     const extraName = this.getToolExtra('WindowLevel');
+    if (typeof extraName === 'undefined') {
+      return;
+    }
     const presetsId = this.getToolId(extraName);
     const domPresets = this.#rootDoc.getElementById(presetsId);
     // find the index
