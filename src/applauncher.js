@@ -145,7 +145,7 @@ export function startApp(uid, options, rootDoc) {
       const toolNames = Object.keys(appTools);
       // enable tools
       dwvAppGui.getToolbar().enableTools(true);
-      // enable/disable tools
+      // disable specific tools
       if (toolNames.includes('Scroll') && !vc.canScroll()) {
         dwvAppGui.getToolbar().enableTool('Scroll', false);
       }
@@ -159,7 +159,6 @@ export function startApp(uid, options, rootDoc) {
         toolNames.length > 0) {
         selectedTool = toolNames[1];
       }
-      dwvApp.setTool(selectedTool);
       dwvAppGui.getToolbar().activateTool(selectedTool, true);
 
       // optional wl preset

@@ -365,9 +365,12 @@ export class Toolbar {
     }
 
     if (flag) {
+      // set app tool
+      this.#app.setTool(name);
+      // handle active layer
+      const lg = this.#app.getActiveLayerGroup();
       if (name === 'Draw') {
         this.#app.setToolFeatures({shapeName: this.#currentShape});
-        const lg = this.#app.getActiveLayerGroup();
         // reuse created draw layer
         if (lg.getNumberOfLayers() > 1) {
           lg?.setActiveLayer(1);
@@ -375,7 +378,6 @@ export class Toolbar {
       } else {
         // if draw was created, active is now a draw layer...
         // reset to view layer
-        const lg = this.#app.getActiveLayerGroup();
         lg?.setActiveLayer(0);
       }
     }
@@ -440,9 +442,7 @@ export class Toolbar {
   onChangeTool(name) {
     // deactivate all
     this.activateTools(false);
-    // set app tool
-    this.#app.setTool(name);
-    // activate tool (after app set in case of tool features)
+    // activate input tool
     this.activateTool(name, true);
   };
 
