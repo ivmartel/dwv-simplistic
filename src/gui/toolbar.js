@@ -438,9 +438,12 @@ export class Toolbar {
    * @param {string} name The name of the new tool.
    */
   onChangeTool(name) {
+    // deactivate all
     this.activateTools(false);
-    this.activateTool(name, true);
+    // set app tool
     this.#app.setTool(name);
+    // activate tool (after app set in case of tool features)
+    this.activateTool(name, true);
   };
 
   /**
