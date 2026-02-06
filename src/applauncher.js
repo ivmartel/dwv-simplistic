@@ -5,6 +5,7 @@ import {
 
 import {Gui} from './appgui.js';
 import {DropboxLoader} from './gui/dropboxLoader.js';
+import {overlayConfig} from './gui/overlays.js';
 
 /**
  * Get the list of app and gui tools.
@@ -85,7 +86,8 @@ export function startApp(uid, options, rootDoc) {
   // app options
   const appOptions = {
     dataViewConfigs: {'*': [{divId: 'layerGroup-' + uid}]},
-    tools: appTools
+    tools: appTools,
+    overlayConfig
   };
   if (typeof rootDoc !== 'undefined') {
     appOptions.rootDocument = rootDoc;
