@@ -1,4 +1,12 @@
-/* Info layer */
+/* White theme */
+
+/* host */
+.dwv {
+  background-color: #fff;
+  color: #000;
+}
+
+/* info layer */
 .info {
   color: #cde;
   text-shadow: 1px 1px #000;
@@ -20,14 +28,12 @@
   border-color: #cc0;
 }
 
-
-/* header */
+/* button/input */
 input[type=color] {
   border-color: #e0e0e0;
   background-color: #fff;
   color: #757575;
 }
-
 svg {
   fill: #757575;
 }
@@ -81,76 +87,12 @@ button:disabled path {
 
 /* modal dialog */
 .modal {
-  background-color: rgb(0,0,0); /* Fallback color */
-  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-
   .modal-content {
     background-color: #fefefe;
   }
-
   .modal-content-scroll {
     tr {
       border-color: #ddd;
-    }
-  }
-}
-
-/* color-scheme */
-@media (prefers-color-scheme: dark) {
-  .sidepanel {
-    background-color: #333;
-    color: #fff;
-  }
-  .resizer {
-    background-color: #555;
-  }
-
-  svg {
-    fill: #fff;
-  }
-  input[type=color] {
-    border-color: #2f2f2f;
-    color: #fff;
-    background-color: #333;
-  }
-  button {
-    border-color: #2f2f2f;
-    background-color: #333;
-    color: #fff;
-  }
-  button:enabled:hover {
-    background-color: #555;
-  }
-  button:disabled {
-    color: #aeaeae;
-  }
-  button.active {
-    background-color: #404040 !important;
-  }
-  button:enabled path {
-    fill: #fff;
-  }
-  button:disabled path {
-    fill: #aeaeae;
-  }
-  .footer a {
-    color: #ccc;
-  }
-  .data-item-list li {
-    background-color: #444;
-  }
-  .data-item-list li:hover {
-    background-color: #555;
-  }
-
-  .modal {
-    .modal-content {
-      background-color: #424242;
-    }
-    .modal-content-scroll {
-      tr {
-        border-color: #666;
-      }
     }
   }
 }

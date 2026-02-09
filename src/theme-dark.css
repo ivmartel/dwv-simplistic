@@ -1,0 +1,103 @@
+/* Black theme */
+
+/* host */
+.dwv {
+  background-color: #252525;
+  color: #fff;
+}
+
+/* info layer */
+.info {
+  color: #cde;
+  text-shadow: 1px 1px #000;
+}
+/* position indicators (c, tl, tc, bl...)
+  need to be in sync with those defined
+  in the overlay.json file */
+/* center */
+.info-c {
+  color: #ff0;
+  text-shadow: 1px 1px #000;
+}
+
+/* drag&drop */
+.dropBoxBorder {
+  border-color: #ccc;
+}
+.dropBoxBorder:hover {
+  border-color: #cc0;
+}
+
+/* button/input */
+input[type=color] {
+  border-color: #2f2f2f;
+  color: #fff;
+  background-color: #333;
+}
+svg {
+  fill: #fff;
+}
+button {
+  border-color: #2f2f2f;
+  background-color: #333;
+  color: #fff;
+}
+button:enabled:hover {
+  background-color: #555;
+}
+button:disabled {
+  color: #aeaeae;
+}
+button.active {
+  background-color: #404040 !important;
+}
+button:enabled path {
+  fill: #fff;
+}
+button.active:enabled path {
+  fill: #4a5bb9;
+}
+button:disabled path {
+  fill: #aeaeae;
+}
+
+/* side panel */
+.sidepanel {
+  background-color: #333;
+  color: #fff;
+}
+.resizer {
+  background-color: #555;
+}
+.resizer:hover, .resizer:active {
+  background-color: #4a5bb9;
+}
+
+/* right panel content */
+.data-item-list li {
+  background-color: #444;
+  border-color: transparent;
+}
+.data-item-list li:hover {
+  background-color: #555;
+}
+.data-item-list .selected {
+  border-color: #4a5bb9;
+}
+
+/* modal dialog */
+.modal {
+  .modal-content {
+    background-color: #424242;
+  }
+  .modal-content-scroll {
+    tr {
+      border-color: #666;
+    }
+  }
+}
+
+/* footer */
+.footer a {
+  color: #ccc;
+}
