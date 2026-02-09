@@ -1,9 +1,31 @@
-/* White theme */
+/* Light theme */
+:host {
+  /* button */
+  --primary-color: #fff;
+  --on-primary-color: #666;
+  /* selected button */
+  --secondary-color: #f0f1f9;
+  --on-secondary-color: #4a5bb9;
+  /* button border */
+  --outline: #e0e0e0;
+  /* main background */
+  --surface: #fff;
+  --on-surface: #000;
+  /* panel */
+  --surface-container: #efefef;
+  --surface-container-high: #dfdfdf;
+  --on-surface-container: #000;
+}
 
-/* host */
+/* main */
 .dwv {
-  background-color: #fff;
-  color: #000;
+  background-color: var(--surface);
+  color: var(--on-surface)
+}
+
+/* footer */
+.footer a {
+  color: var(--on-surface);
 }
 
 /* info layer */
@@ -22,77 +44,74 @@
 
 /* drag&drop */
 .dropBoxBorder {
-  border-color: #ccc;
+  border-color: var(--secondary-color);
 }
 .dropBoxBorder:hover {
-  border-color: #cc0;
+  border-color: var(--on-secondary-color);
 }
 
 /* button/input */
 input[type=color] {
-  border-color: #e0e0e0;
-  background-color: #fff;
-  color: #757575;
+  background-color: var(--primary-color);
+  color: var(--on-primary-color);
+  border-color: var(--outline);
 }
 svg {
-  fill: #757575;
+  fill: var(--on-primary-color);
 }
 button {
-  border-color: #e0e0e0;
-  background-color: #fff;
-  color: #757575;
+  background-color: var(--primary-color);
+  color: var(--on-primary-color);
+  border-color: var(--outline);
 }
 button:enabled:hover {
-  background-color: #f5f5f5;
+  filter: brightness(90%);
 }
 button:disabled {
-  color: #bdbdbd;
+  filter: brightness(100%);
 }
 button.active {
-  background-color: #f0f1f9 !important;
+  background-color: var(--secondary-color);
 }
 button:enabled path {
-  fill: #757575;
+  fill: var(--on-primary-color);
 }
 button.active:enabled path {
-  fill: #4a5bb9;
+  fill: var(--on-secondary-color);
 }
 button:disabled path {
-  fill: #bdbdbd;
+  filter: brightness(150%);
 }
 
 /* side panel */
 .sidepanel {
-  background-color: #efefef;
-  color: black;
+  background-color: var(--surface-container);
+  color: var(--on-surface-container);
 }
 .resizer {
-  background-color: #ccc;
+  background-color: var(--secondary-color);
 }
 .resizer:hover, .resizer:active {
-  background-color: #4a5bb9;
+  background-color: var(--on-secondary-color);
 }
 
 /* right panel content */
 .data-item-list li {
-  background-color: #dfdfdf;
+  background-color: var(--surface-container-high);
+  /* avoid jumps on select */
   border-color: transparent;
 }
 .data-item-list li:hover {
-  background-color: #ccc;
+  filter: brightness(90%);
 }
 .data-item-list .selected {
-  border-color: #4a5bb9;
+  border-color: var(--on-secondary-color);
 }
 
 /* modal dialog */
 .modal {
   .modal-content {
-    background-color: #fefefe;
-  }
-  .modal-content-scroll {
-    tr {
-      border-color: #ddd;
-    }
+    background-color: var(--surface-container);
+    color: var(--on-surface-container);
   }
 }
