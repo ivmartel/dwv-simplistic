@@ -1,3 +1,6 @@
+/* theme */
+@import "theme.css";
+
 /* progress bar */
 progress {
   appearance: none;
@@ -48,8 +51,6 @@ progress {
   padding: 2px;
 }
 .info {
-  color: #cde;
-  text-shadow: 1px 1px #000;
   font-size: 80%;
   max-width: 50%;
   max-height: 50%;
@@ -60,8 +61,6 @@ progress {
   in the overlay.json file */
 /* center */
 .info-c {
-  color: #ff0;
-  text-shadow: 1px 1px #000;
   font-size: 120%;
 }
 /* top left */
@@ -130,11 +129,8 @@ progress {
 }
 .dropBoxBorder {
   margin: 20px auto;
-  border: 5px dashed #ccc;
-}
-.dropBoxBorder:hover {
-  margin: 20px auto;
-  border: 5px dashed #cc0;
+  border-width: 5px;
+  border-style: dashed;
 }
 #input-file-link {
   text-decoration-line: underline;
@@ -200,37 +196,16 @@ input[type=color] {
   width: 27px;
   height: 27px;
 
-  border: 1px solid #e0e0e0;
-  background-color: #fff;
-  color: #757575;
+  border-width: 1px;
+  border-style: solid;
 }
 
-svg {
-  fill: #757575;
-}
 button {
-  border: 1px solid #e0e0e0;
-  background-color: #fff;
-  color: #757575;
+  border-width: 1px;
+  border-style: solid;
 }
 button:enabled:hover {
-  background-color: #f5f5f5;
   cursor: pointer;
-}
-button:disabled {
-  color: #bdbdbd;
-}
-button.active {
-  background-color: #f0f1f9 !important;
-}
-button:enabled path {
-  fill: #757575;
-}
-button.active:enabled path {
-  fill: #4a5bb9;
-}
-button:disabled path {
-  fill: #bdbdbd;
 }
 
 /* footer */
@@ -244,9 +219,6 @@ button:disabled path {
 .sidepanel {
   padding: 2px;
   width: 24px;
-
-  background-color: #efefef;
-  color: black;
 
   display: flex;
   flex-direction: column;
@@ -269,11 +241,6 @@ button:disabled path {
   width: 5px;
   cursor: col-resize;
   user-select: none;
-
-  background-color: #ccc;
-}
-.resizer:hover, .resizer:active {
-  background-color: #4a5bb9;
 }
 
 /* right panel content */
@@ -299,8 +266,8 @@ button:disabled path {
   padding: 0;
 }
 .data-item-list li {
-  background-color: #dfdfdf;
-  border: 1px solid transparent;
+  border-width: 1px;
+  border-style: solid;
   padding: 5px;
   margin-bottom: 5px;
   display: flex;
@@ -313,11 +280,7 @@ button:disabled path {
   }
 }
 .data-item-list li:hover {
-  background-color: #ccc;
   cursor: pointer;
-}
-.data-item-list .selected {
-  border: 1px solid #4a5bb9;
 }
 
 /* modal dialog */
@@ -329,11 +292,8 @@ button:disabled path {
   top: 0;
   width: 100%; /* Full width */
   height: 100%; /* Full height */
-  background-color: rgb(0,0,0); /* Fallback color */
-  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
 
   .modal-content {
-    background-color: #fefefe;
     padding: 20px;
     overflow: auto;
   }
@@ -356,75 +316,14 @@ button:disabled path {
       border-collapse: collapse;
     }
     tr {
-      border: solid thin;
-      border-color: #ddd;
+      border-width: thin;
+      border-style: solid;
     }
     th {
       text-align: left;
     }
     td, th {
       padding: 10px;
-    }
-  }
-}
-
-/* color-scheme */
-@media (prefers-color-scheme: dark) {
-  .sidepanel {
-    background-color: #333;
-    color: #fff;
-  }
-  .resizer {
-    background-color: #555;
-  }
-
-  svg {
-    fill: #fff;
-  }
-  input[type=color] {
-    border: 1px solid #2f2f2f;
-    color: #fff;
-    background-color: #333;
-  }
-  button {
-    border: 1px solid #2f2f2f;
-    background-color: #333;
-    color: #fff;
-  }
-  button:enabled:hover {
-    background-color: #555;
-  }
-  button:disabled {
-    color: #aeaeae;
-  }
-  button.active {
-    background-color: #404040 !important;
-  }
-  button:enabled path {
-    fill: #fff;
-  }
-  button:disabled path {
-    fill: #aeaeae;
-  }
-  .footer a {
-    color: #ccc;
-  }
-  .data-item-list li {
-    background-color: #444;
-  }
-  .data-item-list li:hover {
-    background-color: #555;
-  }
-
-  .modal {
-    .modal-content {
-      background-color: #424242;
-    }
-    .modal-content-scroll {
-      tr {
-        border: solid thin;
-        border-color: #666;
-      }
     }
   }
 }
