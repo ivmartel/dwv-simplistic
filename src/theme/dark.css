@@ -1,0 +1,34 @@
+/* Dark theme */
+:host {
+  /* button */
+  --primary-color: #333;
+  --on-primary-color: #fff;
+  /* selected button */
+  --secondary-color: #444;
+  --on-secondary-color: #4a5bb9;
+  /* button border */
+  --outline: #333;
+  /* main background */
+  --surface: #222;
+  --on-surface: #fff;
+  /* panel */
+  --surface-container: #333;
+  --surface-container-high: #444;
+  --on-surface-container: #fff;
+}
+
+/* button/input */
+button:enabled:hover {
+  filter: brightness(140%);
+}
+button:disabled {
+  filter: brightness(85%);
+}
+button:disabled path {
+  filter: brightness(50%);
+}
+
+/* right panel content */
+.data-item-list li:hover {
+  filter: brightness(140%);
+}

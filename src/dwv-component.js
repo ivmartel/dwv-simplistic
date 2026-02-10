@@ -5,6 +5,9 @@ import {getRightPanelElements} from './gui/rightPanel.js';
 import {getModalElement} from './gui/modal.js';
 
 import styles from './dwv-component.css';
+import themeCommon from './theme/common.css';
+import themeDark from './theme/dark.css';
+import themeLight from './theme/light.css';
 
 /**
  * DWV component: display DICOM data using DWV (DICOM Web Viewer).
@@ -124,6 +127,14 @@ export class DwvComponent extends HTMLElement {
     const styleElement = document.createElement('style');
     styleElement.innerHTML += '.dwv {' + extraCss + '}\n\n';
     styleElement.innerHTML += styles.toString();
+    // theme
+    styleElement.innerHTML += '@media (prefers-color-scheme: light) {';
+    styleElement.innerHTML += themeLight.toString();
+    styleElement.innerHTML += '}';
+    styleElement.innerHTML += '@media (prefers-color-scheme: dark) {';
+    styleElement.innerHTML += themeDark.toString();
+    styleElement.innerHTML += '}';
+    styleElement.innerHTML += themeCommon.toString();
 
     // shadow root
     const shadow = this.attachShadow({mode: 'open'});

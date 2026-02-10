@@ -1,0 +1,34 @@
+/* Light theme */
+:host {
+  /* button */
+  --primary-color: #fff;
+  --on-primary-color: #666;
+  /* selected button */
+  --secondary-color: #f0f1f9;
+  --on-secondary-color: #4a5bb9;
+  /* button border */
+  --outline: #e0e0e0;
+  /* main background */
+  --surface: #fff;
+  --on-surface: #000;
+  /* panel */
+  --surface-container: #efefef;
+  --surface-container-high: #dfdfdf;
+  --on-surface-container: #000;
+}
+
+/* button/input */
+button:enabled:hover {
+  filter: brightness(90%);
+}
+button:disabled {
+  filter: brightness(100%);
+}
+button:disabled path {
+  filter: brightness(150%);
+}
+
+/* right panel content */
+.data-item-list li:hover {
+  filter: brightness(90%);
+}
