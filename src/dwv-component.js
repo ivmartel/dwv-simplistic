@@ -25,9 +25,9 @@ import themeBlue from './theme/blue.css';
  * - width: the css width of the component,
  * - tools: comma separeted list of viewer tools, available are: 'Scroll',
  *   'ZoomAndPan', 'WindowLevel' and 'Draw' (case insensitive).
- * - theme: one or two theme names (space separated), if two are provided, the first
- *   one will be used as light theme and the second one as dark. Available: 'light',
- *   'dark' and 'blue', defaults to 'light dark'.
+ * - theme: one or two theme names (space separated), if two are provided,
+ *   the first one will be used as light theme and the second one as dark.
+ *   Available: 'light','dark' and 'blue', defaults to 'light dark'.
  *
  * Attributes are case insensitive. Boolean type are considered true if
  * present whatever the value.
@@ -139,7 +139,7 @@ export class DwvComponent extends HTMLElement {
       light: themeLight,
       dark: themeDark,
       blue: themeBlue
-    }
+    };
     let themes = ['light', 'dark'];
     if (this.hasAttribute('theme')) {
       // space separated, keep first 2
@@ -148,7 +148,7 @@ export class DwvComponent extends HTMLElement {
       inputThemes = inputThemes.map((item) => item.trim());
       // keep valid
       inputThemes = inputThemes.filter((item) => {
-        return typeof availableThemes[item] !== 'undefined'
+        return typeof availableThemes[item] !== 'undefined';
       });
       if (inputThemes.length !== 0) {
         themes = inputThemes;
