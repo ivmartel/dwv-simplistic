@@ -193,13 +193,11 @@ input[type=color] {
   width: 27px;
   height: 27px;
 
-  border-width: 1px;
-  border-style: solid;
+  border-width: 0;
 }
 
 button {
-  border-width: 1px;
-  border-style: solid;
+  border-width: 0;
 }
 button:enabled:hover {
   cursor: pointer;

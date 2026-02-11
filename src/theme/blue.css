@@ -1,0 +1,40 @@
+/* Light theme */
+:host {
+  /* button */
+  --primary-color: #005cbb;
+  --on-primary-color: #fefefe;
+  /* selected button */
+  --secondary-color: #0080ff;
+  --on-secondary-color: #fefefe;
+  /* button border */
+  --outline: #74777f;
+  --outline-variant: #c4c6d0;
+  /* main background */
+  --surface: #faf9fd;
+  --on-surface: #1a1b1f;
+  /* panel */
+  --surface-container: #efedf0;
+  --surface-container-high: #e9e7eb;
+  --on-surface-container: #1a1b1f;
+}
+
+/* button/input */
+button:enabled:hover {
+  filter: brightness(140%);
+}
+button:disabled {
+  filter: brightness(80%);
+}
+button:disabled path {
+  filter: brightness(100%);
+}
+
+/* right panel content */
+.data-item-list li:hover {
+  filter: brightness(90%);
+}
+
+/* side panel */
+.resizer:hover, .resizer:active {
+  filter: brightness(120%);
+}

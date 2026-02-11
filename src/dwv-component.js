@@ -8,6 +8,7 @@ import styles from './dwv-component.css';
 import themeCommon from './theme/common.css';
 import themeDark from './theme/dark.css';
 import themeLight from './theme/light.css';
+import themeBlue from './theme/blue.css';
 
 /**
  * DWV component: display DICOM data using DWV (DICOM Web Viewer).
@@ -24,6 +25,9 @@ import themeLight from './theme/light.css';
  * - width: the css width of the component,
  * - tools: comma separeted list of viewer tools, available are: 'Scroll',
  *   'ZoomAndPan', 'WindowLevel' and 'Draw' (case insensitive).
+ * - theme: one or two theme names (space separated), if two are provided, the first
+ *   one will be used as light theme and the second one as dark. Available: 'light',
+ *   'dark' and 'blue', defaults to 'light dark'.
  *
  * Attributes are case insensitive. Boolean type are considered true if
  * present whatever the value.
@@ -50,6 +54,8 @@ import themeLight from './theme/light.css';
  * <dwv-simple></dwv-simple>
  * @example
  * <dwv-simple showlegend loadfromwindowlocation></dwv-simple>
+ * @example
+ * <dwv-simple showlegend loadfromwindowlocation theme="blue"></dwv-simple>
  * @example
  * <dwv-simple
  *   uri="https://www.demo.com/index.html?input=file.dcm"
@@ -127,13 +133,38 @@ export class DwvComponent extends HTMLElement {
     const styleElement = document.createElement('style');
     styleElement.innerHTML += '.dwv {' + extraCss + '}\n\n';
     styleElement.innerHTML += styles.toString();
+
     // theme
-    styleElement.innerHTML += '@media (prefers-color-scheme: light) {';
-    styleElement.innerHTML += themeLight.toString();
-    styleElement.innerHTML += '}';
-    styleElement.innerHTML += '@media (prefers-color-scheme: dark) {';
-    styleElement.innerHTML += themeDark.toString();
-    styleElement.innerHTML += '}';
+    const availableThemes = {
+      light: themeLight,
+      dark: themeDark,
+      blue: themeBlue
+    }
+    let themes = ['light', 'dark'];
+    if (this.hasAttribute('theme')) {
+      // space separated, keep first 2
+      let inputThemes = this.getAttribute('theme').split(' ').slice(0, 2);
+      // trim strings
+      inputThemes = inputThemes.map((item) => item.trim());
+      // keep valid
+      inputThemes = inputThemes.filter((item) => {
+        return typeof availableThemes[item] !== 'undefined'
+      });
+      if (inputThemes.length !== 0) {
+        themes = inputThemes;
+      }
+    }
+    // use media preference when 2 themes
+    if (themes.length === 2) {
+      styleElement.innerHTML += '@media (prefers-color-scheme: light) {';
+      styleElement.innerHTML += availableThemes[themes[0]].toString();
+      styleElement.innerHTML += '}';
+      styleElement.innerHTML += '@media (prefers-color-scheme: dark) {';
+      styleElement.innerHTML += availableThemes[themes[1]].toString();
+      styleElement.innerHTML += '}';
+    } else {
+      styleElement.innerHTML += availableThemes[themes[0]].toString();
+    }
     styleElement.innerHTML += themeCommon.toString();
 
     // shadow root

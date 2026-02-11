@@ -1,13 +1,14 @@
 /* Light theme */
 :host {
   /* button */
-  --primary-color: #fff;
+  --primary-color: #f0f0f0;
   --on-primary-color: #666;
   /* selected button */
-  --secondary-color: #f0f1f9;
+  --secondary-color: #e1e1e8;
   --on-secondary-color: #4a5bb9;
   /* button border */
   --outline: #e0e0e0;
+  --outline-variant: #bbb;
   /* main background */
   --surface: #fff;
   --on-surface: #000;
@@ -30,5 +31,10 @@ button:disabled path {
 
 /* right panel content */
 .data-item-list li:hover {
+  filter: brightness(90%);
+}
+
+/* side panel */
+.resizer:hover, .resizer:active {
   filter: brightness(90%);
 }

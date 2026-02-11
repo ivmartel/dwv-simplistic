@@ -4,6 +4,11 @@
   color: var(--on-surface)
 }
 
+/* svg */
+path {
+  fill: var(--on-surface);
+}
+
 /* footer */
 .footer a {
   color: var(--on-surface);
@@ -25,10 +30,10 @@
 
 /* drag&drop */
 .dropBoxBorder {
-  border-color: var(--secondary-color);
+  border-color: var(--outline);
 }
 .dropBoxBorder:hover {
-  border-color: var(--on-secondary-color);
+  border-color: var(--outline-variant);
 }
 
 /* button/input */
@@ -37,7 +42,7 @@ input[type=color] {
   color: var(--on-primary-color);
   border-color: var(--outline);
 }
-svg {
+button path {
   fill: var(--on-primary-color);
 }
 button {
@@ -61,10 +66,7 @@ button.active:enabled path {
   color: var(--on-surface-container);
 }
 .resizer {
-  background-color: var(--secondary-color);
-}
-.resizer:hover, .resizer:active {
-  background-color: var(--on-secondary-color);
+  background-color: var(--primary-color);
 }
 
 /* right panel content */
@@ -82,5 +84,8 @@ button.active:enabled path {
   .modal-content {
     background-color: var(--surface-container);
     color: var(--on-surface-container);
+  }
+  .modal-content-scroll {
+    background-color: var(--surface-container-high);
   }
 }

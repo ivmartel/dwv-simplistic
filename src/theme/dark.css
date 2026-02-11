@@ -8,6 +8,7 @@
   --on-secondary-color: #4a5bb9;
   /* button border */
   --outline: #333;
+  --outline-variant: #555;
   /* main background */
   --surface: #222;
   --on-surface: #fff;
@@ -30,5 +31,10 @@ button:disabled path {
 
 /* right panel content */
 .data-item-list li:hover {
+  filter: brightness(140%);
+}
+
+/* side panel */
+.resizer:hover, .resizer:active {
   filter: brightness(140%);
 }
