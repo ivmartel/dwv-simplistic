@@ -14,12 +14,12 @@
   --primary-container: #e1e1e8;
   --on-primary-container: #4a5bb9;
   /* border */
-  --outline: #e0e0e0;
+  --outline: #74777f;
 }
 
 /* drag&drop */
 .dropBoxBorder:hover {
-  filter: brightness(80%);
+  filter: brightness(150%);
 }
 
 /* button/input */

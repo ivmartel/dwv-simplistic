@@ -1,4 +1,4 @@
-/* Blue theme */
+/* Blue theme (light) */
 :host {
   /* main background */
   --surface: #faf9fd;
@@ -11,8 +11,8 @@
   --primary-color: #005cbb;
   --on-primary-color: #fefefe;
   /* selected button */
-  --primary-container: #74b9ff;
-  --on-primary-container: #003667;
+  --primary-container: #d7e3ff;
+  --on-primary-container: #00458f;
   /* border */
   --outline: #74777f;
 }

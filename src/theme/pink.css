@@ -1,4 +1,4 @@
-/* Dark theme */
+/* Pink theme (dark) */
 :host {
   /* main background */
   --surface: #1a1c1e;
@@ -8,11 +8,11 @@
   --surface-container-high: #43474e;
   --on-surface-container: #e2e2e6;
   /* button */
-  --primary-color: #3F4748;
-  --on-primary-color: #e1e1e1;
+  --primary-color: #ffabf3;
+  --on-primary-color: #5b005b;
   /* selected button */
-  --primary-container: #586364;
-  --on-primary-container: #dde3e4;
+  --primary-container: #810081;
+  --on-primary-container: #ffd7f5;
   /* border */
   --outline: #333;
 }
@@ -24,21 +24,21 @@
 
 /* button/input */
 button:enabled:hover {
-  filter: brightness(140%);
+  filter: brightness(120%);
 }
 button:disabled {
-  filter: brightness(85%);
+  filter: brightness(80%);
 }
 button:disabled path {
-  filter: brightness(50%);
+  filter: brightness(80%);
 }
 
 /* right panel content */
 .data-item-list li:hover {
-  filter: brightness(140%);
+  filter: brightness(90%);
 }
 
 /* side panel */
 .resizer:hover, .resizer:active {
-  filter: brightness(140%);
+  filter: brightness(120%);
 }

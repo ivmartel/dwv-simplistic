@@ -9,6 +9,7 @@ import themeCommon from './theme/common.css';
 import themeDark from './theme/dark.css';
 import themeLight from './theme/light.css';
 import themeBlue from './theme/blue.css';
+import themePink from './theme/pink.css';
 
 /**
  * DWV component: display DICOM data using DWV (DICOM Web Viewer).
@@ -27,7 +28,8 @@ import themeBlue from './theme/blue.css';
  *   'ZoomAndPan', 'WindowLevel' and 'Draw' (case insensitive).
  * - theme: one or two theme names (space separated), if two are provided,
  *   the first one will be used as light theme and the second one as dark.
- *   Available: 'light','dark' and 'blue', defaults to 'light dark'.
+ *   Available: 'light','dark', 'blue' (light) and 'pink' (dark),
+ *   defaults to 'light dark'.
  *
  * Attributes are case insensitive. Boolean type are considered true if
  * present whatever the value.
@@ -138,7 +140,8 @@ export class DwvComponent extends HTMLElement {
     const availableThemes = {
       light: themeLight,
       dark: themeDark,
-      blue: themeBlue
+      blue: themeBlue,
+      pink: themePink
     };
     let themes = ['light', 'dark'];
     if (this.hasAttribute('theme')) {
