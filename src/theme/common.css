@@ -32,15 +32,11 @@ path {
 .dropBoxBorder {
   border-color: var(--outline);
 }
-.dropBoxBorder:hover {
-  border-color: var(--outline-variant);
-}
 
 /* button/input */
 input[type=color] {
   background-color: var(--primary-color);
   color: var(--on-primary-color);
-  border-color: var(--outline);
 }
 button path {
   fill: var(--on-primary-color);
@@ -48,16 +44,15 @@ button path {
 button {
   background-color: var(--primary-color);
   color: var(--on-primary-color);
-  border-color: var(--outline);
 }
 button.active {
-  background-color: var(--secondary-color);
+  background-color: var(--primary-container);
 }
 button:enabled path {
   fill: var(--on-primary-color);
 }
 button.active:enabled path {
-  fill: var(--on-secondary-color);
+  fill: var(--on-primary-container);
 }
 
 /* side panel */
@@ -76,7 +71,7 @@ button.active:enabled path {
   border-color: transparent;
 }
 .data-item-list .selected {
-  border-color: var(--on-secondary-color);
+  border-color: var(--on-primary-container);
 }
 
 /* modal dialog */

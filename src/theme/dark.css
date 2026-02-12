@@ -1,21 +1,25 @@
 /* Dark theme */
 :host {
-  /* button */
-  --primary-color: #333;
-  --on-primary-color: #fff;
-  /* selected button */
-  --secondary-color: #444;
-  --on-secondary-color: #4a5bb9;
-  /* button border */
-  --outline: #333;
-  --outline-variant: #555;
   /* main background */
   --surface: #222;
   --on-surface: #fff;
   /* panel */
   --surface-container: #333;
-  --surface-container-high: #444;
+  --surface-container-high: #555;
   --on-surface-container: #fff;
+  /* button */
+  --primary-color: #3F4748;
+  --on-primary-color: #fff;
+  /* selected button */
+  --primary-container: #586364;
+  --on-primary-container: #DDE3E4;
+  /* border */
+  --outline: #333;
+}
+
+/* drag&drop */
+.dropBoxBorder:hover {
+  filter: brightness(150%);
 }
 
 /* button/input */

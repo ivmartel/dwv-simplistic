@@ -1,21 +1,25 @@
 /* Light theme */
 :host {
+  /* main background */
+  --surface: #faf9fd;
+  --on-surface: #1a1b1f;
+  /* panel */
+  --surface-container: #efedf0;
+  --surface-container-high: #e9e7eb;
+  --on-surface-container: #1a1b1f;
   /* button */
   --primary-color: #f0f0f0;
   --on-primary-color: #666;
   /* selected button */
-  --secondary-color: #e1e1e8;
-  --on-secondary-color: #4a5bb9;
-  /* button border */
+  --primary-container: #e1e1e8;
+  --on-primary-container: #4a5bb9;
+  /* border */
   --outline: #e0e0e0;
-  --outline-variant: #bbb;
-  /* main background */
-  --surface: #fff;
-  --on-surface: #000;
-  /* panel */
-  --surface-container: #efefef;
-  --surface-container-high: #dfdfdf;
-  --on-surface-container: #000;
+}
+
+/* drag&drop */
+.dropBoxBorder:hover {
+  filter: brightness(80%);
 }
 
 /* button/input */
@@ -31,7 +35,7 @@ button:disabled path {
 
 /* right panel content */
 .data-item-list li:hover {
-  filter: brightness(90%);
+  filter: brightness(95%);
 }
 
 /* side panel */
