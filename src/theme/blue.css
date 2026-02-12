@@ -1,4 +1,4 @@
-/* Light theme */
+/* Blue theme */
 :host {
   /* main background */
   --surface: #faf9fd;
@@ -11,8 +11,8 @@
   --primary-color: #005cbb;
   --on-primary-color: #fefefe;
   /* selected button */
-  --primary-container: #2488FF;
-  --on-primary-container: #FFc0c0;
+  --primary-container: #74b9ff;
+  --on-primary-container: #003667;
   /* border */
   --outline: #74777f;
 }
@@ -24,13 +24,13 @@
 
 /* button/input */
 button:enabled:hover {
-  filter: brightness(140%);
+  filter: brightness(120%);
 }
 button:disabled {
   filter: brightness(80%);
 }
 button:disabled path {
-  filter: brightness(100%);
+  filter: brightness(80%);
 }
 
 /* right panel content */

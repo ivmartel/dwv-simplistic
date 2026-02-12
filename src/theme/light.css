@@ -9,7 +9,7 @@
   --on-surface-container: #1a1b1f;
   /* button */
   --primary-color: #f0f0f0;
-  --on-primary-color: #666;
+  --on-primary-color: #333;
   /* selected button */
   --primary-container: #e1e1e8;
   --on-primary-container: #4a5bb9;
@@ -30,7 +30,7 @@ button:disabled {
   filter: brightness(100%);
 }
 button:disabled path {
-  filter: brightness(150%);
+  filter: brightness(300%);
 }
 
 /* right panel content */
