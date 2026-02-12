@@ -91,8 +91,10 @@ export class Modal {
     const modalContentDiv = this.#rootDoc.getElementById(
       'modal-content-' + this.#uid
     );
-    for (const element of content) {
-      modalContentDiv.appendChild(element);
+    if (modalContentDiv && !modalContentDiv.hasChildNodes()) {
+      for (const element of content) {
+        modalContentDiv.appendChild(element);
+      }
     }
   }
 }
