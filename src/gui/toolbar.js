@@ -633,11 +633,11 @@ export class Toolbar {
   };
 
   /**
-   * Update preset dropdown.
+   * Add preset HTML options to select.
    *
    * @param {string[]} presets The list of presets to use as options.
    */
-  updatePresets(presets) {
+  addPresetOptions(presets) {
     if (!this.#toolNames.includes('WindowLevel')) {
       return;
     }
@@ -652,14 +652,25 @@ export class Toolbar {
       domPresets.removeChild(domPresets.firstChild);
     }
     // add new
-    for (let i = 0; i < presets.length; ++i) {
-      const option = document.createElement('option');
-      option.value = presets[i];
-      const label = presets[i];
-      option.appendChild(document.createTextNode(label));
-      domPresets.appendChild(option);
+    for (const preset of presets) {
+      domPresets.appendChild(
+        this.#getHTMLOption(preset)
+      );
     }
   };
+
+  /**
+   * Get a HTML option element for a input string.
+   *
+   * @param {string} name The input name.
+   * @returns {HTMLOptionElement} The option element.
+   */
+  #getHTMLOption(name) {
+    const option = document.createElement('option');
+    option.value = name;
+    option.appendChild(document.createTextNode(name));
+    return option;
+  }
 
   /**
    * Set the selected preset in the preset dropdown.
@@ -678,10 +689,17 @@ export class Toolbar {
     const domPresets = this.#rootDoc.getElementById(presetsId);
     // find the index
     let index = 0;
-    for (index in domPresets.options) {
-      if (domPresets.options[index].value === name) {
+    for (const option of domPresets.options) {
+      if (option.value === name) {
         break;
       }
+      ++index;
+    }
+    // add if not present
+    if (index === domPresets.options.length) {
+      domPresets.appendChild(
+        this.#getHTMLOption(name)
+      )
     }
     // set selected
     domPresets.selectedIndex = index;

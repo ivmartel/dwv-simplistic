@@ -179,7 +179,7 @@ export function startApp(uid, options, rootDoc) {
       }
       // update GUI
       if (toolNames.includes('WindowLevel')) {
-        dwvAppGui.getToolbar().updatePresets(
+        dwvAppGui.getToolbar().addPresetOptions(
           vc.getWindowLevelPresetsNames()
         );
       }
@@ -242,16 +242,11 @@ export function startApp(uid, options, rootDoc) {
   window.addEventListener('resize', dwvApp.onResize);
 
   // listen to 'wlchange'
-  dwvApp.addEventListener('wlchange', function (/*event*/) {
-    // update presets (in case new was added)
-    const lg = dwvApp.getActiveLayerGroup();
-    const vl = lg.getViewLayersFromActive()[0];
-    const viewController = vl.getViewController();
-    dwvAppGui.getToolbar().updatePresets(
-      viewController.getWindowLevelPresetsNames()
-    );
-    // suppose it is a manual change so switch preset to manual
-    dwvAppGui.getToolbar().setSelectedPreset('manual');
+  dwvApp.addEventListener('wlchange', function (event) {
+    // value: [center, width, name]
+    if (event.value[2] === 'manual') {
+      dwvAppGui.getToolbar().setSelectedPreset('manual');
+    }
   });
 
   // load from options if defined
