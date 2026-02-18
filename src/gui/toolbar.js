@@ -409,8 +409,6 @@ export class Toolbar {
     const vl = lg.getViewLayersFromActive()[0];
     const vc = vl.getViewController();
     vc.setWindowLevelPreset(name);
-    // set selected
-    this.setSelectedPreset(name);
   };
 
   /**
