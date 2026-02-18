@@ -699,7 +699,7 @@ export class Toolbar {
     if (index === domPresets.options.length) {
       domPresets.appendChild(
         this.#getHTMLOption(name)
-      )
+      );
     }
     // set selected
     domPresets.selectedIndex = index;
