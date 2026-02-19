@@ -244,7 +244,7 @@ export function startApp(uid, options, rootDoc) {
   // listen to 'wlchange'
   dwvApp.addEventListener('wlchange', function (event) {
     // value: [center, width, name]
-    const manualStr = 'manual'
+    const manualStr = 'manual';
     if (event.value[2] === manualStr) {
       dwvAppGui.getToolbar().setSelectedPreset(manualStr);
     }
