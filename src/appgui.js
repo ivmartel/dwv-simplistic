@@ -84,7 +84,8 @@ export class Gui {
       this.#rootDoc = rootDoc;
     }
 
-    this.#toolbar = new Toolbar(app, appTools, shapeNames, guiTools, uid, rootDoc);
+    this.#toolbar = new Toolbar(
+      app, appTools, shapeNames, guiTools, uid, rootDoc);
 
     this.#rightPanel = new RightPanel(app, uid, rootDoc);
   };
