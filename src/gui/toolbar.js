@@ -227,13 +227,14 @@ export class Toolbar {
 
   /**
    * @param {App} app The associated app.
-   * @param {object[]} appTools The list of app tools.
+   * @param {string[]} appTools The list of app tools.
+   * @param {string[]} shapeNames The list of annotation shape names.
    * @param {string[]} guiTools The list of gui tools.
    * @param {string} uid The GUI unique id.
    * @param {Document} [rootDoc] Optional root document,
    *   defaults to `window.document`.
    */
-  constructor(app, appTools, guiTools, uid, rootDoc) {
+  constructor(app, appTools, shapeNames, guiTools, uid, rootDoc) {
     this.#app = app;
     this.#uid = uid;
     if (typeof rootDoc !== 'undefined') {
@@ -241,15 +242,14 @@ export class Toolbar {
     }
 
     // build tool names
-    const tools = Object.keys(appTools);
-    this.#toolNames = tools.concat(guiTools);
+    this.#toolNames = appTools.concat(guiTools);
 
-    if (typeof appTools['WindowLevel'] !== 'undefined') {
+    if (appTools.includes('WindowLevel')) {
       this.#toolExtras['WindowLevel'] = 'WindowLevelPresets';
     }
-    if (typeof appTools['Draw'] !== 'undefined') {
+    if (appTools.includes('Draw')) {
       this.#toolExtras['Draw'] = 'DrawShapes';
-      this.#shapes = appTools['Draw'].options;
+      this.#shapes = shapeNames;
       this.#currentShape = this.#shapes[0];
     }
 

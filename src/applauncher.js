@@ -98,7 +98,13 @@ export function startApp(uid, options, rootDoc) {
 
   // app gui
   const dwvAppGui = new Gui(
-    dwvApp, appOptions.tools, guiTools, uid, rootDoc);
+    dwvApp,
+    Object.keys(appTools),
+    appTools.Draw.options,
+    guiTools,
+    uid,
+    rootDoc
+  );
   dwvAppGui.init();
   dwvAppGui.getToolbar().enableTools(false);
 
