@@ -10,18 +10,10 @@ import {overlayConfig} from './gui/overlays.js';
 /**
  * Get the list of app and gui tools.
  *
- * @param {string} optionTools User tools.
+ * @param {string[]} optionTools Options tools.
  * @returns {object} App Tools.
  */
 function getTools(optionTools) {
-  // optional user tools
-  let userTools;
-  if (typeof optionTools !== 'undefined') {
-    userTools = optionTools.split(',').map(
-      (item) => item.trim().toLowerCase()
-    );
-  }
-
   // app tools
   const defaultAppTools = {
     Scroll: {},
@@ -30,9 +22,9 @@ function getTools(optionTools) {
     Draw: {}
   };
   let appTools = {};
-  if (typeof userTools !== 'undefined') {
+  if (typeof optionTools !== 'undefined') {
     for (const toolName of Object.keys(defaultAppTools)) {
-      if (userTools.includes(toolName.toLowerCase())) {
+      if (optionTools.includes(toolName.toLowerCase())) {
         appTools[toolName] = {};
       }
     }
@@ -75,8 +67,16 @@ function getTools(optionTools) {
  */
 export function startApp(uid, options, rootDoc) {
   // tools
-  const optionsGuiTools = undefined; // available later (?)
-  const appTools = getTools(options.tools);
+  const optionGuiTools = undefined; // available later (?)
+
+  // optional user tools
+  let optionTools;
+  if (typeof options.tools !== 'undefined') {
+    optionTools = options.tools.split(',').map(
+      (item) => item.trim().toLowerCase()
+    );
+  }
+  const appTools = getTools(optionTools);
   // app options
   const appOptions = {
     dataViewConfigs: {'*': [{divId: 'layerGroup-' + uid}]},
@@ -95,7 +95,7 @@ export function startApp(uid, options, rootDoc) {
     dwvApp,
     Object.keys(appTools),
     appTools.Draw.options,
-    optionsGuiTools,
+    optionGuiTools,
     uid,
     rootDoc
   );

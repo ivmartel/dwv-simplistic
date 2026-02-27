@@ -73,19 +73,19 @@ export class Gui {
    * @param {App} app The associated app.
    * @param {string[]} appTools The list of app tools.
    * @param {string[]} shapeNames The list of annotation shape names.
-   * @param {string[]} optionsGuiTools The list of gui tools.
+   * @param {string[]} optionGuiTools The list of gui tools.
    * @param {string} uid The GUI unique id.
    * @param {Document} [rootDoc] Optional root document,
    *   defaults to `window.document`.
    */
-  constructor(app, appTools, shapeNames, optionsGuiTools, uid, rootDoc) {
+  constructor(app, appTools, shapeNames, optionGuiTools, uid, rootDoc) {
     this.#uid = uid;
     if (typeof rootDoc !== 'undefined') {
       this.#rootDoc = rootDoc;
     }
 
     this.#toolbar = new Toolbar(
-      app, appTools, shapeNames, optionsGuiTools, uid, rootDoc);
+      app, appTools, shapeNames, optionGuiTools, uid, rootDoc);
 
     this.#rightPanel = new RightPanel(app, uid, rootDoc);
   };

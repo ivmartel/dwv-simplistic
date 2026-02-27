@@ -229,12 +229,12 @@ export class Toolbar {
    * @param {App} app The associated app.
    * @param {string[]} appTools The list of app tools.
    * @param {string[]} shapeNames The list of annotation shape names.
-   * @param {string[]} optionsGuiTools The list of gui tools.
+   * @param {string[]} optionGuiTools The list of gui tools.
    * @param {string} uid The GUI unique id.
    * @param {Document} [rootDoc] Optional root document,
    *   defaults to `window.document`.
    */
-  constructor(app, appTools, shapeNames, optionsGuiTools, uid, rootDoc) {
+  constructor(app, appTools, shapeNames, optionGuiTools, uid, rootDoc) {
     this.#app = app;
     this.#uid = uid;
     if (typeof rootDoc !== 'undefined') {
@@ -249,8 +249,8 @@ export class Toolbar {
       'Tags'
     ];
     let guiTools;
-    if (typeof optionsGuiTools !== 'undefined') {
-      guiTools = optionsGuiTools.filter(item => defaultGuiTools.includes(item));
+    if (typeof optionGuiTools !== 'undefined') {
+      guiTools = optionGuiTools.filter(item => defaultGuiTools.includes(item));
     } else {
       guiTools = defaultGuiTools;
     }
