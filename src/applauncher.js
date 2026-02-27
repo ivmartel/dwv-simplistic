@@ -11,7 +11,7 @@ import {overlayConfig} from './gui/overlays.js';
  * Get the list of app and gui tools.
  *
  * @param {string} optionTools User tools.
- * @returns {object} App and gui Tools.
+ * @returns {object} App Tools.
  */
 function getTools(optionTools) {
   // optional user tools
@@ -58,15 +58,7 @@ function getTools(optionTools) {
     appTools.Draw.options = defaultShapeNames;
   }
 
-  // gui tools
-  const guiTools = [
-    'Reset',
-    'ToggleOrientation',
-    'Fullscreen',
-    'Tags'
-  ];
-
-  return {appTools, guiTools};
+  return appTools;
 }
 
 /**
@@ -76,13 +68,15 @@ function getTools(optionTools) {
  * @param {object} options Start options:
  * - uri (string): an URI with search parameters,
  * - urls (string[]): list of urls to load,
- * - wlpreset (object): default window level preset.
+ * - wlpreset (object): default window level preset,
+ * - tools (string[]): list of tools.
  * @param {Document} [rootDoc] Optional root document,
  *   defaults to `window.document`.
  */
 export function startApp(uid, options, rootDoc) {
   // tools
-  const {appTools, guiTools} = getTools(options.tools);
+  const optionsGuiTools = undefined; // available later (?)
+  const appTools = getTools(options.tools);
   // app options
   const appOptions = {
     dataViewConfigs: {'*': [{divId: 'layerGroup-' + uid}]},
@@ -101,7 +95,7 @@ export function startApp(uid, options, rootDoc) {
     dwvApp,
     Object.keys(appTools),
     appTools.Draw.options,
-    guiTools,
+    optionsGuiTools,
     uid,
     rootDoc
   );

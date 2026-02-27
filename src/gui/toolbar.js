@@ -229,16 +229,30 @@ export class Toolbar {
    * @param {App} app The associated app.
    * @param {string[]} appTools The list of app tools.
    * @param {string[]} shapeNames The list of annotation shape names.
-   * @param {string[]} guiTools The list of gui tools.
+   * @param {string[]} optionsGuiTools The list of gui tools.
    * @param {string} uid The GUI unique id.
    * @param {Document} [rootDoc] Optional root document,
    *   defaults to `window.document`.
    */
-  constructor(app, appTools, shapeNames, guiTools, uid, rootDoc) {
+  constructor(app, appTools, shapeNames, optionsGuiTools, uid, rootDoc) {
     this.#app = app;
     this.#uid = uid;
     if (typeof rootDoc !== 'undefined') {
       this.#rootDoc = rootDoc;
+    }
+
+    // default gui tools
+    const defaultGuiTools = [
+      'Reset',
+      'ToggleOrientation',
+      'Fullscreen',
+      'Tags'
+    ];
+    let guiTools;
+    if (typeof optionsGuiTools !== 'undefined') {
+      guiTools = optionsGuiTools.filter(item => defaultGuiTools.includes(item));
+    } else {
+      guiTools = defaultGuiTools;
     }
 
     // build tool names
