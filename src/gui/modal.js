@@ -28,18 +28,15 @@ export class Modal {
    *
    * @type {Document}
    */
-  #rootDoc = document;
+  #rootDoc;
 
   /**
    * @param {string} uid The GUI UID.
-   * @param {Document} [rootDoc] Optional root document,
-   *   defaults to `window.document`.
+   * @param {Document} rootDoc Root document.
    */
   constructor(uid, rootDoc) {
     this.#uid = uid;
-    if (typeof rootDoc !== 'undefined') {
-      this.#rootDoc = rootDoc;
-    }
+    this.#rootDoc = rootDoc;
   }
 
   /**

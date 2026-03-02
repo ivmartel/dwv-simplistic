@@ -3,7 +3,7 @@ import {RightPanel} from './gui/rightPanel.js';
 
 // doc imports
 /* eslint-disable no-unused-vars */
-import {App} from 'dwv';
+import {DwvService} from './dwv.service.js';
 /* eslint-enable no-unused-vars */
 
 /**
@@ -53,7 +53,7 @@ export class Gui {
    *
    * @type {Document}
    */
-  #rootDoc = document;
+  #rootDoc;
 
   /**
    * The toolbar.
@@ -70,24 +70,19 @@ export class Gui {
   #rightPanel;
 
   /**
-   * @param {App} app The associated app.
-   * @param {string[]} appTools The list of app tools.
-   * @param {string[]} shapeNames The list of annotation shape names.
+   * @param {DwvService} dwvService The dwv service.
    * @param {string[]} optionGuiTools The list of gui tools.
-   * @param {string} uid The GUI unique id.
-   * @param {Document} [rootDoc] Optional root document,
-   *   defaults to `window.document`.
    */
-  constructor(app, appTools, shapeNames, optionGuiTools, uid, rootDoc) {
-    this.#uid = uid;
-    if (typeof rootDoc !== 'undefined') {
-      this.#rootDoc = rootDoc;
-    }
+  constructor(dwvService, optionGuiTools) {
+    this.#uid = dwvService.getOptions().uid;
+    this.#rootDoc = dwvService.getOptions().rootDocument;
 
-    this.#toolbar = new Toolbar(
-      app, appTools, shapeNames, optionGuiTools, uid, rootDoc);
+    this.#toolbar = new Toolbar(dwvService, optionGuiTools);
+    this.#rightPanel = new RightPanel(dwvService);
 
-    this.#rightPanel = new RightPanel(app, uid, rootDoc);
+    dwvService.addEventListener('loadprogress', (event) => {
+      this.setProgress(event.detail.value);
+    });
   };
 
   /**
@@ -117,37 +112,30 @@ export class Gui {
   };
 
   /**
-   * Show the progress bar: adds a progress to the
-   *   layerGroup div.
-   */
-  showProgressBar() {
-    const progress = document.createElement('progress');
-    progress.id = this.#getProgressDivId();
-    progress.max = '100';
-    progress.value = '0';
-
-    const lg = this.#rootDoc.getElementById(
-      getHeaderDivId(this.#uid));
-    lg.appendChild(progress);
-  };
-
-  /**
-   * Set the progress: updates the progress bar,
-   *   hides it if percent is 100.
+   * Set the progress: add if not present, update value,
+   *   hide if percent is 100.
    *
    * @param {number} percent The progess percent.
    */
   setProgress(percent) {
-    const progress = this.#rootDoc.getElementById(
+    let progressDiv = this.#rootDoc.getElementById(
       this.#getProgressDivId());
-    if (progress) {
-      if (percent === 100) {
-        // remove
-        progress.remove();
-      } else {
-        // update value
-        progress.value = percent;
-      }
+    // create if not present
+    if (!progressDiv) {
+      progressDiv = document.createElement('progress');
+      progressDiv.id = this.#getProgressDivId();
+      progressDiv.max = '100';
+      progressDiv.value = '0';
+      // add as first header child
+      const header = this.#rootDoc.getElementById(
+        getHeaderDivId(this.#uid));
+      header.insertBefore(progressDiv, header.firstChild);
+    }
+    // remove or update value
+    if (percent === 100) {
+      progressDiv.remove();
+    } else {
+      progressDiv.value = percent;
     }
   };
 

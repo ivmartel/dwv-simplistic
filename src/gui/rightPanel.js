@@ -4,6 +4,11 @@ import {
   toggleButtonPressed
 } from './icons.js';
 
+// doc imports
+/* eslint-disable no-unused-vars */
+import {DwvService} from '../dwv.service.js';
+/* eslint-enable no-unused-vars */
+
 /**
  * Get the right panel HTML elements.
  *
@@ -58,11 +63,11 @@ export function getRightPanelElements(appId) {
 export class RightPanel {
 
   /**
-   * The associated app.
+   * The dwv service.
    *
-   * @type {App}
+   * @type {DwvService}
    */
-  #app;
+  #dwvService;
 
   /**
    * The GUI UID.
@@ -76,7 +81,7 @@ export class RightPanel {
    *
    * @type {Document}
    */
-  #rootDoc = document;
+  #rootDoc;
 
   /**
    * Annotation UI.
@@ -86,19 +91,14 @@ export class RightPanel {
   #annotationUI;
 
   /**
-   * @param {App} app The associated app.
-   * @param {string} uid The GUI unique id.
-   * @param {Document} [rootDoc] Optional root document,
-   *   defaults to `window.document`.
+   * @param {DwvService} dwvService The dwv service.
    */
-  constructor(app, uid, rootDoc) {
-    this.#app = app;
-    this.#uid = uid;
-    if (typeof rootDoc !== 'undefined') {
-      this.#rootDoc = rootDoc;
-    }
+  constructor(dwvService) {
+    this.#dwvService = dwvService;
+    this.#uid = dwvService.getOptions().uid;
+    this.#rootDoc = dwvService.getOptions().rootDocument;
 
-    this.#annotationUI = new AnnotationUI(app, uid, rootDoc);
+    this.#annotationUI = new AnnotationUI(dwvService);
   }
 
   /**
@@ -160,7 +160,7 @@ export class RightPanel {
         content.style.display = 'block';
         resizer.style.display = 'block';
       }
-      this.#app.onResize();
+      this.#dwvService.onResize();
     });
 
     // activate resizing
@@ -180,7 +180,7 @@ export class RightPanel {
       const newWidth = startWidth - (event.clientX - startX);
       if (newWidth > minPanelWidth && newWidth < maxPanelWidth) {
         rightPanel.style.width = newWidth + 'px';
-        this.#app.onResize();
+        this.#dwvService.onResize();
       }
     };
     // stop resizing

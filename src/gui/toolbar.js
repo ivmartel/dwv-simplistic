@@ -12,7 +12,7 @@ import {
 
 // doc imports
 /* eslint-disable no-unused-vars */
-import {App} from 'dwv';
+import {DwvService} from '../dwv.service.js';
 /* eslint-enable no-unused-vars */
 
 /**
@@ -25,7 +25,7 @@ import {App} from 'dwv';
 function getToolButton(toolName, toolbar) {
   let name = toolName;
   if (name === 'Draw') {
-    name = toolbar.getCurrentShape();
+    name = toolbar.getSelectedShape();
   }
   const button = getButton(name);
   button.id = toolbar.getToolId(toolName);
@@ -156,13 +156,6 @@ function getToolbarItem(toolName, toolbar) {
 export class Toolbar {
 
   /**
-   * View this.#orientation.
-   *
-   * @type {string}
-   */
-  #orientation;
-
-  /**
    * Layer group div height before full screen.
    *
    * @type {string}
@@ -170,18 +163,25 @@ export class Toolbar {
   #lgDivHeight;
 
   /**
-   * The associated app.
+   * The dwv service.
    *
-   * @type {App}
+   * @type {DwvService}
    */
-  #app;
+  #dwvService;
 
   /**
-   * The list of tool names.
+   * The list of all tool names.
    *
    * @type {string[]}
    */
   #toolNames;
+
+  /**
+   * The list of GUI tool names.
+   *
+   * @type {string[]}
+   */
+  #guiToolNames;
 
   /**
    * List of tool extra names.
@@ -202,7 +202,7 @@ export class Toolbar {
    *
    * @type {Document}
    */
-  #rootDoc = document;
+  #rootDoc;
 
   /**
    * List of draw shapes.
@@ -212,11 +212,18 @@ export class Toolbar {
   #shapes;
 
   /**
-   * Current shape name.
+   * Selected annotation shape name.
    *
    * @type {string}
    */
-  #currentShape;
+  #selectedShape;
+
+  /**
+   * Selected window level preset.
+   *
+   * @type {string}
+   */
+  #selectedPreset;
 
   /**
    * Modal dialog.
@@ -226,20 +233,13 @@ export class Toolbar {
   #modal;
 
   /**
-   * @param {App} app The associated app.
-   * @param {string[]} appTools The list of app tools.
-   * @param {string[]} shapeNames The list of annotation shape names.
+   * @param {DwvService} dwvService The dwv service.
    * @param {string[]} optionGuiTools The list of gui tools.
-   * @param {string} uid The GUI unique id.
-   * @param {Document} [rootDoc] Optional root document,
-   *   defaults to `window.document`.
    */
-  constructor(app, appTools, shapeNames, optionGuiTools, uid, rootDoc) {
-    this.#app = app;
-    this.#uid = uid;
-    if (typeof rootDoc !== 'undefined') {
-      this.#rootDoc = rootDoc;
-    }
+  constructor(dwvService, optionGuiTools) {
+    this.#dwvService = dwvService;
+    this.#uid = dwvService.getOptions().uid;
+    this.#rootDoc = dwvService.getOptions().rootDocument;
 
     // default gui tools
     const defaultGuiTools = [
@@ -248,27 +248,63 @@ export class Toolbar {
       'Fullscreen',
       'Tags'
     ];
-    let guiTools;
     if (typeof optionGuiTools !== 'undefined') {
-      guiTools = optionGuiTools.filter(item => defaultGuiTools.includes(item));
+      this.#guiToolNames = optionGuiTools.filter(
+        item => defaultGuiTools.includes(item)
+      );
     } else {
-      guiTools = defaultGuiTools;
+      this.#guiToolNames = defaultGuiTools;
     }
 
     // build tool names
-    this.#toolNames = appTools.concat(guiTools);
+    const appToolNames = dwvService.getToolNames();
+    this.#toolNames = appToolNames.concat(this.#guiToolNames);
 
-    if (appTools.includes('WindowLevel')) {
+    if (appToolNames.includes('WindowLevel')) {
       this.#toolExtras['WindowLevel'] = 'WindowLevelPresets';
     }
-    if (appTools.includes('Draw')) {
+    if (appToolNames.includes('Draw')) {
       this.#toolExtras['Draw'] = 'DrawShapes';
-      this.#shapes = shapeNames;
-      this.#currentShape = this.#shapes[0];
+      this.#shapes = dwvService.getShapeNames();
+      this.#selectedShape = this.#shapes[0];
     }
 
     // modal dialog
-    this.#modal = new Modal(uid, rootDoc);
+    this.#modal = new Modal(this.#uid, this.#rootDoc);
+
+    // watch data ready
+    this.#dwvService.addEventListener('dataready', (event) => {
+      const dataReady = event.detail.value;
+      if (dataReady) {
+        // enable tools
+        this.#enableToolUIs();
+
+        // activate first runnable
+        const runnableTool = this.#dwvService.getFirstRunnableTool();
+        if (runnableTool !== undefined) {
+          this.applyTool(runnableTool);
+        }
+
+        // option preset is default if preset
+        const presetName = this.#dwvService.getOptionWlPresetName();
+        if (typeof presetName !== 'undefined') {
+          this.setSelectedPreset(presetName);
+        }
+      }
+    });
+    // watch preset names
+    this.#dwvService.addEventListener('presetnames', (event) => {
+      this.addPresetOptions(event.detail.value);
+    });
+    // watch is manual preset
+    this.#dwvService.addEventListener('ismanualpreset', (event) => {
+      const isManual = event.detail.value;
+      const preset = this.#selectedPreset;
+      const manualStr = 'manual';
+      if (isManual && preset !== manualStr) {
+        this.setSelectedPreset(manualStr);
+      }
+    });
   };
 
   /**
@@ -295,8 +331,8 @@ export class Toolbar {
    *
    * @returns {string|undefined} The shape name.
    */
-  getCurrentShape() {
-    return this.#currentShape;
+  getSelectedShape() {
+    return this.#selectedShape;
   }
 
   /**
@@ -307,6 +343,8 @@ export class Toolbar {
       getHeaderDivId(this.#uid));
     for (const toolName of this.#toolNames) {
       header.appendChild(getToolbarItem(toolName, this));
+      // disable tool
+      this.#enableToolUI(toolName, false);
     }
     // init modal
     this.#modal.init();
@@ -327,12 +365,89 @@ export class Toolbar {
   };
 
   /**
-   * Enable or not a tool.
+   * Handle tool change.
+   *
+   * @param {string} name The name of the new tool.
+   */
+  onChangeTool(name) {
+    this.applyTool(name);
+  };
+
+  /**
+   * Handle shape change.
+   *
+   * @param {string} name The name of the new shape.
+   */
+  onChangeShape(name) {
+    // save
+    this.#selectedShape = name;
+    // apply
+    this.applyShape(name);
+
+    // update draw button to show shape
+    const toolId = this.getToolId('Draw');
+    const button = this.#rootDoc.querySelector('#' + toolId);
+    button.innerHTML = '';
+    button.appendChild(getIconElement(name));
+    button.title = name;
+  }
+
+  /**
+   * Handle preset change.
+   *
+   * @param {string} name The name of the new preset.
+   */
+  onChangePreset(name) {
+    // save
+    this.setSelectedPreset(name);
+    // apply
+    this.applyPreset(name);
+  };
+
+  /**
+   * Apply a tool.
+   *
+   * @param {string} tool The tool name.
+   * @param {object} [features] Optional tool features.
+   */
+  applyTool(tool, features) {
+    // apply
+    if (typeof features === 'undefined' && tool === 'Draw') {
+      features = {shapeName: this.#selectedShape};
+    }
+    this.#dwvService.applyTool(tool, features);
+
+    // deactivate all
+    this.#markAllToolUIsAsActive(false);
+    // activate input tool
+    this.#markToolUIAsActive(tool, true);
+  }
+
+  /**
+   * Apply a draw shape.
+   *
+   * @param {string} shape The shape name.
+   */
+  applyShape(shape) {
+    this.applyTool('Draw', {shapeName: shape});
+  }
+
+  /**
+   * Apply a window level preset.
+   *
+   * @param {string} preset The preset name.
+   */
+  applyPreset(preset) {
+    this.#dwvService.applyPreset(preset);
+  }
+
+  /**
+   * Enable or not a tool UI.
    *
    * @param {string} name The tool name.
    * @param {boolean} flag True to enable.
    */
-  enableTool(name, flag) {
+  #enableToolUI(name, flag) {
     if (!this.#toolNames.includes(name)) {
       return;
     }
@@ -351,166 +466,62 @@ export class Toolbar {
   };
 
   /**
-   * Enable or not all tools.
-   *
-   * @param {boolean} flag True to enable.
+   * Enable or not tool UIs.
    */
-  enableTools(flag) {
+  #enableToolUIs() {
     for (const toolName of this.#toolNames) {
-      this.enableTool(toolName, flag);
+      let canRun;
+      if (this.#guiToolNames.includes(toolName)) {
+        canRun = true;
+      } else {
+        canRun = this.#dwvService.canRunTool(toolName);
+      }
+      this.#enableToolUI(toolName, canRun);
     }
   };
 
   /**
-   * Activate or not a tool.
+   * Mark a tool UI as active or not.
    *
    * @param {string} name The tool name.
    * @param {boolean} flag True to activate.
    */
-  activateTool(name, flag) {
+  #markToolUIAsActive(name, flag) {
     if (!this.#toolNames.includes(name)) {
       return;
     }
     const toolId = this.getToolId(name);
+    const toolElement = this.#rootDoc.getElementById(toolId);
     if (flag) {
-      this.#rootDoc.getElementById(toolId).classList.add('active');
+      toolElement.classList.add('active');
     } else {
-      this.#rootDoc.getElementById(toolId).classList.remove('active');
-    }
-
-    if (flag) {
-      // set app tool
-      this.#app.setTool(name);
-      // handle active layer
-      const lg = this.#app.getActiveLayerGroup();
-      if (name === 'Draw') {
-        this.#app.setToolFeatures({shapeName: this.#currentShape});
-        // reuse created draw layer
-        if (lg.getNumberOfLayers() > 1) {
-          lg?.setActiveLayer(1);
-        }
-      } else {
-        // if draw was created, active is now a draw layer...
-        // reset to view layer
-        lg?.setActiveLayer(0);
-      }
+      toolElement.classList.remove('active');
     }
   };
 
   /**
-   * Activate or not all tool.
+   * Mark all tool UIs as active or not.
    *
    * @param {boolean} flag True to activate.
    */
-  activateTools(flag) {
+  #markAllToolUIsAsActive(flag) {
     for (const toolName of this.#toolNames) {
-      this.activateTool(toolName, flag);
+      this.#markToolUIAsActive(toolName, flag);
     }
-  };
-
-  /**
-   * Handle preset change.
-   *
-   * @param {string} name The name of the new preset.
-   */
-  onChangePreset(name) {
-    if (!this.#toolNames.includes('WindowLevel')) {
-      return;
-    }
-
-    // update viewer
-    const lg = this.#app.getActiveLayerGroup();
-    const vl = lg.getViewLayersFromActive()[0];
-    const vc = vl.getViewController();
-    vc.setWindowLevelPreset(name);
-  };
-
-  /**
-   * Handle shape change.
-   *
-   * @param {string} name The name of the new shape.
-   */
-  onChangeShape(name) {
-    if (!this.#toolNames.includes('Draw')) {
-      return;
-    }
-
-    this.#currentShape = name;
-    // activate tool and set shape
-    this.onChangeTool('Draw');
-    // update draw button
-    const toolId = this.getToolId('Draw');
-    const button = this.#rootDoc.querySelector('#' + toolId);
-    button.innerHTML = '';
-    button.appendChild(getIconElement(name));
-    button.title = name;
-  }
-
-  /**
-   * Handle tool change.
-   *
-   * @param {string} name The name of the new tool.
-   */
-  onChangeTool(name) {
-    // deactivate all
-    this.activateTools(false);
-    // activate input tool
-    this.activateTool(name, true);
   };
 
   /**
    * Handle display reset.
    */
   onDisplayReset() {
-    this.#app.resetZoomPan();
-    // reset window level
-    const lg = this.#app.getActiveLayerGroup();
-    const vl = lg.getViewLayersFromActive()[0];
-    vl.getViewController().initialise();
-
-    // reset preset dropdown
-    if (this.#toolNames.includes('WindowLevel')) {
-      const extraName = this.getToolExtra('WindowLevel');
-      if (typeof extraName === 'undefined') {
-        return;
-      }
-      const presetsId = this.getToolId(extraName);
-      const domPresets = this.#rootDoc.getElementById(presetsId);
-      domPresets.selectedIndex = 0;
-    }
+    this.#dwvService.reset();
   };
 
   /**
    * Toggle the viewer this.#orientation.
    */
   toggleOrientation() {
-    if (typeof this.#orientation !== 'undefined') {
-      if (this.#orientation === 'axial') {
-        this.#orientation = 'coronal';
-      } else if (this.#orientation === 'coronal') {
-        this.#orientation = 'sagittal';
-      } else if (this.#orientation === 'sagittal') {
-        this.#orientation = 'axial';
-      }
-    } else {
-      // default is most probably axial
-      this.#orientation = 'coronal';
-    }
-    // update data view config
-    const config = {
-      '*': [
-        {
-          divId: getLayerGroupDivId(this.#uid),
-          orientation: this.#orientation
-        }
-      ]
-    };
-    this.#app.setDataViewConfigs(config);
-    // render data
-    const dataIds = this.#app.getDataIds();
-    for (let i = 0; i < dataIds.length; ++i) {
-      this.#app.render(dataIds[i]);
-    }
+    this.#dwvService.toggleOrientation();
   };
 
   /**
@@ -599,7 +610,7 @@ export class Toolbar {
     modalTitle.appendChild(document.createTextNode('DICOM Tags'));
 
     // TODO allow for different dataid
-    const metaData = this.#app.getMetaData('0');
+    const metaData = this.#dwvService.getMetaData();
 
     // InstanceNumber
     const instanceElement = metaData['00200013'];
@@ -693,6 +704,9 @@ export class Toolbar {
     if (!this.#toolNames.includes('WindowLevel')) {
       return;
     }
+
+    this.#selectedPreset = name;
+
     const extraName = this.getToolExtra('WindowLevel');
     if (typeof extraName === 'undefined') {
       return;

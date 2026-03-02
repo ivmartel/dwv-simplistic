@@ -1,6 +1,6 @@
 // doc imports
 /* eslint-disable no-unused-vars */
-import {App} from 'dwv';
+import {DwvService} from '../dwv.service.js';
 /* eslint-enable no-unused-vars */
 
 /**
@@ -23,11 +23,11 @@ export function getDropboxElement(appId) {
 export class DropboxLoader {
 
   /**
-   * The associated app.
+   * The dwv service.
    *
-   * @type {App}
+   * @type {DwvService}
    */
-  #app;
+  #dwvService;
 
   /**
    * The GUI UID.
@@ -41,7 +41,7 @@ export class DropboxLoader {
    *
    * @type {Document}
    */
-  #rootDoc = document;
+  #rootDoc;
 
   // drop box class name
   #dropboxClassName = 'dropBox';
@@ -49,17 +49,12 @@ export class DropboxLoader {
   #hoverClassName = 'hover';
 
   /**
-   * @param {App} app The associated application.
-   * @param {string} uid The GUI UID.
-   * @param {Document} [rootDoc] Optional root document,
-   *   defaults to `window.document`.
+   * @param {DwvService} dwvService The dwv service.
    */
-  constructor(app, uid, rootDoc) {
-    this.#app = app;
-    this.#uid = uid;
-    if (typeof rootDoc !== 'undefined') {
-      this.#rootDoc = rootDoc;
-    }
+  constructor(dwvService) {
+    this.#dwvService = dwvService;
+    this.#uid = dwvService.getOptions().uid;
+    this.#rootDoc = dwvService.getOptions().rootDocument;
   }
 
   /**
@@ -125,7 +120,7 @@ export class DropboxLoader {
   #onDrop = (event) => {
     this.#defaultHandleDragEvent(event);
     // load files
-    this.#app.loadFiles(event.dataTransfer.files);
+    this.#dwvService.loadFiles(event.dataTransfer.files);
   };
 
   /**
@@ -135,7 +130,7 @@ export class DropboxLoader {
    */
   #onInputFile = (event) => {
     if (event.target && event.target.files) {
-      this.#app.loadFiles(event.target.files);
+      this.#dwvService.loadFiles(event.target.files);
     }
   };
 
