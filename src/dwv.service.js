@@ -145,6 +145,7 @@ export class DwvService extends EventTarget {
    * Setup the list of tools.
    *
    * @param {string[]} optionTools Option tools.
+   * @returns {ToolConfig[]} The final list of tools.
    */
   #setupTools(optionTools) {
     this.#toolNames = [];
