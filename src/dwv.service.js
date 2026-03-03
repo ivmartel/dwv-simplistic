@@ -154,6 +154,7 @@ export class DwvService extends EventTarget {
         const found = this.#defaultToolNames.find(
           item => item.toLowerCase() === toolName.toLowerCase()
         );
+        // use name from default list
         if (typeof found !== 'undefined') {
           this.#toolNames.push(found);
         } else {
