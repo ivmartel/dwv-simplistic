@@ -59,13 +59,6 @@ export class DwvService extends EventTarget {
   #toolNames;
 
   /**
-   * List of tools.
-   *
-   * @type {ToolConfig[]}
-   */
-  #tools;
-
-  /**
    * Can scroll flag.
    *
    * @type {boolean}
@@ -131,14 +124,14 @@ export class DwvService extends EventTarget {
     }
     this.#options = options;
 
-    this.#setupTools(options.tools);
+    const tools = this.#setupTools(options.tools);
 
     // initialise app
     this.#layerGroupName = 'layerGroup-' + options.uid;
     const viewConfig0 = new ViewConfig(this.#layerGroupName);
     const viewConfigs = {'*': [viewConfig0]};
     const appOptions = new AppOptions(viewConfigs);
-    appOptions.tools = this.#tools;
+    appOptions.tools = tools;
     appOptions.overlayConfig = overlayConfig;
     appOptions.rootDocument = options.rootDocument;
     this.#dwvApp.init(appOptions);
@@ -174,15 +167,16 @@ export class DwvService extends EventTarget {
     }
 
     // convert to tools
-    this.#tools = {};
+    const tools = {};
     for (const toolName of this.#toolNames) {
       if (toolName === 'Draw') {
-        this.#tools[toolName] = new ToolConfig(this.#defaultShapeNames);
+        tools[toolName] = new ToolConfig(this.#defaultShapeNames);
         this.#shapeNames = this.#defaultShapeNames;
       } else {
-        this.#tools[toolName] = new ToolConfig();
+        tools[toolName] = new ToolConfig();
       }
     }
+    return tools;
   }
 
   /**
