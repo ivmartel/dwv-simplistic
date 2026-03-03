@@ -16,24 +16,16 @@ import {DwvService} from './dwv.service.js';
  *   defaults to `window.document`.
  */
 export function startApp(uid, options, rootDoc) {
-  // tools
-  const optionGuiTools = undefined; // available later (?)
-
-  // optional user tools
-  let optionTools;
-  if (typeof options.tools !== 'undefined') {
-    optionTools = options.tools.split(',').map(
-      (item) => item.trim().toLowerCase()
-    );
-  }
-
   // create service
   const dwvService = new DwvService({
     uid,
-    tools: optionTools,
+    tools: options.tools,
     wlpreset: options.wlpreset,
     rootDocument: rootDoc
   });
+
+  // gui tools
+  const optionGuiTools = undefined; // available later (?)
 
   // app gui
   const dwvAppGui = new Gui(
