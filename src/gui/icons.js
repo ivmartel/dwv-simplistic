@@ -75,8 +75,6 @@ export function getIconElement(name) {
   svg.setAttributeNS(null, 'height', 20);
   svg.setAttributeNS(null, 'width', 20);
   svg.setAttributeNS(null, 'viewBox', '0 -960 960 960');
-  // avoid pointer events to let parent be target
-  svg.style.pointerEvents = 'none';
   svg.appendChild(path);
   return svg;
 }

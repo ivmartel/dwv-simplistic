@@ -133,6 +133,11 @@ progress {
   text-decoration-line: underline;
 }
 
+button svg {
+  /* avoid pointer events to let parent be target */
+  pointer-events: none;
+}
+
 /* content */
 .content {
   /* occupy space left by header and footer */
@@ -164,6 +169,7 @@ progress {
   padding: 10px;
 }
 
+/* select-wraper */
 .select-wrapper {
   height: 100%;
   position: relative;
