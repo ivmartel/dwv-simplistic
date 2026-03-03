@@ -18,7 +18,7 @@ import {DicomData} from 'dwv';
  */
 export class DwvService extends EventTarget {
   /**
-   * List of annotation shape names.
+   * List of default annotation shape names.
    *
    * @type {string[]}
    */
@@ -32,10 +32,15 @@ export class DwvService extends EventTarget {
     'Roi'
   ];
 
+  /**
+   * List of annotation shape names.
+   *
+   * @type {string[]}
+   */
   #shapeNames = [];
 
   /**
-   * List of tool names.
+   * List of default tool names.
    *
    * @type {string[]}
    */
@@ -46,14 +51,19 @@ export class DwvService extends EventTarget {
     'Draw'
   ];
 
-  #tools;
-
   /**
    * List of tool names.
    *
    * @type {string[]}
    */
   #toolNames;
+
+  /**
+   * List of tools.
+   *
+   * @type {ToolConfig[]}
+   */
+  #tools;
 
   /**
    * Can scroll flag.
