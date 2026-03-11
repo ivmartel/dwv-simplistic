@@ -13,7 +13,7 @@ import {overlayConfig} from './gui/overlays.js';
 import {DicomData} from 'dwv';
 /* eslint-enable no-unused-vars */
 
-const _DEBUG = true;
+const _LOAD_TIMERS = false;
 
 /**
  * DWV service.
@@ -375,7 +375,7 @@ export class DwvService extends EventTarget {
     });
 
     // timers
-    if (_DEBUG) {
+    if (_LOAD_TIMERS) {
       // loading
       this.#dwvApp.addEventListener('loadstart', function (event) {
         console.time('load-data-' + event.dataid);
