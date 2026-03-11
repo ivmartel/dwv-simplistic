@@ -13,6 +13,8 @@ import {overlayConfig} from './gui/overlays.js';
 import {DicomData} from 'dwv';
 /* eslint-enable no-unused-vars */
 
+const _DEBUG = true;
+
 /**
  * DWV service.
  */
@@ -275,16 +277,6 @@ export class DwvService extends EventTarget {
    * Setup the DWV app load listeners.
    */
   #setupLoadListeners() {
-
-    // abort shortcut listener
-    const abortOnCrtlX = function (event) {
-      if (event.ctrlKey && event.keyCode === 88) {
-        // crtl-x
-        console.log('Abort load received from user (crtl-x).');
-        this.#dwvApp.abortLoad();
-      }
-    };
-
     // handle load events
     let nReceivedLoadError = 0;
     let nReceivedLoadAbort = 0;
@@ -296,8 +288,6 @@ export class DwvService extends EventTarget {
       nReceivedLoadError = 0;
       nReceivedLoadAbort = 0;
       isFirstRender = true;
-      // allow to cancel via crtl-x
-      window.addEventListener('keydown', abortOnCrtlX);
     });
     this.#dwvApp.addEventListener('loadprogress', (event) => {
       this.#dispatch('loadprogress', {value: event.loaded});
@@ -344,6 +334,35 @@ export class DwvService extends EventTarget {
       // set data loaded flag
       this.#dispatch('dataloaded', {value: true});
     });
+
+    // abort shortcut
+    const abortOnCrtlX = (event) => {
+      if (event.ctrlKey && event.keyCode === 88) {
+        // crtl-x
+        console.log('Abort load received from user (crtl-x).');
+        this.#dwvApp.abortLoad();
+      }
+    };
+    this.#dwvApp.addEventListener('loadstart', function (/*event*/) {
+      window.addEventListener('keydown', abortOnCrtlX);
+    });
+    this.#dwvApp.addEventListener('loadend', function (/*event*/) {
+      window.removeEventListener('keydown', abortOnCrtlX);
+    });
+
+    // warn/error
+    this.#dwvApp.addEventListener('loaditem', function (event) {
+      if (typeof event.warn !== 'undefined') {
+        console.warn('load-warn', event.warn);
+      }
+    });
+    this.#dwvApp.addEventListener('loaderror', (event) => {
+      console.error(event.error);
+      ++nReceivedLoadError;
+    });
+    this.#dwvApp.addEventListener('loadabort', (/*event*/) => {
+      ++nReceivedLoadAbort;
+    });
     this.#dwvApp.addEventListener('loadend', (/*event*/) => {
       if (nReceivedLoadError) {
         this.#dispatch('loadprogress', {value: 0});
@@ -353,16 +372,36 @@ export class DwvService extends EventTarget {
         this.#dispatch('loadprogress', {value: 0});
         alert('Load was aborted.');
       }
-      // stop listening for crtl-x
-      window.removeEventListener('keydown', abortOnCrtlX);
     });
-    this.#dwvApp.addEventListener('loaderror', (event) => {
-      console.error(event.error);
-      ++nReceivedLoadError;
-    });
-    this.#dwvApp.addEventListener('loadabort', (/*event*/) => {
-      ++nReceivedLoadAbort;
-    });
+
+    // timers
+    if (_DEBUG) {
+      // loading
+      this.#dwvApp.addEventListener('loadstart', function (event) {
+        console.time('load-data-' + event.dataid);
+      });
+      this.#dwvApp.addEventListener('loadend', function (event) {
+        console.timeEnd('load-data-' + event.dataid);
+      });
+      // labeling
+      this.#dwvApp.addEventListener('labelingstart', function (event) {
+        console.time('label-data-' + event.dataid);
+      });
+      this.#dwvApp.addEventListener('labelschanged', function (event) {
+        console.timeEnd('label-data-' + event.dataid);
+      });
+      // resampling
+      this.#dwvApp.addEventListener('imageresamplingstart',
+        function (event) {
+          console.time('resample-data-' + event.dataid);
+        }
+      );
+      this.#dwvApp.addEventListener('imageresamplingcomplete',
+        function (event) {
+          console.timeEnd('resample-data-' + event.dataid);
+        }
+      );
+    }
   }
 
   /**
