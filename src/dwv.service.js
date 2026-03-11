@@ -423,7 +423,7 @@ export class DwvService extends EventTarget {
     });
   }
 
-  /** ------------------------ Load related [start] ------------------------ */
+  // Load related [start] ------------------------------------------------
 
   /**
    * Get data.
@@ -462,9 +462,9 @@ export class DwvService extends EventTarget {
     this.#dwvApp.loadFiles(files);
   }
 
-  /** ------------------------ Load related [end] ------------------------ */
+  // Load related [end] ------------------------------------------------
 
-  /** ------------------------ Tool related [start] ------------------------ */
+  // Tool related [start] ------------------------------------------------
 
   /**
    * Check if a tool can be run.
@@ -563,7 +563,7 @@ export class DwvService extends EventTarget {
     }
   }
 
-    /**
+  /**
    * Reset the layout.
    */
   reset() {
@@ -577,9 +577,9 @@ export class DwvService extends EventTarget {
     this.#dwvApp.onResize();
   }
 
-  /** ------------------------ Tool related [end] ------------------------ */
+  // Tool related [end] ------------------------------------------------
 
-  /** ------------------------ Annotation related [start] ------------------------ */
+  // Annotation related [start] ------------------------------------------------
 
   /**
    * Go to an annotation: set the current position to
@@ -659,6 +659,6 @@ export class DwvService extends EventTarget {
     this.#dwvApp.addToUndoStack();
   };
 
-  /** ------------------------ Annotation related [end] ------------------------ */
+  // Annotation related [end] ------------------------------------------------
 
 }
