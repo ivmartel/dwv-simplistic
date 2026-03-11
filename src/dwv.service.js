@@ -135,6 +135,7 @@ export class DwvService extends EventTarget {
     appOptions.overlayConfig = overlayConfig;
     appOptions.rootDocument = options.rootDocument;
     this.#dwvApp.init(appOptions);
+
     // setup listeners
     this.#setupLoadListeners();
     this.#setupListeners();
@@ -179,6 +180,18 @@ export class DwvService extends EventTarget {
       }
     }
     return tools;
+  }
+
+  /**
+   * Dispatch a CustomEvent.
+   *
+   * @param {string} type The event type.
+   * @param {object} value The event value.
+   */
+  #dispatch(type, value) {
+    this.dispatchEvent(
+      new CustomEvent(type, {detail: value})
+    );
   }
 
   /**
@@ -246,18 +259,6 @@ export class DwvService extends EventTarget {
       res = this.#options.wlpreset.name;
     }
     return res;
-  }
-
-  /**
-   * Dispatch a CustomEvent.
-   *
-   * @param {string} type The event type.
-   * @param {object} value Teh event value.
-   */
-  #dispatch(type, value) {
-    this.dispatchEvent(
-      new CustomEvent(type, {detail: value})
-    );
   }
 
   /**
@@ -420,8 +421,9 @@ export class DwvService extends EventTarget {
         data: event.data
       });
     });
-
   }
+
+  /** ------------------------ Load related [start] ------------------------ */
 
   /**
    * Get data.
@@ -459,6 +461,10 @@ export class DwvService extends EventTarget {
   loadFiles(files) {
     this.#dwvApp.loadFiles(files);
   }
+
+  /** ------------------------ Load related [end] ------------------------ */
+
+  /** ------------------------ Tool related [start] ------------------------ */
 
   /**
    * Check if a tool can be run.
@@ -557,6 +563,31 @@ export class DwvService extends EventTarget {
     }
   }
 
+    /**
+   * Reset the layout.
+   */
+  reset() {
+    this.#dwvApp.resetZoomPan();
+  }
+
+  /**
+   * Handle a resize.
+   */
+  onResize() {
+    this.#dwvApp.onResize();
+  }
+
+  /** ------------------------ Tool related [end] ------------------------ */
+
+  /** ------------------------ Annotation related [start] ------------------------ */
+
+  /**
+   * Go to an annotation: set the current position to
+   * the annotations' centroid.
+   *
+   * @param {string} dataId The data id.
+   * @param {string} annotationId The annotation id.
+   */
   goToAnnotation(dataId, annotationId) {
     const data = this.#dwvApp.getData(dataId);
     const annotationGroup = data.annotationGroup;
@@ -572,38 +603,53 @@ export class DwvService extends EventTarget {
     }
   }
 
-  setAnnotationVisibility(dataId, annotationId, flag) {
+  /**
+   * Set an annotation visibility.
+   *
+   * @param {string} dataId The data id.
+   * @param {string} annotationId The annotation id.
+   * @param {boolean} visible True to set visible.
+   */
+  setAnnotationVisibility(dataId, annotationId, visible) {
     const drawLayers = this.#dwvApp.getDrawLayersByDataId(dataId);
     for (const layer of drawLayers) {
-      layer.setAnnotationVisibility(annotationId, flag);
+      layer.setAnnotationVisibility(annotationId, visible);
     }
   }
 
-  setAnnotationLabelsVisibility(dataId, flag) {
+  /**
+   * Set the visibility of annotations' labels.
+   *
+   * @param {string} dataId The data id.
+   * @param {boolean} visible True to set visible.
+   */
+  setAnnotationLabelsVisibility(dataId, visible) {
     const drawLayer = this.#dwvApp.getDrawLayersByDataId(dataId)[0];
     if (typeof drawLayer === 'undefined') {
       console.warn('Cannot find draw layer with id ' + dataId);
     }
-    drawLayer.setLabelsVisibility(flag);
+    drawLayer.setLabelsVisibility(visible);
   }
 
+  /**
+   * Add an annotation group.
+   */
   addAnnotationGroup() {
     //const divId = 'layerGroup0';
     const divId = this.#layerGroupName;
     const layerGroup = this.#dwvApp.getLayerGroupByDivId(divId);
     // add annotation group
     const viewLayer = layerGroup.getActiveViewLayer();
-    if (typeof viewLayer === 'undefined') {
+    if (typeof viewLayer !== 'undefined') {
+      const refDataId = viewLayer.getDataId();
+      const data = this.#dwvApp.createAnnotationData(refDataId);
+      // render (will create draw layer)
+      this.#dwvApp.addAndRenderAnnotationData(data, divId, refDataId);
+    } else {
       console.warn(
-        'No active view layer, please select one in the data table'
+        'No active view layer to associate the annotation group to'
       );
-      return;
     }
-    const refDataId = viewLayer.getDataId();
-    const data = this.#dwvApp.createAnnotationData(refDataId);
-    // render (will create draw layer)
-    this.#dwvApp.addAndRenderAnnotationData(data, divId, refDataId);
-
   }
 
   /**
@@ -613,14 +659,6 @@ export class DwvService extends EventTarget {
     this.#dwvApp.addToUndoStack();
   };
 
-  /**
-   * Reset the layout.
-   */
-  reset() {
-    this.#dwvApp.resetZoomPan();
-  }
+  /** ------------------------ Annotation related [end] ------------------------ */
 
-  onResize() {
-    this.#dwvApp.onResize();
-  }
 }
