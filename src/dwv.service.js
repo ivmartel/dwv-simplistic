@@ -8,10 +8,9 @@ import {
 } from 'dwv';
 import {overlayConfig} from './gui/overlays.js';
 
-// doc imports
-/* eslint-disable no-unused-vars */
-import {DicomData} from 'dwv';
-/* eslint-enable no-unused-vars */
+/**
+ * @import {DicomData} from 'dwv';
+ */
 
 const _LOAD_TIMERS = false;
 

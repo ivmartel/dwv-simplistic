@@ -11,14 +11,10 @@ import {
   isButtonPressed
 } from './icons.js';
 
-// doc imports
-/* eslint-disable no-unused-vars */
-import {
-  Annotation,
-  AnnotationGroup,
-} from 'dwv';
-import {DwvService} from '../dwv.service.js';
-/* eslint-enable no-unused-vars */
+/**
+ * @import {Annotation, AnnotationGroup} from 'dwv';
+ * @import {DwvService} from './dwv.service.js';
+ */
 
 /**
  * Get the annotation group divId.

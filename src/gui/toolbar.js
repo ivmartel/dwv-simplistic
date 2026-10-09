@@ -10,10 +10,9 @@ import {
   getIconElement
 } from './icons.js';
 
-// doc imports
-/* eslint-disable no-unused-vars */
-import {DwvService} from '../dwv.service.js';
-/* eslint-enable no-unused-vars */
+/**
+ * @import {DwvService} from './dwv.service.js';
+ */
 
 /**
  * Get a tool html button.

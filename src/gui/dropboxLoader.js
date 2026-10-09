@@ -1,7 +1,6 @@
-// doc imports
-/* eslint-disable no-unused-vars */
-import {DwvService} from '../dwv.service.js';
-/* eslint-enable no-unused-vars */
+/**
+ * @import {DwvService} from './dwv.service.js';
+ */
 
 /**
  * Get the drop box HTML element.

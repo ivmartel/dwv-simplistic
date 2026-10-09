@@ -1,10 +1,9 @@
 import {Toolbar} from './gui/toolbar.js';
 import {RightPanel} from './gui/rightPanel.js';
 
-// doc imports
-/* eslint-disable no-unused-vars */
-import {DwvService} from './dwv.service.js';
-/* eslint-enable no-unused-vars */
+/**
+ * @import {DwvService} from './dwv.service.js';
+ */
 
 /**
  * Get the dwv div id.
