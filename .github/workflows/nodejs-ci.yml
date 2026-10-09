@@ -25,6 +25,8 @@ jobs:
       run: yarn install --immutable
     - name: Run lint
       run: yarn run lint
+    - name: Run tests
+      run: yarn run test-ci
     - name: Build
       run: |
         rm -Rf ./build

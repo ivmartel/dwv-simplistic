@@ -3,6 +3,7 @@
 /public
 /resources
 /src
+/tests
 
 # root files (will keep package, license and readme)
 /*.*
