@@ -14,6 +14,8 @@ import {DwvService} from './dwv.service.js';
  * - tools (string[]): list of tools.
  * @param {Document} [rootDoc] Optional root document,
  *   defaults to `window.document`.
+ * @returns {DwvService} The created service, call its `dispose` method
+ *   to release its resources.
  */
 export function startApp(uid, options, rootDoc) {
   // create service
@@ -66,4 +68,6 @@ export function startApp(uid, options, rootDoc) {
   } else {
     dropBoxLoader.showDropbox(true);
   }
+
+  return dwvService;
 };

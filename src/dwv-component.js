@@ -12,6 +12,10 @@ import themeBlue from './theme/blue.css';
 import themePink from './theme/pink.css';
 
 /**
+ * @import {DwvService} from './dwv.service.js';
+ */
+
+/**
  * DWV component: display DICOM data using DWV (DICOM Web Viewer).
  * Possible attributes are:
  * - uri: an input string URI to load the data from,
@@ -32,7 +36,11 @@ import themePink from './theme/pink.css';
  *   defaults to 'light dark'.
  *
  * Attributes are case insensitive. Boolean type are considered true if
- * present whatever the value.
+ * present whatever the value. Attributes are read when the element is
+ * first connected to the document, later changes are ignored.
+ *
+ * The viewer is released when the element is removed from the document
+ * (but not when it is moved within it).
  *
  * A dropbox is shown if no uri nor urls are provided. It allows to
  * manually load dicom data from the local system.
@@ -89,15 +97,28 @@ import themePink from './theme/pink.css';
  * ></dwv-simple>
  */
 export class DwvComponent extends HTMLElement {
+  /**
+   * The dwv service, defined while the viewer is running.
+   *
+   * @type {DwvService|undefined}
+   */
+  #dwvService;
+
   constructor() {
     // Always call super first in constructor
     super();
+    this.attachShadow({mode: 'open'});
   }
 
   /**
-   * Invoked when the custom element is first connected to the document's DOM.
+   * Invoked each time the custom element is connected to the document's DOM.
    */
   connectedCallback() {
+    // already running: the element was moved
+    if (typeof this.#dwvService !== 'undefined') {
+      return;
+    }
+
     // use element id as appId if present or
     // generate random
     let appId;
@@ -175,9 +196,7 @@ export class DwvComponent extends HTMLElement {
     styleElement.innerHTML += themeCommon.toString();
 
     // shadow root
-    const shadow = this.attachShadow({mode: 'open'});
-    shadow.appendChild(styleElement);
-    shadow.appendChild(container);
+    this.shadowRoot.replaceChildren(styleElement, container);
 
     // create options from attributes
     const options = {};
@@ -207,7 +226,23 @@ export class DwvComponent extends HTMLElement {
     }
 
     // start app
-    startApp(appId, options, shadow);
+    this.#dwvService = startApp(appId, options, this.shadowRoot);
+  }
+
+  /**
+   * Invoked each time the custom element is disconnected from the
+   * document's DOM.
+   */
+  disconnectedCallback() {
+    // a move disconnects and reconnects the element synchronously:
+    // only release the viewer if it is still disconnected afterwards
+    queueMicrotask(() => {
+      if (!this.isConnected && typeof this.#dwvService !== 'undefined') {
+        this.#dwvService.dispose();
+        this.#dwvService = undefined;
+        this.shadowRoot.replaceChildren();
+      }
+    });
   }
 
   /**
