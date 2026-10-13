@@ -16,10 +16,21 @@ import themePink from './theme/pink.css';
  */
 
 /**
+ * Split a white space separated attribute value into a list of
+ * non empty strings.
+ *
+ * @param {string} value The attribute value.
+ * @returns {string[]} The list of values.
+ */
+export function splitAttribute(value) {
+  return value.split(/\s+/).filter((item) => item !== '');
+}
+
+/**
  * DWV component: display DICOM data using DWV (DICOM Web Viewer).
  * Possible attributes are:
  * - uri: an input string URI to load the data from,
- * - urls: space separated list of urls to load the data from,
+ * - urls: white space separated list of urls to load the data from,
  * - loadfromwindowlocation: (boolean) use the window location
  *   as input uri if it contains search arguments,
  * - showlegend: (boolean) show or not the legend (defaults to false),
@@ -28,10 +39,11 @@ import themePink from './theme/pink.css';
  *   present in the DICOM file (only applied if all three values are present),
  * - height: the css height of the component,
  * - width: the css width of the component,
- * - tools: space separeted list of viewer tools, available are: 'Scroll',
- *   'ZoomAndPan', 'WindowLevel' and 'Draw' (case insensitive).
- * - theme: one or two theme names (space separated), if two are provided,
- *   the first one will be used as light theme and the second one as dark.
+ * - tools: white space separated list of viewer tools, available are:
+ *   'Scroll', 'ZoomAndPan', 'WindowLevel' and 'Draw' (case insensitive).
+ * - theme: one or two theme names (white space separated), if two are
+ *   provided, the first one will be used as light theme and the second
+ *   one as dark.
  *   Available: 'light','dark', 'blue' (light) and 'pink' (dark),
  *   defaults to 'light dark'.
  *
@@ -73,14 +85,14 @@ import themePink from './theme/pink.css';
  * @example
  * <dwv-simple
  *   urls="
- *     https://raw.githubusercontent.com/ivmartel/dwv/master/tests/data/bbmri-53323851.dcm,
+ *     https://raw.githubusercontent.com/ivmartel/dwv/master/tests/data/bbmri-53323851.dcm
  *     https://raw.githubusercontent.com/ivmartel/dwv/master/tests/data/bbmri-53323707.dcm
  *   "
  * ></dwv-simple>
  * @example
  * <dwv-simple
  *   urls="
- *     https://raw.githubusercontent.com/ivmartel/dwv/master/tests/data/bbmri-53323851.dcm,
+ *     https://raw.githubusercontent.com/ivmartel/dwv/master/tests/data/bbmri-53323851.dcm
  *     https://raw.githubusercontent.com/ivmartel/dwv/master/tests/data/bbmri-53323707.dcm
  *   "
  *   wlpresetname="preset0"
@@ -90,10 +102,10 @@ import themePink from './theme/pink.css';
  * @example
  * <dwv-simple
  *   urls="
- *     https://raw.githubusercontent.com/ivmartel/dwv/master/tests/data/bbmri-53323851.dcm,
+ *     https://raw.githubusercontent.com/ivmartel/dwv/master/tests/data/bbmri-53323851.dcm
  *     https://raw.githubusercontent.com/ivmartel/dwv/master/tests/data/bbmri-53323707.dcm
  *   "
- *   tools="scroll, windowlevel"
+ *   tools="scroll windowlevel"
  * ></dwv-simple>
  */
 export class DwvComponent extends HTMLElement {
@@ -157,10 +169,6 @@ export class DwvComponent extends HTMLElement {
     styleElement.innerHTML += '.dwv {' + extraCss + '}\n\n';
     styleElement.innerHTML += styles.toString();
 
-    const splitAtt = function (att) {
-      return att.trim() ? att.trim().split(/\s+/) : [];
-    };
-
     // theme
     const availableThemes = {
       light: themeLight,
@@ -170,10 +178,8 @@ export class DwvComponent extends HTMLElement {
     };
     let themes = ['light', 'dark'];
     if (this.hasAttribute('theme')) {
-      // space separated, keep first 2
-      let inputThemes = splitAtt(this.getAttribute('theme')).slice(0, 2);
-      // trim strings
-      inputThemes = inputThemes.map((item) => item.trim());
+      // keep first 2
+      let inputThemes = splitAttribute(this.getAttribute('theme')).slice(0, 2);
       // keep valid
       inputThemes = inputThemes.filter((item) => {
         return typeof availableThemes[item] !== 'undefined';
@@ -204,7 +210,7 @@ export class DwvComponent extends HTMLElement {
     if (this.hasAttribute('uri')) {
       options.uri = this.getAttribute('uri');
     } else if (this.hasAttribute('urls')) {
-      options.urls = splitAtt(this.getAttribute('urls'));
+      options.urls = splitAttribute(this.getAttribute('urls'));
     } else if (this.hasAttribute('loadfromwindowlocation')) {
       if (window.location.search !== '') {
         options.uri = window.location.href;
@@ -222,7 +228,7 @@ export class DwvComponent extends HTMLElement {
     }
     // tools
     if (this.hasAttribute('tools')) {
-      options.tools = splitAtt(this.getAttribute('tools'));
+      options.tools = splitAttribute(this.getAttribute('tools'));
     }
 
     // start app

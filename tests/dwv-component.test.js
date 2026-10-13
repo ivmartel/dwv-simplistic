@@ -1,5 +1,5 @@
 import {describe, test, expect} from 'vitest';
-import '../src/dwv-component.js';
+import {splitAttribute} from '../src/dwv-component.js';
 
 /**
  * Create a test component: only uses the scroll tool since
@@ -23,6 +23,21 @@ function createComponent(id) {
 function flushMicrotasks() {
   return new Promise((resolve) => setTimeout(resolve, 0));
 }
+
+describe('splitAttribute', () => {
+  test('splits on white spaces', () => {
+    expect(splitAttribute(' a\n  b\tc ')).toEqual(['a', 'b', 'c']);
+  });
+
+  test('keeps commas', () => {
+    expect(splitAttribute('a,b c')).toEqual(['a,b', 'c']);
+  });
+
+  test('returns an empty list for blank values', () => {
+    expect(splitAttribute('')).toEqual([]);
+    expect(splitAttribute('  ')).toEqual([]);
+  });
+});
 
 describe('DwvComponent', () => {
   test('is defined', () => {
