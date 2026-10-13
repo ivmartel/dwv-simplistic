@@ -115,6 +115,19 @@ export class DwvService extends EventTarget {
   #options;
 
   /**
+   * Abort the current loads on ctrl-x.
+   *
+   * @param {KeyboardEvent} event The key event.
+   */
+  #onAbortKeydown = (event) => {
+    if (event.ctrlKey && event.keyCode === 88) {
+      // crtl-x
+      console.log('Abort load received from user (crtl-x).');
+      this.#dwvApp.abortAllLoads();
+    }
+  };
+
+  /**
    * @param {object} options Service options.
    */
   constructor(options) {
@@ -335,18 +348,11 @@ export class DwvService extends EventTarget {
     });
 
     // abort shortcut
-    const abortOnCrtlX = (event) => {
-      if (event.ctrlKey && event.keyCode === 88) {
-        // crtl-x
-        console.log('Abort load received from user (crtl-x).');
-        this.#dwvApp.abortLoad();
-      }
-    };
-    this.#dwvApp.addEventListener('loadstart', function (/*event*/) {
-      window.addEventListener('keydown', abortOnCrtlX);
+    this.#dwvApp.addEventListener('loadstart', (/*event*/) => {
+      window.addEventListener('keydown', this.#onAbortKeydown);
     });
-    this.#dwvApp.addEventListener('loadend', function (/*event*/) {
-      window.removeEventListener('keydown', abortOnCrtlX);
+    this.#dwvApp.addEventListener('loadend', (/*event*/) => {
+      window.removeEventListener('keydown', this.#onAbortKeydown);
     });
 
     // warn/error
@@ -606,6 +612,18 @@ export class DwvService extends EventTarget {
    */
   reset() {
     this.#dwvApp.resetZoomPan();
+  }
+
+  /**
+   * Release the resources held by the service: abort the current loads,
+   * remove the window listeners and reset the dwv app.
+   * The service should not be used afterwards.
+   */
+  dispose() {
+    window.removeEventListener('resize', this.#dwvApp.onResize);
+    window.removeEventListener('keydown', this.#onAbortKeydown);
+    this.#dwvApp.abortAllLoads();
+    this.#dwvApp.reset();
   }
 
   /**
