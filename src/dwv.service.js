@@ -4,16 +4,12 @@ import {
   ViewConfig,
   ToolConfig,
   WindowLevel,
-  AnnotationGroupFactory,
-  DicomWriter,
-  DrawController,
-  getDwvVersion,
-  getUID
+  getDwvVersion
 } from 'dwv';
 import {overlayConfig} from './gui/overlays.js';
 
 /**
- * @import {Annotation, AnnotationGroup} from 'dwv';
+ * @import {DicomData} from 'dwv';
  */
 
 const _LOAD_TIMERS = false;
@@ -469,15 +465,19 @@ export class DwvService extends EventTarget {
         data: event.data
       });
     });
-    this.#dwvApp.addEventListener('annotationgroupeditablechange', (event) => {
-      this.#dispatch('annotationgroupeditablechange', {
-        dataid: event.dataid,
-        value: event.data
-      });
-    });
   }
 
   // Load related [start] ------------------------------------------------
+
+  /**
+   * Get data.
+   *
+   * @param {string} dataId The data id.
+   * @returns {DicomData} The data.
+   */
+  getData(dataId) {
+    return this.#dwvApp.getData(dataId);
+  }
 
   /**
    * Load a list of urls.
@@ -709,144 +709,10 @@ export class DwvService extends EventTarget {
   }
 
   /**
-   * Get the annotation group of a data.
-   *
-   * @param {string} dataId The data id.
-   * @returns {AnnotationGroup|undefined} The annotation group.
+   * Add to undo stack.
    */
-  #getAnnotationGroup(dataId) {
-    const data = this.#dwvApp.getData(dataId);
-    let res;
-    if (typeof data !== 'undefined') {
-      res = data.annotationGroup;
-    }
-    if (typeof res === 'undefined') {
-      console.warn('No annotation group for data with id ' + dataId);
-    }
-    return res;
-  }
-
-  /**
-   * Get the list of annotations of a data.
-   *
-   * @param {string} dataId The data id.
-   * @returns {Annotation[]|undefined} The annotations, undefined if
-   *   the data has no annotation group.
-   */
-  getAnnotations(dataId) {
-    const data = this.#dwvApp.getData(dataId);
-    let res;
-    if (typeof data !== 'undefined' &&
-      typeof data.annotationGroup !== 'undefined') {
-      res = data.annotationGroup.getList();
-    }
-    return res;
-  }
-
-  /**
-   * Set an annotation colour, undoable.
-   *
-   * @param {string} dataId The data id.
-   * @param {string} annotationId The annotation id.
-   * @param {string} colour The new colour.
-   */
-  setAnnotationColour(dataId, annotationId, colour) {
-    const annotationGroup = this.#getAnnotationGroup(dataId);
-    if (typeof annotationGroup === 'undefined') {
-      return;
-    }
-    const annotation = annotationGroup.find(annotationId);
-    if (typeof annotation === 'undefined' || colour === annotation.colour) {
-      return;
-    }
-    const drawController = new DrawController(annotationGroup);
-    drawController.updateAnnotationWithCommand(
-      annotationId,
-      {colour: annotation.colour},
-      {colour},
-      this.#addToUndoStack
-    );
-  }
-
-  /**
-   * Remove an annotation, undoable.
-   *
-   * @param {string} dataId The data id.
-   * @param {string} annotationId The annotation id.
-   */
-  removeAnnotation(dataId, annotationId) {
-    const annotationGroup = this.#getAnnotationGroup(dataId);
-    if (typeof annotationGroup === 'undefined') {
-      return;
-    }
-    const drawController = new DrawController(annotationGroup);
-    drawController.removeAnnotationWithCommand(
-      annotationId,
-      this.#addToUndoStack
-    );
-  }
-
-  /**
-   * Check if an annotation group is editable.
-   *
-   * @param {string} dataId The data id.
-   * @returns {boolean} True if editable.
-   */
-  isAnnotationGroupEditable(dataId) {
-    const annotationGroup = this.#getAnnotationGroup(dataId);
-    return typeof annotationGroup !== 'undefined' &&
-      annotationGroup.isEditable();
-  }
-
-  /**
-   * Set an annotation group editability, fires an
-   *   `annotationgroupeditablechange` event.
-   *
-   * @param {string} dataId The data id.
-   * @param {boolean} editable True to make editable.
-   */
-  setAnnotationGroupEditable(dataId, editable) {
-    const annotationGroup = this.#getAnnotationGroup(dataId);
-    if (typeof annotationGroup !== 'undefined') {
-      annotationGroup.setEditable(editable);
-    }
-  }
-
-  /**
-   * Get an annotation group as a DICOM SR buffer.
-   *
-   * @param {string} dataId The data id.
-   * @returns {ArrayBuffer} The DICOM buffer.
-   * @throws {Error} If the data has no annotation group or
-   *   if the writing fails.
-   */
-  getAnnotationGroupAsDicom(dataId) {
-    const annotationGroup = this.#getAnnotationGroup(dataId);
-    if (typeof annotationGroup === 'undefined') {
-      throw new Error('No annotation group for data with id ' + dataId);
-    }
-    const factory = new AnnotationGroupFactory();
-    const sopUID = getUID('SOPInstanceUID');
-    const extraTags = {
-      MediaStorageSOPInstanceUID: sopUID,
-      SOPInstanceUID: sopUID,
-      InstanceNumber: 123,
-      SeriesInstanceUID: getUID('SeriesInstanceUID'),
-      SeriesNumber: 123,
-      SeriesDescription: 'Annnotation made with dwv',
-    };
-    const dicomElements = factory.toDicom(annotationGroup, extraTags);
-    const writer = new DicomWriter();
-    return writer.getBuffer(dicomElements);
-  }
-
-  /**
-   * Add a command to the undo stack.
-   *
-   * @param {object} cmd The command.
-   */
-  #addToUndoStack = (cmd) => {
-    this.#dwvApp.addToUndoStack(cmd);
+  addToUndoStack = () => {
+    this.#dwvApp.addToUndoStack();
   };
 
   // Annotation related [end] ------------------------------------------------

@@ -1,4 +1,10 @@
 import {
+  AnnotationGroupFactory,
+  DicomWriter,
+  DrawController,
+  getUID
+} from 'dwv';
+import {
   getIconElement,
   getButton,
   setButtonPressed,
@@ -6,7 +12,7 @@ import {
 } from './icons.js';
 
 /**
- * @import {Annotation} from 'dwv';
+ * @import {Annotation, AnnotationGroup} from 'dwv';
  * @import {DwvService} from './dwv.service.js';
  */
 
@@ -98,8 +104,6 @@ export class AnnotationUI {
       this.#onAnnotationUpdate);
     this.#dwvService.addEventListener('annotationremove',
       this.#onAnnotationRemove);
-    this.#dwvService.addEventListener('annotationgroupeditablechange',
-      this.#onAnnotationGroupEditableChange);
   };
 
   /**
@@ -163,8 +167,20 @@ export class AnnotationUI {
       // get annotation
       const indices =
         splitAnnotationDivId(target.id.substring(inputColourPrefix.length));
-      this.#dwvService.setAnnotationColour(
-        indices.dataId, indices.annotationId, newColour);
+      const dataId = indices.dataId;
+      const annotationId = indices.annotationId;
+      const annotationGroup = this.#dwvService.getData(dataId).annotationGroup;
+      const annotation = annotationGroup.find(annotationId);
+      // update
+      if (newColour !== annotation.colour) {
+        const drawController = new DrawController(annotationGroup);
+        drawController.updateAnnotationWithCommand(
+          annotationId,
+          {colour: annotation.colour},
+          {colour: newColour},
+          this.#dwvService.addToUndoStack
+        );
+      }
     };
 
     const viewButton = getButton('View');
@@ -198,16 +214,27 @@ export class AnnotationUI {
       // get segment and mask
       const indices =
         splitAnnotationDivId(target.id.substring(dbIdPrefix.length));
+      const dataId = indices.dataId;
+      const annotationId = indices.annotationId;
+      // delete if possible
+      const drawController = new DrawController(
+        this.#dwvService.getData(dataId).annotationGroup);
       // TODO reposition div at same position after delete undo?
-      this.#dwvService.removeAnnotation(
-        indices.dataId, indices.annotationId);
+      drawController.removeAnnotationWithCommand(
+        annotationId,
+        this.#dwvService.addToUndoStack
+      );
     };
 
-    // disable buttons if group is not editable
-    // (updated by the 'annotationgroupeditablechange' listener)
-    const disabled = !this.#dwvService.isAnnotationGroupEditable(dataId);
-    inputColour.disabled = disabled;
-    deleteButton.disabled = disabled;
+    // disable/enable buttons if group is editable or not
+    const annotationGroup = this.#dwvService.getData(dataId).annotationGroup;
+    annotationGroup.addEventListener(
+      'annotationgroupeditablechange', function (event) {
+        const disabled = !event.data;
+        inputColour.disabled = disabled;
+        deleteButton.disabled = disabled;
+      }
+    );
 
     // content
     const contentDiv = document.createElement('div');
@@ -258,11 +285,11 @@ export class AnnotationUI {
   /**
    * Get an annotation group html.
    *
+   * @param {AnnotationGroup} annotationGroup The annotation group.
    * @param {string} dataId The annotation group dataId.
-   * @param {Annotation[]} annotations The annotations of the group.
    * @returns {HTMLIement} The annotation list element.
    */
-  #getAnnotationGroupHtml(dataId, annotations) {
+  #getAnnotationGroupHtml(annotationGroup, dataId) {
     // name
     const nameDiv = document.createElement('span');
     nameDiv.id = getAnnotationGroupDivId(dataId) + '-name';
@@ -273,27 +300,42 @@ export class AnnotationUI {
     const lockButton = getButton('Lock');
     setButtonPressed(lockButton, false);
     lockButton.id = 'lockb-' + getAnnotationGroupDivId(dataId);
-    lockButton.onclick = (event) => {
+    lockButton.onclick = function (event) {
       const target = event.target;
-      // toggle lock
+      // toggle hidden
       const isPressed = isButtonPressed(target);
       setButtonPressed(target, !isPressed);
-      this.#dwvService.setAnnotationGroupEditable(dataId, isPressed);
+      if (typeof annotationGroup !== 'undefined') {
+        annotationGroup.setEditable(isPressed);
+      }
     };
 
     // save button
     const saveButton = getButton('Save');
     saveButton.title = 'Save annnotation group';
-    saveButton.onclick = () => {
-      let dicomBuffer;
+    saveButton.onclick = function () {
+      const factory = new AnnotationGroupFactory();
+      const sopUID = getUID('SOPInstanceUID');
+      const extraTags = {
+        MediaStorageSOPInstanceUID: sopUID,
+        SOPInstanceUID: sopUID,
+        InstanceNumber: 123,
+        SeriesInstanceUID: getUID('SeriesInstanceUID'),
+        SeriesNumber: 123,
+        SeriesDescription: 'Annnotation made with dwv',
+      };
+      const dicomElements = factory.toDicom(annotationGroup, extraTags);
+      // write
+      const writer = new DicomWriter();
+      let dicomBuffer = null;
       try {
-        dicomBuffer = this.#dwvService.getAnnotationGroupAsDicom(dataId);
+        dicomBuffer = writer.getBuffer(dicomElements);
       } catch (error) {
         console.error(error);
         alert(error.message);
-        return;
       }
       const blob = new Blob([dicomBuffer], {type: 'application/dicom'});
+      saveButton.href = window.URL.createObjectURL(blob);
 
       // temporary link to download
       const element = document.createElement('a');
@@ -329,7 +371,7 @@ export class AnnotationUI {
     const listDiv = document.createElement('ul');
     listDiv.id = getAnnotationGroupDivId(dataId) + '-list';
     listDiv.className = 'data-item-list';
-    for (const annotation of annotations) {
+    for (const annotation of annotationGroup.getList()) {
       listDiv.appendChild(this.#getAnnotationHtml(annotation, dataId));
     }
 
@@ -363,14 +405,15 @@ export class AnnotationUI {
    */
   #onDataAdd = (event) => {
     const dataId = event.detail.dataid;
-    const annotations = this.#dwvService.getAnnotations(dataId);
-    if (typeof annotations !== 'undefined') {
+    const data = this.#dwvService.getData(dataId);
+    const ag = data.annotationGroup;
+    if (typeof ag !== 'undefined') {
       // setup html if needed
       if (!this.#rootDoc.getElementById('annotationgroup-list')) {
         this.#setupHtml();
       }
       // annotation group as html
-      const item = this.#getAnnotationGroupHtml(dataId, annotations);
+      const item = this.#getAnnotationGroupHtml(ag, dataId);
       // add annotation group item
       const addItem = this.#rootDoc.getElementById('addannotationgroupitem');
       // remove and add after to make it last item
@@ -390,12 +433,9 @@ export class AnnotationUI {
    */
   #onDrawLayerAdd = (event) => {
     const dataId = event.detail.dataid;
-    const annotations = this.#dwvService.getAnnotations(dataId);
-    if (typeof annotations === 'undefined') {
-      return;
-    }
+    const annotationGroup = this.#dwvService.getData(dataId).annotationGroup;
     // strike through non viewable annotations
-    for (const annotation of annotations) {
+    for (const annotation of annotationGroup.getList()) {
       let textDecoration = '';
       if (!annotation.canView()) {
         textDecoration = 'line-through';
@@ -440,26 +480,6 @@ export class AnnotationUI {
           'cb-' + annotationDivId);
         inputColour.value = annotation.colour;
       }
-    }
-  };
-
-  /**
-   * Handle 'annotationgroupeditablechange' event: enable or disable
-   * the annotations edit inputs.
-   *
-   * @param {object} event The event.
-   */
-  #onAnnotationGroupEditableChange = (event) => {
-    const dataId = event.detail.dataid;
-    const disabled = !event.detail.value;
-    const listDiv = this.#rootDoc.getElementById(
-      getAnnotationGroupDivId(dataId) + '-list');
-    if (!listDiv) {
-      return;
-    }
-    const inputs = listDiv.querySelectorAll('[id^="cb-"], [id^="db-"]');
-    for (const input of inputs) {
-      input.disabled = disabled;
     }
   };
 
