@@ -709,10 +709,12 @@ export class DwvService extends EventTarget {
   }
 
   /**
-   * Add to undo stack.
+   * Add a command to the undo stack.
+   *
+   * @param {object} cmd The command.
    */
-  addToUndoStack = () => {
-    this.#dwvApp.addToUndoStack();
+  addToUndoStack = (cmd) => {
+    this.#dwvApp.addToUndoStack(cmd);
   };
 
   // Annotation related [end] ------------------------------------------------
