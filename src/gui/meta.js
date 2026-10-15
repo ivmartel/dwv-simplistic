@@ -1,4 +1,4 @@
-import {getTagFromKey} from 'dwv';
+import {getTagFromKey, getDicomTagInfo} from 'dwv';
 
 /**
  * Get the meta data as an array.
@@ -56,8 +56,11 @@ function getTagReducer(tagData) {
 function getDicomTagReducer(tagData, instanceNumber, prefix) {
   return function (accumulator, currentValue) {
     const tag = getTagFromKey(currentValue);
-    let key = tag.getNameFromDictionary();
-    if (typeof key === 'undefined') {
+    const tagInfo = getDicomTagInfo(tag);
+    let key;
+    if (typeof tagInfo !== 'undefined') {
+      key = tagInfo.getName();
+    } else {
       // add 'x' to help sorting
       key = 'x' + tag.getKey();
     }
