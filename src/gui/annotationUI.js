@@ -232,7 +232,7 @@ export class AnnotationUI {
     const annotationGroup = this.#dwvService.getData(dataId).annotationGroup;
     annotationGroup.addEventListener(
       'annotationgroupeditablechange', function (event) {
-        const disabled = !event.data;
+        const disabled = !event.detail.data;
         inputColour.disabled = disabled;
         deleteButton.disabled = disabled;
       }
@@ -403,7 +403,7 @@ export class AnnotationUI {
   /**
    * Handle 'dataadd' event.
    *
-   * @param {object} event The event.
+   * @param {CustomEvent} event The event.
    */
   #onDataAdd = (event) => {
     const dataId = event.detail.dataid;
@@ -431,7 +431,7 @@ export class AnnotationUI {
   /**
    * Handle 'drawlayeradd' event.
    *
-   * @param {object} event The event.
+   * @param {CustomEvent} event The event.
    */
   #onDrawLayerAdd = (event) => {
     const dataId = event.detail.dataid;
@@ -453,7 +453,7 @@ export class AnnotationUI {
   /**
    * Handle 'annotationadd' event.
    *
-   * @param {object} event The event.
+   * @param {CustomEvent} event The event.
    */
   #onAnnotationAdd = (event) => {
     const annotation = event.detail.data;
@@ -467,7 +467,7 @@ export class AnnotationUI {
   /**
    * Handle 'annotationupdate' event.
    *
-   * @param {object} event The event.
+   * @param {CustomEvent} event The event.
    */
   #onAnnotationUpdate = (event) => {
     const annotation = event.detail.data;
@@ -488,7 +488,7 @@ export class AnnotationUI {
   /**
    * Handle 'annotationremove' event.
    *
-   * @param {object} event The event.
+   * @param {CustomEvent} event The event.
    */
   #onAnnotationRemove = (event) => {
     const annotation = event.detail.data;
