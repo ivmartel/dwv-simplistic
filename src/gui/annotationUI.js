@@ -167,16 +167,17 @@ export class AnnotationUI {
       // get annotation
       const indices =
         splitAnnotationDivId(target.id.substring(inputColourPrefix.length));
-      const dataId = indices.dataId;
+      const chgDataId = indices.dataId;
       const annotationId = indices.annotationId;
-      const annotationGroup = this.#dwvService.getData(dataId).annotationGroup;
-      const annotation = annotationGroup.find(annotationId);
+      const annotationGroup =
+        this.#dwvService.getData(chgDataId).annotationGroup;
+      const chgAnnotation = annotationGroup.find(annotationId);
       // update
-      if (newColour !== annotation.colour) {
+      if (newColour !== chgAnnotation.colour) {
         const drawController = new DrawController(annotationGroup);
         drawController.updateAnnotationWithCommand(
           annotationId,
-          {colour: annotation.colour},
+          {colour: chgAnnotation.colour},
           {colour: newColour},
           this.#dwvService.addToUndoStack
         );
@@ -195,12 +196,13 @@ export class AnnotationUI {
       // get annotatio
       const indices =
         splitAnnotationDivId(target.id.substring(vbIdPrefix.length));
-      const dataId = indices.dataId;
+      const clkDataId = indices.dataId;
       const annotationId = indices.annotationId;
       // toggle view
       const isPressed = isButtonPressed(target);
       setButtonPressed(target, !isPressed);
-      this.#dwvService.setAnnotationVisibility(dataId, annotationId, isPressed);
+      this.#dwvService.setAnnotationVisibility(
+        clkDataId, annotationId, isPressed);
     };
 
     const deleteButton = getButton('Delete');
@@ -214,11 +216,11 @@ export class AnnotationUI {
       // get segment and mask
       const indices =
         splitAnnotationDivId(target.id.substring(dbIdPrefix.length));
-      const dataId = indices.dataId;
+      const clkDataId = indices.dataId;
       const annotationId = indices.annotationId;
       // delete if possible
       const drawController = new DrawController(
-        this.#dwvService.getData(dataId).annotationGroup);
+        this.#dwvService.getData(clkDataId).annotationGroup);
       // TODO reposition div at same position after delete undo?
       drawController.removeAnnotationWithCommand(
         annotationId,
@@ -268,15 +270,15 @@ export class AnnotationUI {
       // remove selected class from other rows
       const mainlist = this.#rootDoc.getElementById('annotationgroup-list');
       const items = mainlist.querySelectorAll('.data-item-list-item');
-      items.forEach(item => item.classList.remove('selected'));
+      items.forEach(item2 => item2.classList.remove('selected'));
       // mark this row as selected
       target.classList.add('selected');
 
       // goto annotation
       const indices = splitAnnotationDivId(target.id);
-      const dataId = indices.dataId;
+      const clkDataId = indices.dataId;
       const annotationId = indices.annotationId;
-      this.#dwvService.goToAnnotation(dataId, annotationId);
+      this.#dwvService.goToAnnotation(clkDataId, annotationId);
     });
 
     return item;
