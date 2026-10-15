@@ -4,7 +4,9 @@ import {
   ViewConfig,
   ToolConfig,
   WindowLevel,
-  getDwvVersion
+  getDwvVersion,
+  getURLsFromKeyValueUri,
+  handleURLsFromWeasisXMLManifest
 } from 'dwv';
 import {overlayConfig} from './gui/overlays.js';
 
@@ -307,7 +309,8 @@ export class DwvService extends EventTarget {
     this.#dwvApp.addEventListener('renderend', (event) => {
       if (isFirstRender) {
         isFirstRender = false;
-        const vl = this.#dwvApp.getViewLayersByDataId(event.dataid)[0];
+        const vl = this.#dwvApp.getStageController()
+          .getViewLayersByDataId(event.dataid)[0];
         const vc = vl.getViewController();
         // option preset
         if (typeof this.#options.wlpreset !== 'undefined') {
@@ -336,7 +339,8 @@ export class DwvService extends EventTarget {
     });
     this.#dwvApp.addEventListener('load', (event) => {
       // set dicom tags
-      this.#metaData = structuredClone(this.#dwvApp.getMetaData(event.dataid));
+      const data = this.#dwvApp.getDataController().get(event.dataid);
+      this.#metaData = structuredClone(data.meta);
       const pixelDataKey = '7FE00010';
       if (typeof this.#metaData[pixelDataKey] !== 'undefined') {
         delete this.#metaData[pixelDataKey];
@@ -476,7 +480,7 @@ export class DwvService extends EventTarget {
    * @returns {DicomData} The data.
    */
   getData(dataId) {
-    return this.#dwvApp.getData(dataId);
+    return this.#dwvApp.getDataController().get(dataId);
   }
 
   /**
@@ -489,12 +493,24 @@ export class DwvService extends EventTarget {
   }
 
   /**
-   * Load a from uri.
+   * Load from a uri: either key-value pairs as in
+   * `?input=[url-encoded uri with key-value pairs]`
+   * or a Weasis XML manifest as in `?input=[manifest url]&type=manifest`.
    *
    * @param {string} uri The uri.
    */
   loadFromUri(uri) {
-    this.#dwvApp.loadFromUri(uri);
+    const url = new URL(uri, window.location.href);
+    if (url.searchParams.get('type') === 'manifest') {
+      handleURLsFromWeasisXMLManifest(uri, (urls) => {
+        this.loadURLs(urls);
+      });
+    } else {
+      const urls = getURLsFromKeyValueUri(uri);
+      if (typeof urls !== 'undefined') {
+        this.loadURLs(urls);
+      }
+    }
   }
 
   /**
@@ -552,7 +568,7 @@ export class DwvService extends EventTarget {
       this.#dwvApp.setToolFeatures(features);
     }
 
-    const lg = this.#dwvApp.getActiveLayerGroup();
+    const lg = this.#dwvApp.getStageController().getActiveLayerGroup();
     if (toolName === 'Draw') {
       // reuse created draw layer
       if (lg !== undefined && lg.getNumberOfLayers() > 1) {
@@ -571,7 +587,7 @@ export class DwvService extends EventTarget {
    * @param {string} presetName The preset name.
    */
   applyPreset(presetName) {
-    const lg = this.#dwvApp.getActiveLayerGroup();
+    const lg = this.#dwvApp.getStageController().getActiveLayerGroup();
     if (lg !== undefined) {
       const vl = lg.getViewLayersFromActive()[0];
       const vc = vl.getViewController();
@@ -599,11 +615,12 @@ export class DwvService extends EventTarget {
     const viewConfig0 = new ViewConfig(this.#layerGroupName);
     viewConfig0.orientation = this.#orientation;
     const viewConfigs = {'*': [viewConfig0]};
-    this.#dwvApp.setDataViewConfigs(viewConfigs);
+    const stageController = this.#dwvApp.getStageController();
+    stageController.setDataViewConfigs(viewConfigs);
     // render data
-    const dataIds = this.#dwvApp.getDataIds();
+    const dataIds = this.#dwvApp.getDataController().getDataIds();
     for (const dataId of dataIds) {
-      this.#dwvApp.render(dataId);
+      stageController.render(dataId);
     }
   }
 
@@ -611,7 +628,7 @@ export class DwvService extends EventTarget {
    * Reset the layout.
    */
   reset() {
-    this.#dwvApp.resetZoomPan();
+    this.#dwvApp.getStageController().resetZoomPan();
   }
 
   /**
@@ -645,12 +662,13 @@ export class DwvService extends EventTarget {
    * @param {string} annotationId The annotation id.
    */
   goToAnnotation(dataId, annotationId) {
-    const data = this.#dwvApp.getData(dataId);
+    const data = this.#dwvApp.getDataController().get(dataId);
     const annotationGroup = data.annotationGroup;
     const annotation = annotationGroup.find(annotationId);
     const annotCentroid = annotation.getCentroid();
     if (typeof annotCentroid !== 'undefined') {
-      const drawLayers = this.#dwvApp.getDrawLayersByDataId(dataId);
+      const drawLayers = this.#dwvApp.getStageController()
+        .getDrawLayersByDataId(dataId);
       for (const layer of drawLayers) {
         layer.setCurrentPosition(annotCentroid);
       }
@@ -667,7 +685,8 @@ export class DwvService extends EventTarget {
    * @param {boolean} visible True to set visible.
    */
   setAnnotationVisibility(dataId, annotationId, visible) {
-    const drawLayers = this.#dwvApp.getDrawLayersByDataId(dataId);
+    const drawLayers = this.#dwvApp.getStageController()
+      .getDrawLayersByDataId(dataId);
     for (const layer of drawLayers) {
       layer.setAnnotationVisibility(annotationId, visible);
     }
@@ -680,7 +699,8 @@ export class DwvService extends EventTarget {
    * @param {boolean} visible True to set visible.
    */
   setAnnotationLabelsVisibility(dataId, visible) {
-    const drawLayer = this.#dwvApp.getDrawLayersByDataId(dataId)[0];
+    const drawLayer = this.#dwvApp.getStageController()
+      .getDrawLayersByDataId(dataId)[0];
     if (typeof drawLayer === 'undefined') {
       console.warn('Cannot find draw layer with id ' + dataId);
     }
@@ -693,7 +713,8 @@ export class DwvService extends EventTarget {
   addAnnotationGroup() {
     //const divId = 'layerGroup0';
     const divId = this.#layerGroupName;
-    const layerGroup = this.#dwvApp.getLayerGroupByDivId(divId);
+    const layerGroup = this.#dwvApp.getStageController()
+      .getLayerGroupByDivId(divId);
     // add annotation group
     const viewLayer = layerGroup.getActiveViewLayer();
     if (typeof viewLayer !== 'undefined') {
@@ -714,7 +735,7 @@ export class DwvService extends EventTarget {
    * @param {object} cmd The command.
    */
   addToUndoStack = (cmd) => {
-    this.#dwvApp.addToUndoStack(cmd);
+    this.#dwvApp.getUndoController().addToUndoStack(cmd);
   };
 
   // Annotation related [end] ------------------------------------------------

@@ -43,7 +43,7 @@ describe('DwvService', () => {
     const annotationGroup = new AnnotationGroup([annotation]);
     const data = new DicomData({});
     data.annotationGroup = annotationGroup;
-    app.addData('0', data);
+    app.getDataController().add('0', data);
 
     // update with command, as done by the annotation UI
     const drawController = new DrawController(annotationGroup);
@@ -54,8 +54,28 @@ describe('DwvService', () => {
       service.addToUndoStack
     );
     expect(annotation.colour).toBe('#ff0000');
-    app.undo();
+    app.getUndoController().undo();
     expect(annotation.colour).toBe('#ffff80');
+
+    service.dispose();
+    div.remove();
+  });
+
+  test('loadFromUri loads the urls of a key-value uri', () => {
+    const div = document.createElement('div');
+    div.id = 'layerGroup-uri';
+    document.body.appendChild(div);
+    const service = new DwvService({uid: 'uri', tools: ['Scroll']});
+    const spy = vi.spyOn(service, 'loadURLs').mockImplementation(() => {});
+
+    const input = 'https://example.com/file.dcm';
+    service.loadFromUri(
+      'https://viewer.com/index.html?input=' + encodeURIComponent(input));
+    expect(spy).toHaveBeenCalledWith([input]);
+
+    spy.mockClear();
+    service.loadFromUri('https://viewer.com/index.html');
+    expect(spy).not.toHaveBeenCalled();
 
     service.dispose();
     div.remove();
