@@ -80,4 +80,27 @@ describe('DwvService', () => {
     service.dispose();
     div.remove();
   });
+
+  test('forwards the dwv load progress from the event detail', () => {
+    const div = document.createElement('div');
+    div.id = 'layerGroup-progress';
+    document.body.appendChild(div);
+    // get the service dwv app
+    const initSpy = vi.spyOn(App.prototype, 'init');
+    const service = new DwvService({uid: 'progress', tools: ['Scroll']});
+    const app = initSpy.mock.contexts[0];
+    initSpy.mockRestore();
+
+    const values = [];
+    service.addEventListener('loadprogress', (event) => {
+      values.push(event.detail.value);
+    });
+    app.dispatchEvent(new CustomEvent('loadprogress', {
+      detail: {dataid: '0', loaded: 42, total: 100}
+    }));
+    expect(values).toStrictEqual([42]);
+
+    service.dispose();
+    div.remove();
+  });
 });

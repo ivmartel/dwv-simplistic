@@ -304,13 +304,13 @@ export class DwvService extends EventTarget {
       isFirstRender = true;
     });
     this.#dwvApp.addEventListener('loadprogress', (event) => {
-      this.#dispatch('loadprogress', {value: event.loaded});
+      this.#dispatch('loadprogress', {value: event.detail.loaded});
     });
     this.#dwvApp.addEventListener('renderend', (event) => {
       if (isFirstRender) {
         isFirstRender = false;
         const vl = this.#dwvApp.getStageController()
-          .getViewLayersByDataId(event.dataid)[0];
+          .getViewLayersByDataId(event.detail.dataid)[0];
         const vc = vl.getViewController();
         // option preset
         if (typeof this.#options.wlpreset !== 'undefined') {
@@ -339,7 +339,7 @@ export class DwvService extends EventTarget {
     });
     this.#dwvApp.addEventListener('load', (event) => {
       // set dicom tags
-      const data = this.#dwvApp.getDataController().get(event.dataid);
+      const data = this.#dwvApp.getDataController().get(event.detail.dataid);
       this.#metaData = structuredClone(data.meta);
       const pixelDataKey = '7FE00010';
       if (typeof this.#metaData[pixelDataKey] !== 'undefined') {
@@ -361,15 +361,15 @@ export class DwvService extends EventTarget {
 
     // warn/error
     this.#dwvApp.addEventListener('loaditem', function (event) {
-      if (typeof event.warn !== 'undefined') {
-        console.warn('load-warn', event.warn);
+      if (typeof event.detail.warn !== 'undefined') {
+        console.warn('load-warn', event.detail.warn);
       }
     });
-    this.#dwvApp.addEventListener('loaderror', (event) => {
-      console.error(event.error);
+    this.#dwvApp.addEventListener('error', (event) => {
+      console.error(event.detail.error);
       ++nReceivedLoadError;
     });
-    this.#dwvApp.addEventListener('loadabort', (/*event*/) => {
+    this.#dwvApp.addEventListener('abort', (/*event*/) => {
       ++nReceivedLoadAbort;
     });
     this.#dwvApp.addEventListener('loadend', (/*event*/) => {
@@ -387,27 +387,27 @@ export class DwvService extends EventTarget {
     if (_LOAD_TIMERS) {
       // loading
       this.#dwvApp.addEventListener('loadstart', function (event) {
-        console.time('load-data-' + event.dataid);
+        console.time('load-data-' + event.detail.dataid);
       });
       this.#dwvApp.addEventListener('loadend', function (event) {
-        console.timeEnd('load-data-' + event.dataid);
+        console.timeEnd('load-data-' + event.detail.dataid);
       });
       // labeling
       this.#dwvApp.addEventListener('labelingstart', function (event) {
-        console.time('label-data-' + event.dataid);
+        console.time('label-data-' + event.detail.dataid);
       });
       this.#dwvApp.addEventListener('labelschanged', function (event) {
-        console.timeEnd('label-data-' + event.dataid);
+        console.timeEnd('label-data-' + event.detail.dataid);
       });
       // resampling
       this.#dwvApp.addEventListener('imageresamplingstart',
         function (event) {
-          console.time('resample-data-' + event.dataid);
+          console.time('resample-data-' + event.detail.dataid);
         }
       );
       this.#dwvApp.addEventListener('imageresamplingcomplete',
         function (event) {
-          console.timeEnd('resample-data-' + event.dataid);
+          console.timeEnd('resample-data-' + event.detail.dataid);
         }
       );
     }
@@ -422,7 +422,7 @@ export class DwvService extends EventTarget {
     this.#dwvApp.addEventListener('wlchange', (event) => {
       // value: [center, width, name]
       const manualStr = 'manual';
-      if (event.value[2] === manualStr) {
+      if (event.detail.value[2] === manualStr) {
         if (!this.#presetNames.includes(manualStr)) {
           this.#setPresetNames([...this.#presetNames, manualStr]);
         }
@@ -434,7 +434,7 @@ export class DwvService extends EventTarget {
 
     // handle key events
     this.#dwvApp.addEventListener('keydown', (event) => {
-      this.#dwvApp.defaultOnKeydown(event);
+      this.#dwvApp.defaultOnKeydown(event.detail);
     });
     // handle window resize
     window.addEventListener('resize', this.#dwvApp.onResize);
@@ -445,28 +445,28 @@ export class DwvService extends EventTarget {
    */
   #setupAnnotationListeners() {
     this.#dwvApp.addEventListener('dataadd', (event) => {
-      this.#dispatch('dataadd', {dataid: event.dataid});
+      this.#dispatch('dataadd', {dataid: event.detail.dataid});
     });
     this.#dwvApp.addEventListener('drawlayeradd', (event) => {
-      this.#dispatch('drawlayeradd', {dataid: event.dataid});
+      this.#dispatch('drawlayeradd', {dataid: event.detail.dataid});
     });
     this.#dwvApp.addEventListener('annotationadd', (event) => {
       this.#dispatch('annotationadd', {
-        dataid: event.dataid,
-        data: event.data
+        dataid: event.detail.dataid,
+        data: event.detail.data
       });
     });
     this.#dwvApp.addEventListener('annotationupdate', (event) => {
       this.#dispatch('annotationupdate', {
-        dataid: event.dataid,
-        data: event.data,
-        keys: event.keys
+        dataid: event.detail.dataid,
+        data: event.detail.data,
+        keys: event.detail.keys
       });
     });
     this.#dwvApp.addEventListener('annotationremove', (event) => {
       this.#dispatch('annotationremove', {
-        dataid: event.dataid,
-        data: event.data
+        dataid: event.detail.dataid,
+        data: event.detail.data
       });
     });
   }
