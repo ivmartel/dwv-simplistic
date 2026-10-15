@@ -2,7 +2,8 @@ import {
   AnnotationGroupFactory,
   DicomWriter,
   DrawController,
-  getUID
+  getUID,
+  i18n
 } from 'dwv';
 import {
   getIconElement,
@@ -151,6 +152,40 @@ export class AnnotationUI {
   #getAnnotationHtml(annotation, dataId) {
     const annotationDivId = getAnnotationDivId(annotation, dataId);
 
+    const infoButton = getButton('Info');
+    const ibIdPrefix = 'ib-';
+    infoButton.id = ibIdPrefix + annotationDivId;
+    infoButton.title = 'Information';
+    infoButton.onclick = (event) => {
+      // do not propagate to parent (triggers goto)
+      event.stopPropagation();
+      const target = event.target;
+      // get annotation
+      const indices =
+        splitAnnotationDivId(target.id.substring(ibIdPrefix.length));
+      const clkDataId = indices.dataId;
+      const annotationId = indices.annotationId;
+      const annotationGroup =
+        this.#dwvService.getData(clkDataId).annotationGroup;
+      const clkAnnotation = annotationGroup.find(annotationId);
+
+      let qStr = 'Quantification:\n';
+      if (typeof clkAnnotation.quantification !== 'undefined') {
+        const keys = Object.keys(clkAnnotation.quantification);
+        for (const key of keys) {
+          const quant = clkAnnotation.quantification[key];
+          qStr += `- ${key}: ${quant.value.toPrecision(4)}`;
+          if (typeof quant.unit !== 'undefined') {
+            qStr += i18n.t(quant.unit);
+          }
+          qStr += '\n';
+        }
+      } else {
+        qStr = 'No quantification.';
+      }
+      alert(qStr);
+    };
+
     const inputColour = document.createElement('input');
     inputColour.type = 'color';
     inputColour.title = 'Change annotation colour';
@@ -252,8 +287,9 @@ export class AnnotationUI {
     // actions
     const actionsDiv = document.createElement('div');
     actionsDiv.className = 'data-item-list-item-actions';
-    actionsDiv.appendChild(viewButton);
+    actionsDiv.appendChild(infoButton);
     actionsDiv.appendChild(inputColour);
+    actionsDiv.appendChild(viewButton);
     actionsDiv.appendChild(deleteButton);
 
     // list item
@@ -262,6 +298,7 @@ export class AnnotationUI {
     item.className = 'data-item-list-item';
     item.appendChild(contentDiv);
     item.appendChild(actionsDiv);
+    item.title = 'Go to annotation';
 
     // click on li to go to annotation
     item.addEventListener('click', (event) => {
