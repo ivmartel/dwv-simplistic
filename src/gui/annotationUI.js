@@ -127,8 +127,22 @@ export class AnnotationUI {
     addAnnotationGroupButton.appendChild(
       document.createTextNode('Add annotation group'));
     addAnnotationGroupButton.onclick = () => {
-      // will trigger a dataadd event
-      this.#dwvService.addAnnotationGroup();
+      const divId = this.#dwvService.getLayerGroupName();
+      const stgCtrl = this.#dwvService.getStageController();
+      const layerGroup = stgCtrl.getLayerGroupByDivId(divId);
+      // add annotation group
+      const viewLayer = layerGroup.getActiveViewLayer();
+      if (typeof viewLayer === 'undefined') {
+        console.warn(
+          'No active view layer to associate the annotation group to'
+        );
+        return;
+      }
+      const refDataId = viewLayer.getDataId();
+      const data = this.#dwvService.createAnnotationData(refDataId);
+      // render (will create draw layer)
+      this.#dwvService.addAndRenderAnnotationData(data, divId, refDataId);
+      // item is added to the UI by the 'dataadd' listener
     };
     addItem.appendChild(addAnnotationGroupButton);
 
@@ -151,6 +165,8 @@ export class AnnotationUI {
    */
   #getAnnotationHtml(annotation, dataId) {
     const annotationDivId = getAnnotationDivId(annotation, dataId);
+    const dataCtrl = this.#dwvService.getDataController();
+    const undoCtrl = this.#dwvService.getUndoController();
 
     const infoButton = getButton('Info');
     const ibIdPrefix = 'ib-';
@@ -165,8 +181,7 @@ export class AnnotationUI {
         splitAnnotationDivId(target.id.substring(ibIdPrefix.length));
       const clkDataId = indices.dataId;
       const annotationId = indices.annotationId;
-      const annotationGroup =
-        this.#dwvService.getData(clkDataId).annotationGroup;
+      const annotationGroup = dataCtrl.get(clkDataId).annotationGroup;
       const clkAnnotation = annotationGroup.find(annotationId);
 
       let qStr = 'Quantification:\n';
@@ -204,8 +219,7 @@ export class AnnotationUI {
         splitAnnotationDivId(target.id.substring(inputColourPrefix.length));
       const chgDataId = indices.dataId;
       const annotationId = indices.annotationId;
-      const annotationGroup =
-        this.#dwvService.getData(chgDataId).annotationGroup;
+      const annotationGroup = dataCtrl.get(chgDataId).annotationGroup;
       const chgAnnotation = annotationGroup.find(annotationId);
       // update
       if (newColour !== chgAnnotation.colour) {
@@ -214,7 +228,7 @@ export class AnnotationUI {
           annotationId,
           {colour: chgAnnotation.colour},
           {colour: newColour},
-          this.#dwvService.addToUndoStack
+          undoCtrl.addToUndoStack
         );
       }
     };
@@ -233,11 +247,14 @@ export class AnnotationUI {
         splitAnnotationDivId(target.id.substring(vbIdPrefix.length));
       const clkDataId = indices.dataId;
       const annotationId = indices.annotationId;
+      const drawLayers = this.#dwvService.getStageController()
+        .getDrawLayersByDataId(clkDataId);
       // toggle view
       const isPressed = isButtonPressed(target);
       setButtonPressed(target, !isPressed);
-      this.#dwvService.setAnnotationVisibility(
-        clkDataId, annotationId, isPressed);
+      for (const layer of drawLayers) {
+        layer.setAnnotationVisibility(annotationId, isPressed);
+      }
     };
 
     const deleteButton = getButton('Delete');
@@ -255,16 +272,16 @@ export class AnnotationUI {
       const annotationId = indices.annotationId;
       // delete if possible
       const drawController = new DrawController(
-        this.#dwvService.getData(clkDataId).annotationGroup);
+        dataCtrl.get(clkDataId).annotationGroup);
       // TODO reposition div at same position after delete undo?
       drawController.removeAnnotationWithCommand(
         annotationId,
-        this.#dwvService.addToUndoStack
+        undoCtrl.addToUndoStack
       );
     };
 
     // disable/enable buttons if group is editable or not
-    const annotationGroup = this.#dwvService.getData(dataId).annotationGroup;
+    const annotationGroup = dataCtrl.get(dataId).annotationGroup;
     annotationGroup.addEventListener(
       'annotationgroupeditablechange', function (event) {
         const disabled = !event.detail.data;
@@ -311,11 +328,22 @@ export class AnnotationUI {
       // mark this row as selected
       target.classList.add('selected');
 
-      // goto annotation
+      // get annotation
       const indices = splitAnnotationDivId(target.id);
       const clkDataId = indices.dataId;
       const annotationId = indices.annotationId;
-      this.#dwvService.goToAnnotation(clkDataId, annotationId);
+      const clkAnnotationGroup = dataCtrl.get(clkDataId).annotationGroup;
+      const clkAnnotation = clkAnnotationGroup.find(annotationId);
+      const annotCentroid = clkAnnotation.getCentroid();
+      if (typeof annotCentroid !== 'undefined') {
+        const drawLayers = this.#dwvService.getStageController()
+          .getDrawLayersByDataId(clkDataId);
+        for (const layer of drawLayers) {
+          layer.setCurrentPosition(annotCentroid);
+        }
+      } else {
+        console.log('No centroid for annotation');
+      }
     });
 
     return item;
@@ -392,10 +420,16 @@ export class AnnotationUI {
     hideLabelsButton.title = 'Show/hide annotation labels';
     hideLabelsButton.onclick = (event) => {
       const target = event.target;
+      const drawLayer = this.#dwvService.getStageController()
+        .getDrawLayersByDataId(dataId)[0];
+      if (typeof drawLayer === 'undefined') {
+        console.warn(`Cannot find draw layer with id ${dataId}`);
+        return;
+      }
       // toggle hide
       const isPressed = isButtonPressed(target);
       setButtonPressed(target, !isPressed);
-      this.#dwvService.setAnnotationLabelsVisibility(dataId, isPressed);
+      drawLayer.setLabelsVisibility(isPressed);
     };
 
     // actions
@@ -444,7 +478,8 @@ export class AnnotationUI {
    */
   #onDataAdd = (event) => {
     const dataId = event.detail.dataid;
-    const data = this.#dwvService.getData(dataId);
+    const dataCtrl = this.#dwvService.getDataController();
+    const data = dataCtrl.get(dataId);
     const ag = data.annotationGroup;
     if (typeof ag !== 'undefined') {
       // setup html if needed
@@ -472,7 +507,8 @@ export class AnnotationUI {
    */
   #onDrawLayerAdd = (event) => {
     const dataId = event.detail.dataid;
-    const annotationGroup = this.#dwvService.getData(dataId).annotationGroup;
+    const dataCtrl = this.#dwvService.getDataController();
+    const annotationGroup = dataCtrl.get(dataId).annotationGroup;
     // strike through non viewable annotations
     for (const annotation of annotationGroup.getList()) {
       let textDecoration = '';

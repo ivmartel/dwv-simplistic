@@ -26,7 +26,7 @@ describe('DwvService', () => {
     div.remove();
   });
 
-  test('addToUndoStack makes annotation commands undoable', () => {
+  test('undo controller makes annotation commands undoable', () => {
     const div = document.createElement('div');
     div.id = 'layerGroup-undo';
     document.body.appendChild(div);
@@ -43,7 +43,8 @@ describe('DwvService', () => {
     const annotationGroup = new AnnotationGroup([annotation]);
     const data = new DicomData({});
     data.annotationGroup = annotationGroup;
-    app.getDataController().add('0', data);
+    service.getDataController().add('0', data);
+    expect(service.getDataController()).toBe(app.getDataController());
 
     // update with command, as done by the annotation UI
     const drawController = new DrawController(annotationGroup);
@@ -51,7 +52,7 @@ describe('DwvService', () => {
       'a0',
       {colour: '#ffff80'},
       {colour: '#ff0000'},
-      service.addToUndoStack
+      service.getUndoController().addToUndoStack
     );
     expect(annotation.colour).toBe('#ff0000');
     app.getUndoController().undo();

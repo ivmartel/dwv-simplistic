@@ -11,7 +11,12 @@ import {
 import {overlayConfig} from './gui/overlays.js';
 
 /**
- * @import {DicomData} from 'dwv';
+ * @import {
+ *   DataController,
+ *   DicomData,
+ *   StageController,
+ *   UndoController
+ * } from 'dwv';
  */
 
 const _LOAD_TIMERS = false;
@@ -474,16 +479,6 @@ export class DwvService extends EventTarget {
   // Load related [start] ------------------------------------------------
 
   /**
-   * Get data.
-   *
-   * @param {string} dataId The data id.
-   * @returns {DicomData} The data.
-   */
-  getData(dataId) {
-    return this.#dwvApp.getDataController().get(dataId);
-  }
-
-  /**
    * Load a list of urls.
    *
    * @param {string[]} urls The urls.
@@ -655,88 +650,52 @@ export class DwvService extends EventTarget {
   // Annotation related [start] ------------------------------------------------
 
   /**
-   * Go to an annotation: set the current position to
-   * the annotations' centroid.
+   * Get the data controller.
    *
-   * @param {string} dataId The data id.
-   * @param {string} annotationId The annotation id.
+   * @returns {DataController} The controller.
    */
-  goToAnnotation(dataId, annotationId) {
-    const data = this.#dwvApp.getDataController().get(dataId);
-    const annotationGroup = data.annotationGroup;
-    const annotation = annotationGroup.find(annotationId);
-    const annotCentroid = annotation.getCentroid();
-    if (typeof annotCentroid !== 'undefined') {
-      const drawLayers = this.#dwvApp.getStageController()
-        .getDrawLayersByDataId(dataId);
-      for (const layer of drawLayers) {
-        layer.setCurrentPosition(annotCentroid);
-      }
-    } else {
-      console.log('No centroid for annotation');
-    }
+  getDataController() {
+    return this.#dwvApp.getDataController();
   }
 
   /**
-   * Set an annotation visibility.
+   * Get the stage controller.
    *
-   * @param {string} dataId The data id.
-   * @param {string} annotationId The annotation id.
-   * @param {boolean} visible True to set visible.
+   * @returns {StageController} The controller.
    */
-  setAnnotationVisibility(dataId, annotationId, visible) {
-    const drawLayers = this.#dwvApp.getStageController()
-      .getDrawLayersByDataId(dataId);
-    for (const layer of drawLayers) {
-      layer.setAnnotationVisibility(annotationId, visible);
-    }
+  getStageController() {
+    return this.#dwvApp.getStageController();
   }
 
   /**
-   * Set the visibility of annotations' labels.
+   * Get the undo controller.
    *
-   * @param {string} dataId The data id.
-   * @param {boolean} visible True to set visible.
+   * @returns {UndoController} The controller.
    */
-  setAnnotationLabelsVisibility(dataId, visible) {
-    const drawLayer = this.#dwvApp.getStageController()
-      .getDrawLayersByDataId(dataId)[0];
-    if (typeof drawLayer === 'undefined') {
-      console.warn('Cannot find draw layer with id ' + dataId);
-    }
-    drawLayer.setLabelsVisibility(visible);
+  getUndoController() {
+    return this.#dwvApp.getUndoController();
   }
 
   /**
-   * Add an annotation group.
+   * Create new annotation data.
+   *
+   * @param {string} refDataId The reference data id.
+   * @returns {DicomData} The new data.
    */
-  addAnnotationGroup() {
-    //const divId = 'layerGroup0';
-    const divId = this.#layerGroupName;
-    const layerGroup = this.#dwvApp.getStageController()
-      .getLayerGroupByDivId(divId);
-    // add annotation group
-    const viewLayer = layerGroup.getActiveViewLayer();
-    if (typeof viewLayer !== 'undefined') {
-      const refDataId = viewLayer.getDataId();
-      const data = this.#dwvApp.createAnnotationData(refDataId);
-      // render (will create draw layer)
-      this.#dwvApp.addAndRenderAnnotationData(data, divId, refDataId);
-    } else {
-      console.warn(
-        'No active view layer to associate the annotation group to'
-      );
-    }
+  createAnnotationData(refDataId) {
+    return this.#dwvApp.createAnnotationData(refDataId);
   }
 
   /**
-   * Add a command to the undo stack.
+   * Add and render annotation data.
    *
-   * @param {object} cmd The command.
+   * @param {DicomData} data The data to add.
+   * @param {string} divId The div where to draw.
+   * @param {string} refDataId The reference data id.
    */
-  addToUndoStack = (cmd) => {
-    this.#dwvApp.getUndoController().addToUndoStack(cmd);
-  };
+  addAndRenderAnnotationData(data, divId, refDataId) {
+    this.#dwvApp.addAndRenderAnnotationData(data, divId, refDataId);
+  }
 
   // Annotation related [end] ------------------------------------------------
 
