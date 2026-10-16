@@ -87,11 +87,11 @@ export class DwvService extends EventTarget {
   #orientation;
 
   /**
-   * Name of the main layer group.
+   * Div id of the main layer group.
    *
    * @type {string}
    */
-  #layerGroupName;
+  #layerGroupDivId;
 
   /**
    * DWV app.
@@ -147,10 +147,13 @@ export class DwvService extends EventTarget {
 
     const tools = this.#setupTools(options.tools);
 
-    // initialise app
-    this.#layerGroupName = 'layerGroup-' + options.uid;
-    const viewConfig0 = new ViewConfig(this.#layerGroupName);
+    // view config
+    // Note: assuming only one layer group
+    this.#layerGroupDivId = 'layerGroup-' + options.uid;
+    const viewConfig0 = new ViewConfig(this.#layerGroupDivId);
     const viewConfigs = {'*': [viewConfig0]};
+
+    // initialise app
     const appOptions = new AppOptions(viewConfigs);
     appOptions.tools = tools;
     appOptions.overlayConfig = overlayConfig;
@@ -225,12 +228,12 @@ export class DwvService extends EventTarget {
   }
 
   /**
-   * Get the layer group name.
+   * Get the layer group div id.
    *
-   * @returns {string} The name.
+   * @returns {string} The div id.
    */
-  getLayerGroupName() {
-    return this.#layerGroupName;
+  getMainLayerGroupDivId() {
+    return this.#layerGroupDivId;
   }
 
   /**
@@ -452,6 +455,9 @@ export class DwvService extends EventTarget {
     this.#dwvApp.addEventListener('dataadd', (event) => {
       this.#dispatch('dataadd', {dataid: event.detail.dataid});
     });
+    this.#dwvApp.addEventListener('dataremove', (event) => {
+      this.#dispatch('dataremove', {dataid: event.detail.dataid});
+    });
     this.#dwvApp.addEventListener('drawlayeradd', (event) => {
       this.#dispatch('drawlayeradd', {dataid: event.detail.dataid});
     });
@@ -607,7 +613,7 @@ export class DwvService extends EventTarget {
       this.#orientation = 'coronal';
     }
     // update data view config
-    const viewConfig0 = new ViewConfig(this.#layerGroupName);
+    const viewConfig0 = new ViewConfig(this.#layerGroupDivId);
     viewConfig0.orientation = this.#orientation;
     const viewConfigs = {'*': [viewConfig0]};
     const stageController = this.#dwvApp.getStageController();
