@@ -1,5 +1,5 @@
 import {describe, test, expect} from 'vitest';
-import {getQuantificationGroups} from '../../src/gui/annotationUI.js';
+import {getQuantificationGroups} from '../../src/gui/quantification.js';
 
 describe('getQuantificationGroups', () => {
   test('undefined quantification', () => {
