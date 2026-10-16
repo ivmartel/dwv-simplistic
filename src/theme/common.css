@@ -73,6 +73,9 @@ button.active:enabled path {
 .data-item-list .selected {
   border-color: var(--on-primary-container);
 }
+.data-item-list-item-details {
+  border-color: var(--outline);
+}
 
 /* modal dialog */
 .modal {
