@@ -20,7 +20,7 @@ import {
 
 /**
  * Note: highly inspired from the dwv 'pacs' viewer
- *   and 'dev/pacs/viewer.ui.annot.js'
+ *   and 'dev/pacs/viewer.ui.annot.js'.
  */
 
 /**
