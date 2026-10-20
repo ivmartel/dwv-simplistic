@@ -480,6 +480,12 @@ export class DwvService extends EventTarget {
         data: event.detail.data
       });
     });
+    this.#dwvApp.addEventListener('annotationselect', (event) => {
+      this.#dispatch('annotationselect', {
+        dataid: event.detail.dataid,
+        annotationid: event.detail.annotationid
+      });
+    });
   }
 
   // Load related [start] ------------------------------------------------

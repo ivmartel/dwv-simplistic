@@ -104,4 +104,27 @@ describe('DwvService', () => {
     service.dispose();
     div.remove();
   });
+
+  test('forwards the dwv annotation select from the event detail', () => {
+    const div = document.createElement('div');
+    div.id = 'layerGroup-select';
+    document.body.appendChild(div);
+    // get the service dwv app
+    const initSpy = vi.spyOn(App.prototype, 'init');
+    const service = new DwvService({uid: 'select', tools: ['Scroll']});
+    const app = initSpy.mock.contexts[0];
+    initSpy.mockRestore();
+
+    const details = [];
+    service.addEventListener('annotationselect', (event) => {
+      details.push(event.detail);
+    });
+    app.dispatchEvent(new CustomEvent('annotationselect', {
+      detail: {annotationid: 'a0', dataid: '1'}
+    }));
+    expect(details).toStrictEqual([{dataid: '1', annotationid: 'a0'}]);
+
+    service.dispose();
+    div.remove();
+  });
 });
