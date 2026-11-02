@@ -3754,7 +3754,7 @@ __metadata:
     "@vitest/coverage-v8": "npm:^5.0.3"
     babel-loader: "npm:^10.0.0"
     css-loader: "npm:^7.1.2"
-    dwv: "npm:0.37.0-beta.19"
+    dwv: "npm:0.37.0-beta.22"
     eslint: "npm:^10.0.0"
     eslint-plugin-jsdoc: "npm:^65.0.1"
     globals: "npm:^17.0.0"
@@ -3770,15 +3770,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"dwv@npm:0.37.0-beta.19":
-  version: 0.37.0-beta.19
-  resolution: "dwv@npm:0.37.0-beta.19"
+"dwv@npm:0.37.0-beta.22":
+  version: 0.37.0-beta.22
+  resolution: "dwv@npm:0.37.0-beta.22"
   dependencies:
     dcmstdtojs: "npm:0.2.0"
     jszip: "npm:^3.10.1"
-    konva: "npm:~10.7.0"
+    konva: "npm:~10.9.0"
     magic-wand-tool: "npm:~1.1.7"
-  checksum: 10c0/595f4a160f8564aef32c0cbb36ea8fdaf11d3390c96d5650c84d03406b2bc6099081edd4b6692a620ed7ff50e2ebb1b65976de17ac616823236485dedaed912e
+  checksum: 10c0/b6fd709789bda9b507381d06b4e254af88cdc8cc01808f07e2be77f2cb7f8fdb5d6dd68719d0b8b6161ac8e1e8fe5185d709e211b7559cf98ecb30a6bc7f70bd
   languageName: node
   linkType: hard
 
@@ -4946,9 +4946,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"konva@npm:~10.7.0":
-  version: 10.7.1
-  resolution: "konva@npm:10.7.1"
+"konva@npm:~10.9.0":
+  version: 10.9.0
+  resolution: "konva@npm:10.9.0"
   peerDependencies:
     canvas: ^3.0.0
     skia-canvas: ^3.0.0
@@ -4957,7 +4957,7 @@ __metadata:
       optional: true
     skia-canvas:
       optional: true
-  checksum: 10c0/558bff33b3af9bffaeffcb316c207da3cc85a3e2779497f12c576cbf8c7c756648a0d25f847d1ff858277fc7a3890e90b2d3c6beaf5f56fb48b49d091697f661
+  checksum: 10c0/89d1c79956283d331d19366254a61363812a739da28f3a51fd9920a86fa6b5d1aff65a60485060688198e5a9930d0663badafc2d49085f0b115cde520f714320
   languageName: node
   linkType: hard
 
