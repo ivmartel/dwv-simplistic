@@ -486,6 +486,13 @@ export class DwvService extends EventTarget {
         annotationid: event.detail.annotationid
       });
     });
+    this.#dwvApp.addEventListener('tap', (event) => {
+      this.#dispatch('tap', {
+        position: event.detail.position,
+        annotations: event.detail.annotations,
+        segments: event.detail.segments
+      });
+    });
   }
 
   // Load related [start] ------------------------------------------------

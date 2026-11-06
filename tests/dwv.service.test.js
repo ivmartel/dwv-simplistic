@@ -127,4 +127,36 @@ describe('DwvService', () => {
     service.dispose();
     div.remove();
   });
+
+  test('forwards the dwv tap from the event detail', () => {
+    const div = document.createElement('div');
+    div.id = 'layerGroup-tap';
+    document.body.appendChild(div);
+    // get the service dwv app
+    const initSpy = vi.spyOn(App.prototype, 'init');
+    const service = new DwvService({uid: 'tap', tools: ['Scroll']});
+    const app = initSpy.mock.contexts[0];
+    initSpy.mockRestore();
+
+    const details = [];
+    service.addEventListener('tap', (event) => {
+      details.push(event.detail);
+    });
+    app.dispatchEvent(new CustomEvent('tap', {
+      detail: {
+        position: [1, 2, 3],
+        annotations: [{annotationid: 'a0', dataid: '1'}],
+        segments: [],
+        extra: 'ignored'
+      }
+    }));
+    expect(details).toStrictEqual([{
+      position: [1, 2, 3],
+      annotations: [{annotationid: 'a0', dataid: '1'}],
+      segments: []
+    }]);
+
+    service.dispose();
+    div.remove();
+  });
 });

@@ -1,5 +1,8 @@
 import {describe, test, expect} from 'vitest';
-import {getQuantificationGroups} from '../../src/gui/quantification.js';
+import {
+  formatQuantificationValue,
+  getQuantificationGroups
+} from '../../src/gui/quantification.js';
 
 describe('getQuantificationGroups', () => {
   test('undefined quantification', () => {
@@ -67,5 +70,20 @@ describe('getQuantificationGroups', () => {
     expect(groups[0].title).toBe('Geometry');
     expect(groups[0].items).toHaveLength(1);
     expect(groups[0].items[0].label).toBe('radius');
+  });
+});
+
+describe('formatQuantificationValue', () => {
+  test('digits depend on magnitude', () => {
+    expect(formatQuantificationValue(1234.56)).toBe('1234.6');
+    expect(formatQuantificationValue(-150.25)).toBe('-150.3');
+    expect(formatQuantificationValue(35.4712)).toBe('35.47');
+    expect(formatQuantificationValue(0.12345)).toBe('0.123');
+    expect(formatQuantificationValue(0)).toBe('0.00');
+  });
+
+  test('unit', () => {
+    expect(formatQuantificationValue(45, '°')).toBe('45.00°');
+    expect(formatQuantificationValue(35.4712, 'HU')).toBe('35.47 HU');
   });
 });

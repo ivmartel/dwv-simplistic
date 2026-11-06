@@ -112,6 +112,8 @@ export class AnnotationUI {
       this.#onAnnotationRemove);
     this.#dwvService.addEventListener('annotationselect',
       this.#onAnnotationSelect);
+    this.#dwvService.addEventListener('tap',
+      this.#onTap);
   };
 
   /**
@@ -270,6 +272,7 @@ export class AnnotationUI {
         .getDrawLayersByDataId(dataId);
       for (const layer of drawLayers) {
         layer.setCurrentPosition(annotCentroid);
+        layer.highlightAnnotation(annotationId);
       }
     } else {
       logger.warn('No centroid for annotation');
@@ -393,14 +396,20 @@ export class AnnotationUI {
    * @param {HTMLElement} item The annotation list item.
    */
   #selectAnnotationItem(item) {
-    // remove selected class from other rows
+    this.#clearAnnotationSelection();
+    // mark this row as selected
+    item.classList.add('selected');
+  }
+
+  /**
+   * Unselect all annotation list items.
+   */
+  #clearAnnotationSelection() {
     const mainlist = this.#rootDoc.getElementById('annotationgroup-list');
     if (mainlist) {
       const items = mainlist.querySelectorAll('.data-item-list-item');
-      items.forEach(item2 => item2.classList.remove('selected'));
+      items.forEach(item => item.classList.remove('selected'));
     }
-    // mark this row as selected
-    item.classList.add('selected');
   }
 
   /**
@@ -647,6 +656,8 @@ export class AnnotationUI {
   #onAnnotationAdd = (event) => {
     const annotation = event.detail.data;
     const dataId = event.detail.dataid;
+    // reset selection
+    this.#clearAnnotationSelection();
     // add item to list
     const listDivId = `${getAnnotationGroupDivId(dataId)}-list`;
     const listDiv = this.#rootDoc.getElementById(listDivId);
@@ -714,6 +725,27 @@ export class AnnotationUI {
     if (item) {
       this.#selectAnnotationItem(item);
       item.scrollIntoView({block: 'nearest'});
+    }
+  };
+
+  /**
+   * Handle 'tap' event: select the tapped annotation row,
+   *   or clear the selection if no annotation was tapped.
+   *
+   * @param {CustomEvent} event The event.
+   */
+  #onTap = (event) => {
+    let item;
+    const hit = event.detail.annotations[0];
+    if (typeof hit !== 'undefined') {
+      item = this.#rootDoc.getElementById(
+        getAnnotationIdDivId(hit.annotationid, hit.dataid));
+    }
+    if (item) {
+      this.#selectAnnotationItem(item);
+      item.scrollIntoView({block: 'nearest'});
+    } else {
+      this.#clearAnnotationSelection();
     }
   };
 
