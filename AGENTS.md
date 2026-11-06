@@ -1,0 +1,165 @@
+# AGENTS.md
+
+Guidance for coding agents working in this repository.
+
+## Project
+
+dwv-simplistic is a simple medical image viewer built on
+[DWV](https://github.com/ivmartel/dwv) (DICOM Web Viewer). It ships a single
+custom element, `<dwv-simple>`, bundled as an ES module
+(`dist/dwvsimplistic.min.js`). Plain JavaScript (ES modules, no framework,
+no TypeScript sources), browser only. Licensed GPL-3.0; not certified for
+diagnostic use.
+
+## Commands
+
+Package manager is Yarn 4 (via Corepack, `packageManager` in `package.json`).
+
+```sh
+yarn install          # install deps (CI uses --immutable)
+yarn run start        # webpack dev server on localhost:8080 with live reload
+yarn run lint         # eslint with jsdoc rules (config/eslint.config-full.js)
+yarn run test         # vitest unit tests (single run)
+yarn run test-ci      # tests + v8 coverage report in coverage/
+yarn run build        # production bundle into dist/
+```
+
+CI ([.github/workflows/nodejs-ci.yml](.github/workflows/nodejs-ci.yml))
+runs `lint`, `test-ci` then `build`; all must pass. Verify UI changes manually
+with `yarn run start` (load DICOM via drag and drop or `?input=<url>` in the
+page URL).
+
+## Tests
+
+- [Vitest](https://vitest.dev/) with the `jsdom` environment
+  ([vitest.config.js](vitest.config.js)); `vite` is a required peer dependency.
+- Tests live in `tests/`, mirroring `src/` (e.g. `src/gui/meta.js` ->
+  `tests/gui/meta.test.js`), named `*.test.js`. They are linted like sources.
+- Import `describe`/`test`/`expect` explicitly from `vitest` (no globals).
+- `dwv` imports work in tests; prefer testing pure helpers and `DwvService`
+  logic over full rendering (no canvas in jsdom).
+- Coverage: v8 provider over `src/**/*.js`, reports (text, html, lcov) in the
+  git-ignored `coverage/` folder; open `coverage/index.html` for details.
+  No thresholds are enforced.
+- Add or update tests with behaviour changes.
+
+## Layout
+
+```
+src/
+  index.js            public exports: startApp, DwvComponent
+  dwv-component.js    <dwv-simple> custom element: reads attributes, builds the
+                      shadow DOM (header/content/footer), injects CSS, calls startApp
+  applauncher.js      startApp(uid, options, rootDoc): wires service, GUI, dropbox
+  dwv.service.js      DwvService (EventTarget): the only wrapper around dwv's App
+  appgui.js           Gui: owns Toolbar + RightPanel, progress bar, div id helpers
+  gui/
+    toolbar.js        tools, shapes, WL presets, reset/orientation/fullscreen/tags
+    rightPanel.js     side panel hosting annotations
+    annotationUI.js   annotation list/table, based on dwv
+                      dev/pacs/viewer.ui.annot.js (keep in sync)
+    quantification.js annotation quantification groups and rendering, based
+                      on dwv dev/pacs/viewer.ui.quantification.js
+    dropboxLoader.js  drag and drop / file input loader
+    modal.js, meta.js DICOM tags modal and meta flattening
+    icons.js          inline SVG icons and button helpers
+    overlays.js       dwv overlay config
+  theme/              light/dark/blue/pink + common CSS (Material 3 color roles,
+                      see src/theme/readme.md)
+  dwv-component.css   component styles
+tests/                vitest unit tests, mirrors src/
+public/               demo index.html, PWA manifest, service worker, assets
+config/               webpack (common/dev/prod) and full eslint config
+resources/scripts/    prep-deploy.sh (used by CI), outdated Conquest lua script
+dist/                 built bundle (see below)
+```
+
+## Architecture notes
+
+- Data flow: `DwvComponent` -> `startApp` -> `DwvService` + `Gui` + `DropboxLoader`.
+  GUI classes never touch the dwv `App` directly; they call `DwvService`
+  methods and listen to its `CustomEvent`s (`loadprogress`, `dataloaded`,
+  `dataready`, `presetnames`, `ismanualpreset`, `dataadd`, `dataremove`,
+  `drawlayeradd`, `annotationadd|update|remove|select`). Event payloads live in `event.detail`.
+  Add new app-level interactions (loading, tools, layout) to `DwvService`
+  and expose them the same way.
+- Exception: `AnnotationUI` mirrors dwv `dev/pacs/viewer.ui.annot.js` and
+  works on dwv objects itself, through the controllers `DwvService` exposes
+  like dwv's `ViewerService` (`getDataController`, `getStageController`,
+  `getUndoController`, `createAnnotationData`,
+  `addAndRenderAnnotationData`). It uses `DrawController`, draw layers and
+  `DicomWriter` directly and listens to `annotationgroupeditablechange` on
+  the annotation group. Keep that logic in the UI to ease syncing with dwv.
+- Everything renders inside a shadow root. Look elements up through
+  `rootDocument` (`dwvService.getOptions().rootDocument`), never `document`
+  directly. Several components can coexist on a page, so all element ids are
+  suffixed with the app uid (`layerGroup-<uid>`, `header-<uid>`, ...); use the
+  helpers in `appgui.js` or the same pattern.
+- Supported viewer tools: `Scroll`, `ZoomAndPan`, `WindowLevel`, `Draw`
+  (shapes: Ruler, Arrow, Rectangle, Circle, Ellipse, Protractor, Roi).
+  Matching against user input is case insensitive.
+- CSS is imported as strings via `css-loader` and injected in a `<style>`
+  element. Themes use CSS custom properties; when two themes are given they
+  are switched with `prefers-color-scheme`.
+- dwv web workers must be served at `./assets/workers` relative to the page;
+  dev server maps `node_modules/dwv/dist/assets` to `/assets`.
+- `dwv` is pinned to an exact version in `package.json`; check its API
+  ([dwv repo](https://github.com/ivmartel/dwv)) before changing calls.
+- Public API documentation of `<dwv-simple>` attributes is the JSDoc on
+  `DwvComponent`; keep it in sync when adding or changing attributes.
+
+## dwv linked files
+
+Some files are adapted from the dwv repository `pacs` viewer
+([dwv/dev/pacs](https://github.com/ivmartel/dwv/tree/develop/dev/pacs))
+and must be kept in sync with it:
+
+| file | dwv source |
+| --- | --- |
+| `src/gui/annotationUI.js` | `dev/pacs/viewer.ui.annot.js` |
+| `src/gui/quantification.js` | `dev/pacs/viewer.ui.quantification.js` |
+
+- When changing them, check the dwv source for the version pinned in
+  `package.json` and keep structure, naming and logic close to it so
+  upstream changes can be ported as diffs. Keep local adaptations (shadow
+  root lookups, uid-suffixed ids, `DwvService` instead of `ViewerService`,
+  icons, theme classes) minimal and easy to spot.
+- When bumping `dwv`, diff these dwv sources between the old and new
+  versions and port relevant changes.
+- Fixes that are not specific to this project belong upstream in dwv too;
+  mention it to the user.
+
+## Code style
+
+Enforced by eslint (`eslint.config.js` + `config/eslint.config-full.js`):
+
+- 2-space indent, single quotes, semicolons, max line length 80, 1TBS braces,
+  `===` only, always curly braces, `const`/`let` (no `var`), no space before
+  named function parens. Unused args must be prefixed with `_`.
+- JSDoc is required on functions, classes and methods (typescript flavor):
+  descriptions are complete sentences ending with a period, one blank line
+  between description and tags, `@param`/`@returns` with types. Type-only
+  imports use `@import` in a JSDoc block (e.g. `@import {DwvService} from './dwv.service.js';`).
+- Use private class fields/methods (`#field`) for internal state, as in the
+  existing classes. Prefer `typeof x !== 'undefined'` checks, matching the
+  surrounding code.
+- Run `yarn run lint` and `yarn run test` before finishing.
+
+## Build output and releases
+
+- `dist/` is git-ignored and not tracked. It is only needed for npm publish:
+  the `prepack` script runs `yarn run build`, and `.npmignore` keeps `dist/`
+  (plus `package.json`, `license.txt`, `readme.md`) in the package. Never
+  commit it.
+- Pushes to `main` deploy the demo to `gh-pages` (`demo/trunk`); non-beta tags
+  deploy to `demo/stable`. `public/index.html` keeps the bundle script inside
+  `<!-- self -->` comments, which `prep-deploy.sh` uncomments at deploy time;
+  keep those markers intact.
+
+## Dependencies
+
+Dependabot opens weekly npm bump PRs; patch updates are auto-merged once CI
+passes, minor/major ones need manual review (`.github/dependabot.yml`,
+`.github/workflows/dependabot-automerge.yml`). When changing
+dependencies, update `yarn.lock` with Yarn 4 (`yarn install`) and keep
+`--immutable` installs working.
