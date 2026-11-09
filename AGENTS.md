@@ -20,9 +20,9 @@ yarn install          # install deps (CI uses --immutable)
 yarn run start        # webpack dev server on localhost:8080 with live reload
 yarn run lint         # eslint with jsdoc rules (config/eslint.config-full.js)
 yarn run test         # vitest unit tests (single run)
-yarn run test-ci      # tests + v8 coverage report in coverage/
+yarn run test-ci      # tests + v8 coverage report in build/coverage/
 yarn run build        # library bundle into dist/
-yarn run build-demo   # full demo site into build/
+yarn run build-demo   # full demo site into build/demo/
 ```
 
 CI ([.github/workflows/nodejs-ci.yml](.github/workflows/nodejs-ci.yml))
@@ -40,8 +40,8 @@ page URL).
 - `dwv` imports work in tests; prefer testing pure helpers and `DwvService`
   logic over full rendering (no canvas in jsdom).
 - Coverage: v8 provider over `src/**/*.js`, reports (text, html, lcov) in the
-  git-ignored `coverage/` folder; open `coverage/index.html` for details.
-  No thresholds are enforced.
+  git-ignored `build/coverage/` folder; open `build/coverage/index.html` for
+  details. No thresholds are enforced.
 - Add or update tests with behaviour changes.
 
 ## Layout
@@ -73,7 +73,7 @@ demo/                 demo index.html, PWA manifest, service worker, assets
 config/               webpack (common/dev/prod) and full eslint config
 resources/scripts/    outdated Conquest lua script
 dist/                 built library bundle (see below)
-build/                built demo site (see below)
+build/                demo site (build/demo/) and coverage (build/coverage/)
 ```
 
 ## Architecture notes
@@ -155,15 +155,15 @@ Enforced by eslint (`eslint.config.js` + `config/eslint.config-full.js`):
   (plus `package.json`, `license.txt`, `readme.md`) in the package. Never
   commit it.
 - `yarn run build-demo` (`config/webpack.demo.js`, extends the prod config)
-  writes the demo site to `build/`: bundle in `build/dist/`, generated
-  `index.html`, the other `demo/` files, `license.txt` and `readme.md`.
-  `build/` is git-ignored too.
-- Pushes to `main` deploy `build/` to `gh-pages` (`demo/trunk`); non-beta tags
-  deploy to `demo/stable`. html-webpack-plugin injects the bundle script into
-  `demo/index.html`. The demo build also replaces the
+  writes the demo site to `build/demo/`: bundle in `build/demo/dist/`,
+  generated `index.html`, the other `demo/` files, `license.txt` and
+  `readme.md`. `build/` is git-ignored too.
+- Pushes to `main` deploy `build/demo/` to `gh-pages` (`demo/trunk`); non-beta
+  tags deploy to `demo/stable`. html-webpack-plugin injects the bundle script
+  into `demo/index.html`. The demo build also replaces the
   `<!-- register-sw ... -->` comment with the service worker script (left out in
   dev); keep that marker intact. Keep the `urlsToCache` list in
-  `demo/service-worker.js` in sync with the files in `build/`.
+  `demo/service-worker.js` in sync with the files in `build/demo/`.
 
 ## Dependencies
 

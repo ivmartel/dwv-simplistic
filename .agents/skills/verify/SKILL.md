@@ -84,10 +84,10 @@ Read `git diff` and check:
   that version (check `node_modules/dwv/dist/dwv.d.ts`).
 - **Demo build** (only when `demo/` or `config/` changed): `demo/index.html`
   keeps the `<!-- register-sw ... -->` comment that the demo build replaces.
-  Quick check: `yarn run build-demo` succeeds, `build/index.html` loads both
-  `register-sw.js` and `dist/dwvsimplistic.min.js`, and every `urlsToCache`
-  entry in `demo/service-worker.js` exists under `build/`.
-- `dist/`, `build/`, `coverage/` are not staged or tracked.
+  Quick check: `yarn run build-demo` succeeds, `build/demo/index.html` loads
+  both `register-sw.js` and `dist/dwvsimplistic.min.js`, and every `urlsToCache`
+  entry in `demo/service-worker.js` exists under `build/demo/`.
+- `dist/` and `build/` are not staged or tracked.
 
 ## 6. Manual / browser check (UI changes)
 
