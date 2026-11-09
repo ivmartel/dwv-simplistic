@@ -8,10 +8,10 @@ import CopyWebpackPlugin from 'copy-webpack-plugin';
 import prod from './webpack.prod.js';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-// demo: full static site in build/ (bundle in build/dist)
+// demo: full static site in build/demo/ (bundle in build/demo/dist)
 export default merge(prod, {
   output: {
-    path: path.resolve(__dirname, '../build/dist'),
+    path: path.resolve(__dirname, '../build/demo/dist'),
   },
   plugins: [
     new HtmlWebpackPlugin({
