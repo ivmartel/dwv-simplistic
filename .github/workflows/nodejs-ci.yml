@@ -28,20 +28,10 @@ jobs:
     - name: Run tests
       run: yarn run test-ci
     - name: Build
-      run: |
-        rm -Rf ./build
-        yarn run build
-    - name: Prepare for deploy (if tag or main branch)
+      run: yarn run build
+    - name: Build demo
       if: env.IS_PUSH_MAIN == 'true' || env.IS_PUSH_TAG == 'true'
-      run: |
-        rm -Rf ./node_modules/*
-        yarn workspaces focus --all --production
-        mkdir build
-        cp license.txt package.json readme.md ./build
-        cp -Rf public/* ./build
-        cp -Rf dist node_modules ./build
-        cp -Rf node_modules/dwv/dist/assets ./build
-        ./resources/scripts/prep-deploy.sh -f build/index.html
+      run: yarn run build-demo
     - name: Push to gh-pages (if tag or main branch)
       if: env.IS_PUSH_MAIN == 'true' || env.IS_PUSH_TAG == 'true'
       run: |

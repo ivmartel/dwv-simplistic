@@ -21,11 +21,12 @@ yarn run start        # webpack dev server on localhost:8080 with live reload
 yarn run lint         # eslint with jsdoc rules (config/eslint.config-full.js)
 yarn run test         # vitest unit tests (single run)
 yarn run test-ci      # tests + v8 coverage report in coverage/
-yarn run build        # production bundle into dist/
+yarn run build        # library bundle into dist/
+yarn run build-demo   # full demo site into build/
 ```
 
 CI ([.github/workflows/nodejs-ci.yml](.github/workflows/nodejs-ci.yml))
-runs `lint`, `test-ci` then `build`; all must pass. Verify UI changes manually
+runs `lint`, `test-ci`, `build` then `build-demo`; all must pass. Verify UI changes manually
 with `yarn run start` (load DICOM via drag and drop or `?input=<url>` in the
 page URL).
 
@@ -70,8 +71,9 @@ src/
 tests/                vitest unit tests, mirrors src/
 public/               demo index.html, PWA manifest, service worker, assets
 config/               webpack (common/dev/prod) and full eslint config
-resources/scripts/    prep-deploy.sh (used by CI), outdated Conquest lua script
-dist/                 built bundle (see below)
+resources/scripts/    outdated Conquest lua script
+dist/                 built library bundle (see below)
+build/                built demo site (see below)
 ```
 
 ## Architecture notes
@@ -101,8 +103,9 @@ dist/                 built bundle (see below)
 - CSS is imported as strings via `css-loader` and injected in a `<style>`
   element. Themes use CSS custom properties; when two themes are given they
   are switched with `prefers-color-scheme`.
-- dwv web workers must be served at `./assets/workers` relative to the page;
-  dev server maps `node_modules/dwv/dist/assets` to `/assets`.
+- The bundle is self-contained (dwv, konva, jszip and magic-wand are bundled).
+  webpack emits the dwv web workers (`*.worker.min.js`) next to it, and they
+  are loaded relative to the bundle URL.
 - `dwv` is pinned to an exact version in `package.json`; check its API
   ([dwv repo](https://github.com/ivmartel/dwv)) before changing calls.
 - Public API documentation of `<dwv-simple>` attributes is the JSDoc on
@@ -151,10 +154,16 @@ Enforced by eslint (`eslint.config.js` + `config/eslint.config-full.js`):
   the `prepack` script runs `yarn run build`, and `.npmignore` keeps `dist/`
   (plus `package.json`, `license.txt`, `readme.md`) in the package. Never
   commit it.
-- Pushes to `main` deploy the demo to `gh-pages` (`demo/trunk`); non-beta tags
-  deploy to `demo/stable`. `public/index.html` keeps the bundle script inside
-  `<!-- self -->` comments, which `prep-deploy.sh` uncomments at deploy time;
-  keep those markers intact.
+- `yarn run build-demo` (`config/webpack.demo.js`, extends the prod config)
+  writes the demo site to `build/`: bundle in `build/dist/`, generated
+  `index.html`, the other `public/` files, `license.txt` and `readme.md`.
+  `build/` is git-ignored too.
+- Pushes to `main` deploy `build/` to `gh-pages` (`demo/trunk`); non-beta tags
+  deploy to `demo/stable`. html-webpack-plugin injects the bundle script into
+  `public/index.html`. The demo build also replaces the
+  `<!-- register-sw ... -->` comment with the service worker script (left out in
+  dev); keep that marker intact. Keep the `urlsToCache` list in
+  `public/service-worker.js` in sync with the files in `build/`.
 
 ## Dependencies
 

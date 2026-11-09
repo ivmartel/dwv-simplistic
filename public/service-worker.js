@@ -22,25 +22,19 @@ const urlsToCache = [
   './assets/help/twotouch_drag.png',
   './assets/help/twotouch_pinch.png',
 
-  // third party
-
-  // js: dwv
-  './node_modules/dwv/dist/dwv.min.js',
-  './node_modules/dwv/dist/dwv.min.js.map',
-  './node_modules/konva/konva.min.js',
-  './node_modules/jszip/dist/jszip.min.js',
-  './node_modules/magic-wand-tool/dist/magic-wand.min.js',
-  // js: workers
-  './node_modules/dwv/dist/assets/workers/jpeg2000.worker.min.js',
-  './node_modules/dwv/dist/assets/workers/jpeg2000.worker.min.js.map',
-  './node_modules/dwv/dist/assets/workers/jpegbaseline.worker.min.js',
-  './node_modules/dwv/dist/assets/workers/jpegbaseline.worker.min.js.map',
-  './node_modules/dwv/dist/assets/workers/jpegloss.worker.min.js',
-  './node_modules/dwv/dist/assets/workers/jpegloss.worker.min.js.map',
-  './node_modules/dwv/dist/assets/workers/labeling.worker.min.js',
-  './node_modules/dwv/dist/assets/workers/labeling.worker.min.js.map',
-  './node_modules/dwv/dist/assets/workers/rle.worker.min.js',
-  './node_modules/dwv/dist/assets/workers/rle.worker.min.js.map',
+  // js: dwv workers (bundled next to the main script)
+  './dist/jpeg2000.worker.min.js',
+  './dist/jpeg2000.worker.min.js.map',
+  './dist/jpegbaseline.worker.min.js',
+  './dist/jpegbaseline.worker.min.js.map',
+  './dist/jpegloss.worker.min.js',
+  './dist/jpegloss.worker.min.js.map',
+  './dist/labeling.worker.min.js',
+  './dist/labeling.worker.min.js.map',
+  './dist/resampling.worker.min.js',
+  './dist/resampling.worker.min.js.map',
+  './dist/rle.worker.min.js',
+  './dist/rle.worker.min.js.map',
 ];
 
 // install

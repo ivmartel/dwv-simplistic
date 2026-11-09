@@ -82,12 +82,12 @@ Read `git diff` and check:
   the JSDoc of `DwvComponent` (`src/dwv-component.js`).
 - **dwv API**: `dwv` is pinned to an exact version; any new call must exist in
   that version (check `node_modules/dwv/dist/dwv.d.ts`).
-- **Deploy markers**: `public/index.html` still has the bundle script inside
-  `<!-- self --><!-- ... --><!-- /self -->`. Quick check:
-  `grep -c 'self -->' public/index.html` should be 2 and
-  `./resources/scripts/prep-deploy.sh -f <copy of index.html>` should run
-  cleanly on a scratch copy.
-- `dist/`, `coverage/` are not staged or tracked.
+- **Demo build** (only when `public/` or `config/` changed): `public/index.html`
+  keeps the `<!-- register-sw ... -->` comment that the demo build replaces.
+  Quick check: `yarn run build-demo` succeeds, `build/index.html` loads both
+  `register-sw.js` and `dist/dwvsimplistic.min.js`, and every `urlsToCache`
+  entry in `public/service-worker.js` exists under `build/`.
+- `dist/`, `build/`, `coverage/` are not staged or tracked.
 
 ## 6. Manual / browser check (UI changes)
 
@@ -101,8 +101,8 @@ Run it in the background. Load data with the `input` query parameter, e.g.:
 http://localhost:8080/index.html?input=https%3A%2F%2Fraw.githubusercontent.com%2Fivmartel%2Fdwv%2Fmaster%2Ftests%2Fdata%2Fbbmri-53323851.dcm
 ```
 
-or drag and drop local DICOM files. Workers must load from `/assets/workers`
-(served from `node_modules/dwv/dist/assets`); a 404 there breaks decoding.
+or drag and drop local DICOM files. Workers load from `/*.worker.min.js`
+(emitted next to the bundle); a 404 there breaks decoding.
 
 Check, as relevant to the change:
 
