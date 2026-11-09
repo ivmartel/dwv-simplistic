@@ -51,7 +51,7 @@ jobs:
         git config user.email github-actions@github.com
         git config user.name github-actions
         # shallow checkout: only fetch the gh-pages tip
-        git fetch --depth=1 origin gh-pages
+        git fetch --depth=1 origin gh-pages:gh-pages
         git checkout gh-pages
         mkdir -p "$DEPLOY_DIR"
         # ':?' aborts if DEPLOY_DIR is empty or unset (avoids 'rm -Rf /*')
