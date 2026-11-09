@@ -37,6 +37,6 @@ yarn run start
 You can now open a browser at http://localhost:8080 and enjoy!
 
 ## DWVs' Web workers
-Web workers used in dwv need to be available in the `./assets/workers` folder
-(relative to calling html). Scripts of this project copy them automatically and
-clients of dwv-simplistic must do it to.
+The build places the web workers used in dwv (`*.worker.min.js`) next to the
+main bundle in `dist/`. They are loaded relative to the bundle URL, so serve
+them from the same folder as `dwvsimplistic.min.js`.
