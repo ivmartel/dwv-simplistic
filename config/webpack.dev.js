@@ -10,7 +10,7 @@ export default merge(common, {
     open: '/',
     static: [
       {
-        directory: './public',
+        directory: './demo',
         publicPath: '/'
       },
       {
@@ -21,7 +21,7 @@ export default merge(common, {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: 'public/index.html',
+      template: 'demo/index.html',
       scriptLoading: 'module',
     }),
   ]

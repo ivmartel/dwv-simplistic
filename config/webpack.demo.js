@@ -16,7 +16,7 @@ export default merge(prod, {
   plugins: [
     new HtmlWebpackPlugin({
       // enable the service worker (not in dev)
-      templateContent: readFileSync('public/index.html', 'utf8').replace(
+      templateContent: readFileSync('demo/index.html', 'utf8').replace(
         /<!-- register-sw .*-->/,
         '<script src="register-sw.js"></script>'
       ),
@@ -26,7 +26,7 @@ export default merge(prod, {
     new CopyWebpackPlugin({
       patterns: [
         {
-          from: 'public',
+          from: 'demo',
           to: '..',
           globOptions: {ignore: ['**/index.html']},
         },

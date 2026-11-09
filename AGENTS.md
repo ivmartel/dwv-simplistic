@@ -69,7 +69,7 @@ src/
                       see src/theme/readme.md)
   dwv-component.css   component styles
 tests/                vitest unit tests, mirrors src/
-public/               demo index.html, PWA manifest, service worker, assets
+demo/                 demo index.html, PWA manifest, service worker, assets
 config/               webpack (common/dev/prod) and full eslint config
 resources/scripts/    outdated Conquest lua script
 dist/                 built library bundle (see below)
@@ -156,14 +156,14 @@ Enforced by eslint (`eslint.config.js` + `config/eslint.config-full.js`):
   commit it.
 - `yarn run build-demo` (`config/webpack.demo.js`, extends the prod config)
   writes the demo site to `build/`: bundle in `build/dist/`, generated
-  `index.html`, the other `public/` files, `license.txt` and `readme.md`.
+  `index.html`, the other `demo/` files, `license.txt` and `readme.md`.
   `build/` is git-ignored too.
 - Pushes to `main` deploy `build/` to `gh-pages` (`demo/trunk`); non-beta tags
   deploy to `demo/stable`. html-webpack-plugin injects the bundle script into
-  `public/index.html`. The demo build also replaces the
+  `demo/index.html`. The demo build also replaces the
   `<!-- register-sw ... -->` comment with the service worker script (left out in
   dev); keep that marker intact. Keep the `urlsToCache` list in
-  `public/service-worker.js` in sync with the files in `build/`.
+  `demo/service-worker.js` in sync with the files in `build/`.
 
 ## Dependencies
 

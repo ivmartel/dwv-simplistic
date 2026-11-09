@@ -1,6 +1,6 @@
 ---
 name: verify
-description: Verify a change in dwv-simplistic before calling it done. Runs the same checks as CI (lint, tests with coverage, production build), checks repo-specific rules (JSDoc, uid-suffixed ids, rootDocument lookups, DwvService boundary, dist/ not committed, deploy markers) and, for UI changes, drives the dev server with a DICOM input. Use after editing src/, tests/, config/, public/ or dependencies, or when asked to "verify", "check" or "make sure CI passes".
+description: Verify a change in dwv-simplistic before calling it done. Runs the same checks as CI (lint, tests with coverage, production build), checks repo-specific rules (JSDoc, uid-suffixed ids, rootDocument lookups, DwvService boundary, dist/ not committed, demo build) and, for UI changes, drives the dev server with a DICOM input. Use after editing src/, tests/, config/, demo/ or dependencies, or when asked to "verify", "check" or "make sure CI passes".
 ---
 
 # Verify
@@ -24,7 +24,7 @@ Classify what changed, it decides which steps below apply:
 - `src/**/*.css`, `src/theme/` -> steps 2, 4, 6 (check light and dark).
 - `tests/**` only -> steps 2, 3.
 - `config/**`, `package.json`, `yarn.lock` -> steps 2-4 and 7.
-- `public/**` -> step 6 and the deploy marker check in step 5.
+- `demo/**` -> step 6 and the demo build check in step 5.
 
 ## 2. Lint
 
@@ -82,11 +82,11 @@ Read `git diff` and check:
   the JSDoc of `DwvComponent` (`src/dwv-component.js`).
 - **dwv API**: `dwv` is pinned to an exact version; any new call must exist in
   that version (check `node_modules/dwv/dist/dwv.d.ts`).
-- **Demo build** (only when `public/` or `config/` changed): `public/index.html`
+- **Demo build** (only when `demo/` or `config/` changed): `demo/index.html`
   keeps the `<!-- register-sw ... -->` comment that the demo build replaces.
   Quick check: `yarn run build-demo` succeeds, `build/index.html` loads both
   `register-sw.js` and `dist/dwvsimplistic.min.js`, and every `urlsToCache`
-  entry in `public/service-worker.js` exists under `build/`.
+  entry in `demo/service-worker.js` exists under `build/`.
 - `dist/`, `build/`, `coverage/` are not staged or tracked.
 
 ## 6. Manual / browser check (UI changes)
