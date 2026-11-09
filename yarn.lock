@@ -3785,7 +3785,7 @@ __metadata:
     "@vitest/coverage-v8": "npm:^5.0.3"
     babel-loader: "npm:^10.0.0"
     css-loader: "npm:^7.1.2"
-    dwv: "npm:0.37.0-beta.22"
+    dwv: "npm:0.37.0-beta.24"
     eslint: "npm:^10.0.0"
     eslint-plugin-jsdoc: "npm:^65.0.1"
     globals: "npm:^17.0.0"
@@ -3801,15 +3801,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"dwv@npm:0.37.0-beta.22":
-  version: 0.37.0-beta.22
-  resolution: "dwv@npm:0.37.0-beta.22"
+"dwv@npm:0.37.0-beta.24":
+  version: 0.37.0-beta.24
+  resolution: "dwv@npm:0.37.0-beta.24"
   dependencies:
     dcmstdtojs: "npm:0.2.0"
     jszip: "npm:^3.10.1"
     konva: "npm:~10.9.0"
     magic-wand-tool: "npm:~1.1.7"
-  checksum: 10c0/b6fd709789bda9b507381d06b4e254af88cdc8cc01808f07e2be77f2cb7f8fdb5d6dd68719d0b8b6161ac8e1e8fe5185d709e211b7559cf98ecb30a6bc7f70bd
+  checksum: 10c0/d4349691ec6756ab40d145750513f167003bd28156aa9d252e2b22904706dce9771741c51ca3dfba3e401845e72843e4068d74d347448c805dc6c552f66902db
   languageName: node
   linkType: hard
 
