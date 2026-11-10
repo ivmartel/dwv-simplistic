@@ -53,8 +53,10 @@ src/
   dwv-component.js    <dwv-simple> custom element: reads attributes, builds the
                       shadow DOM (header/content/footer), injects CSS, calls startApp
   applauncher.js      startApp(uid, options, rootDoc): wires service, GUI, dropbox
-  dwv.service.js      DwvService (EventTarget): the only wrapper around dwv's App
-  annot.service.js    AnnotationService: annotation logic and state store on
+  service/
+    dwvService.js     DwvService (EventTarget): the only wrapper around dwv's App
+    annotationService.js
+                      AnnotationService: annotation logic and state store on
                       top of DwvService, based on dwv
                       dev/viewer/annot.service.js (keep in sync)
   appgui.js           Gui: owns Toolbar + RightPanel, progress bar, div id helpers
@@ -91,8 +93,8 @@ build/                demo site (build/demo/) and coverage (build/coverage/)
   Add new app-level interactions (loading, tools, layout) to `DwvService`
   and expose them the same way.
 - Exception: annotations mirror the dwv viewer (`dev/viewer`).
-  `AnnotationService` (`src/annot.service.js`, no DOM access) works on dwv
-  objects itself, through the controllers `DwvService` exposes like dwv's
+  `AnnotationService` (`src/service/annotationService.js`, no DOM access)
+  works on dwv objects itself, through the controllers `DwvService` exposes like dwv's
   `ViewerService` (`getDataController`, `getStageController`,
   `getUndoController`, `createAnnotationData`,
   `addAndRenderAnnotationData`). It uses `DrawController`, draw layers and
@@ -130,7 +132,7 @@ and must be kept in sync with it:
 
 | file | dwv source |
 | --- | --- |
-| `src/annot.service.js` | `dev/viewer/annot.service.js` |
+| `src/service/annotationService.js` | `dev/viewer/annot.service.js` |
 | `src/gui/annotationUI.js` | `dev/viewer/viewer.ui.annot.js` |
 | `src/gui/quantification.js` | `dev/viewer/viewer.ui.quantification.js` |
 
@@ -138,7 +140,8 @@ and must be kept in sync with it:
   `package.json` and keep structure, naming and logic close to it so
   upstream changes can be ported as diffs. Keep local adaptations (shadow
   root lookups, uid-suffixed ids, `DwvService` instead of `ViewerService`,
-  icons, theme classes) minimal and easy to spot.
+  icons, theme classes) minimal and easy to spot. File names follow the
+  local camelCase convention and can differ from the dwv ones.
 - When bumping `dwv`, diff these dwv sources between the old and new
   versions and port relevant changes.
 - Fixes that are not specific to this project belong upstream in dwv too;
@@ -154,7 +157,7 @@ Enforced by eslint (`eslint.config.js` + `config/eslint.config-full.js`):
 - JSDoc is required on functions, classes and methods (typescript flavor):
   descriptions are complete sentences ending with a period, one blank line
   between description and tags, `@param`/`@returns` with types. Type-only
-  imports use `@import` in a JSDoc block (e.g. `@import {DwvService} from './dwv.service.js';`).
+  imports use `@import` in a JSDoc block (e.g. `@import {DwvService} from '../service/dwvService.js';`).
 - Use private class fields/methods (`#field`) for internal state, as in the
   existing classes. Prefer `typeof x !== 'undefined'` checks, matching the
   surrounding code.

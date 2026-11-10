@@ -8,7 +8,7 @@ import {
   getURLsFromKeyValueUri,
   handleURLsFromWeasisXMLManifest
 } from 'dwv';
-import {overlayConfig} from './gui/overlays.js';
+import {overlayConfig} from '../gui/overlays.js';
 
 /**
  * @import {

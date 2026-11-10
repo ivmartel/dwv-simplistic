@@ -1,5 +1,5 @@
 import {describe, test, expect, vi} from 'vitest';
-import {AnnotationService} from '../src/annot.service.js';
+import {AnnotationService} from '../../src/service/annotationService.js';
 
 /**
  * Get a mock annotation.

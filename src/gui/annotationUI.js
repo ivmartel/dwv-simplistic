@@ -16,7 +16,7 @@ import {
  *   AnnotationGroupState,
  *   AnnotationItemState,
  *   AnnotationSelection
- * } from '../annot.service.js';
+ * } from '../service/annotationService.js';
  */
 
 /**

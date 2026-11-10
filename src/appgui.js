@@ -2,7 +2,7 @@ import {Toolbar} from './gui/toolbar.js';
 import {RightPanel} from './gui/rightPanel.js';
 
 /**
- * @import {DwvService} from './dwv.service.js';
+ * @import {DwvService} from './service/dwvService.js';
  */
 
 /**

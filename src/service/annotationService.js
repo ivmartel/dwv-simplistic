@@ -8,7 +8,7 @@ import {
 
 /**
  * @import {Annotation, AnnotationGroup} from 'dwv';
- * @import {DwvService} from './dwv.service.js';
+ * @import {DwvService} from './dwvService.js';
  */
 
 /**
