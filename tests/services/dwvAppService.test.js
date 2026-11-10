@@ -6,7 +6,7 @@ import {
   DicomData,
   DrawController
 } from 'dwv';
-import {DwvAppService} from '../../src/service/dwvAppService.js';
+import {DwvAppService} from '../../src/services/dwvAppService.js';
 
 describe('DwvAppService', () => {
   test('dispose removes the window listeners', () => {

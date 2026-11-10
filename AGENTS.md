@@ -53,7 +53,7 @@ src/
   dwv-component.js    <dwv-simple> custom element: reads attributes, builds the
                       shadow DOM (header/content/footer), injects CSS, calls startApp
   applauncher.js      startApp(uid, options, rootDoc): wires service, GUI, dropbox
-  service/
+  services/
     dwvAppService.js  DwvAppService (EventTarget): the only wrapper around
                       dwv's App
     annotationService.js
@@ -94,7 +94,7 @@ build/                demo site (build/demo/) and coverage (build/coverage/)
   Add new app-level interactions (loading, tools, layout) to `DwvAppService`
   and expose them the same way.
 - Exception: annotations mirror the dwv viewer (`dev/viewer`).
-  `AnnotationService` (`src/service/annotationService.js`, no DOM access)
+  `AnnotationService` (`src/services/annotationService.js`, no DOM access)
   works on dwv objects itself, through the controllers `DwvAppService`
   exposes like dwv's `ViewerService` (`getDataController`, `getStageController`,
   `getUndoController`, `createAnnotationData`,
@@ -133,7 +133,7 @@ and must be kept in sync with it:
 
 | file | dwv source |
 | --- | --- |
-| `src/service/annotationService.js` | `dev/viewer/annot.service.js` |
+| `src/services/annotationService.js` | `dev/viewer/annot.service.js` |
 | `src/gui/annotationUI.js` | `dev/viewer/viewer.ui.annot.js` |
 | `src/gui/quantification.js` | `dev/viewer/viewer.ui.quantification.js` |
 
@@ -158,7 +158,7 @@ Enforced by eslint (`eslint.config.js` + `config/eslint.config-full.js`):
 - JSDoc is required on functions, classes and methods (typescript flavor):
   descriptions are complete sentences ending with a period, one blank line
   between description and tags, `@param`/`@returns` with types. Type-only
-  imports use `@import` in a JSDoc block (e.g. `@import {DwvAppService} from '../service/dwvAppService.js';`).
+  imports use `@import` in a JSDoc block (e.g. `@import {DwvAppService} from '../services/dwvAppService.js';`).
 - Use private class fields/methods (`#field`) for internal state, as in the
   existing classes. Prefer `typeof x !== 'undefined'` checks, matching the
   surrounding code.

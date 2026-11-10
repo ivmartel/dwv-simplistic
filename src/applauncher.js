@@ -1,7 +1,7 @@
 
 import {Gui} from './appgui.js';
 import {DropboxLoader} from './gui/dropboxLoader.js';
-import {DwvAppService} from './service/dwvAppService.js';
+import {DwvAppService} from './services/dwvAppService.js';
 
 /**
  * Application launcher.

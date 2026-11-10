@@ -12,7 +12,7 @@ import themeBlue from './theme/blue.css';
 import themePink from './theme/pink.css';
 
 /**
- * @import {DwvAppService} from './service/dwvAppService.js';
+ * @import {DwvAppService} from './services/dwvAppService.js';
  */
 
 /**
