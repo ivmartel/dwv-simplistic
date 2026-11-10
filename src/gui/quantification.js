@@ -1,8 +1,8 @@
 import {i18n} from 'dwv';
 
 /**
- * Note: highly inspired from the dwv 'pacs' viewer
- *   and 'dev/pacs/viewer.ui.quantification.js'.
+ * Note: highly inspired from the dwv viewer
+ *   and 'dev/viewer/viewer.ui.quantification.js'.
  */
 
 /**

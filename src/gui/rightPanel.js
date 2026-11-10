@@ -1,4 +1,5 @@
-import {AnnotationUI} from './annotationUI.js';
+import {AnnotationService} from '../annot.service.js';
+import {AnnotationComponent} from './annotationUI.js';
 import {
   getButton,
   toggleButtonPressed
@@ -83,11 +84,18 @@ export class RightPanel {
   #rootDoc;
 
   /**
-   * Annotation UI.
+   * Annotation service.
    *
-   * @type {AnnotationUI}
+   * @type {AnnotationService}
    */
-  #annotationUI;
+  #annotService;
+
+  /**
+   * Annotation component.
+   *
+   * @type {AnnotationComponent}
+   */
+  #annotComponent;
 
   /**
    * @param {DwvService} dwvService The dwv service.
@@ -97,7 +105,9 @@ export class RightPanel {
     this.#uid = dwvService.getOptions().uid;
     this.#rootDoc = dwvService.getOptions().rootDocument;
 
-    this.#annotationUI = new AnnotationUI(dwvService);
+    this.#annotService = new AnnotationService(dwvService);
+    this.#annotComponent = new AnnotationComponent(
+      this.#annotService, this.#rootDoc, this.#uid);
   }
 
   /**
@@ -115,7 +125,8 @@ export class RightPanel {
   init() {
     this.#setupUI();
 
-    this.#annotationUI.registerListeners();
+    this.#annotService.connect();
+    this.#annotComponent.registerListeners();
   }
 
   /**

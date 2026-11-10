@@ -54,14 +54,18 @@ src/
                       shadow DOM (header/content/footer), injects CSS, calls startApp
   applauncher.js      startApp(uid, options, rootDoc): wires service, GUI, dropbox
   dwv.service.js      DwvService (EventTarget): the only wrapper around dwv's App
+  annot.service.js    AnnotationService: annotation logic and state store on
+                      top of DwvService, based on dwv
+                      dev/viewer/annot.service.js (keep in sync)
   appgui.js           Gui: owns Toolbar + RightPanel, progress bar, div id helpers
   gui/
     toolbar.js        tools, shapes, WL presets, reset/orientation/fullscreen/tags
     rightPanel.js     side panel hosting annotations
-    annotationUI.js   annotation list/table, based on dwv
-                      dev/pacs/viewer.ui.annot.js (keep in sync)
+    annotationUI.js   AnnotationComponent: annotation list renderer of the
+                      AnnotationService state, based on dwv
+                      dev/viewer/viewer.ui.annot.js (keep in sync)
     quantification.js annotation quantification groups and rendering, based
-                      on dwv dev/pacs/viewer.ui.quantification.js
+                      on dwv dev/viewer/viewer.ui.quantification.js
     dropboxLoader.js  drag and drop / file input loader
     modal.js, meta.js DICOM tags modal and meta flattening
     icons.js          inline SVG icons and button helpers
@@ -86,13 +90,18 @@ build/                demo site (build/demo/) and coverage (build/coverage/)
   `drawlayeradd`, `annotationadd|update|remove|select`). Event payloads live in `event.detail`.
   Add new app-level interactions (loading, tools, layout) to `DwvService`
   and expose them the same way.
-- Exception: `AnnotationUI` mirrors dwv `dev/pacs/viewer.ui.annot.js` and
-  works on dwv objects itself, through the controllers `DwvService` exposes
-  like dwv's `ViewerService` (`getDataController`, `getStageController`,
+- Exception: annotations mirror the dwv viewer (`dev/viewer`).
+  `AnnotationService` (`src/annot.service.js`, no DOM access) works on dwv
+  objects itself, through the controllers `DwvService` exposes like dwv's
+  `ViewerService` (`getDataController`, `getStageController`,
   `getUndoController`, `createAnnotationData`,
   `addAndRenderAnnotationData`). It uses `DrawController`, draw layers and
-  `DicomWriter` directly and listens to `annotationgroupeditablechange` on
-  the annotation group. Keep that logic in the UI to ease syncing with dwv.
+  `DicomWriter` directly, listens to `annotationgroupeditablechange` on
+  the annotation group and exposes an immutable state through the external
+  store contract (`subscribe` / `getSnapshot`). `AnnotationComponent`
+  (`src/gui/annotationUI.js`) only renders that state and calls the
+  service actions. Both are created by `RightPanel`. Keep that split to
+  ease syncing with dwv.
 - Everything renders inside a shadow root. Look elements up through
   `rootDocument` (`dwvService.getOptions().rootDocument`), never `document`
   directly. Several components can coexist on a page, so all element ids are
@@ -114,14 +123,16 @@ build/                demo site (build/demo/) and coverage (build/coverage/)
 
 ## dwv linked files
 
-Some files are adapted from the dwv repository `pacs` viewer
-([dwv/dev/pacs](https://github.com/ivmartel/dwv/tree/develop/dev/pacs))
+Some files are adapted from the dwv repository viewer
+([dwv/dev/viewer](https://github.com/ivmartel/dwv/tree/develop/dev/viewer),
+`dev/pacs` up to v0.37.0-beta.24)
 and must be kept in sync with it:
 
 | file | dwv source |
 | --- | --- |
-| `src/gui/annotationUI.js` | `dev/pacs/viewer.ui.annot.js` |
-| `src/gui/quantification.js` | `dev/pacs/viewer.ui.quantification.js` |
+| `src/annot.service.js` | `dev/viewer/annot.service.js` |
+| `src/gui/annotationUI.js` | `dev/viewer/viewer.ui.annot.js` |
+| `src/gui/quantification.js` | `dev/viewer/viewer.ui.quantification.js` |
 
 - When changing them, check the dwv source for the version pinned in
   `package.json` and keep structure, naming and logic close to it so

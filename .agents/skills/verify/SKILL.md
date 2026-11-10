@@ -73,9 +73,10 @@ Read `git diff` and check:
   helpers in `src/appgui.js` or the same pattern.
 - **DwvService boundary**: GUI code does not touch the dwv `App` directly; new
   app-level interactions are `DwvService` methods and/or `CustomEvent`s with
-  payload in `event.detail`. Exception: `src/gui/annotationUI.js` (and
-  `quantification.js`) mirror dwv `dev/pacs` code and may use dwv objects via
-  the exposed controllers; keep them in sync with dwv.
+  payload in `event.detail`. Exception: `src/annot.service.js` (and
+  `src/gui/annotationUI.js`, `quantification.js`) mirror dwv `dev/viewer`
+  code and may use dwv objects via the exposed controllers; keep them in
+  sync with dwv.
 - **Style**: private `#fields`/`#methods` for internal state,
   `typeof x !== 'undefined'` checks, `@import` JSDoc for type-only imports.
 - **Public API**: new or changed `<dwv-simple>` attributes are documented in
