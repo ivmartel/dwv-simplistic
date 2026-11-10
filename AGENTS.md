@@ -26,8 +26,9 @@ yarn run build-demo   # full demo site into build/demo/
 ```
 
 CI ([.github/workflows/nodejs-ci.yml](.github/workflows/nodejs-ci.yml))
-runs `lint`, `test-ci`, `build` then `build-demo`; all must pass. Verify UI changes manually
-with `yarn run start` (load DICOM via drag and drop or `?input=<url>` in the
+has a `build` job (`lint`, `test-ci` then `build-demo`, all must pass) and a
+`deploy` job that pushes the demo to `gh-pages` (main and release tags
+only). Verify UI changes manually with `yarn run start` (load DICOM via drag and drop or `?input=<url>` in the
 page URL).
 
 ## Tests
