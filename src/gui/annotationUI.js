@@ -4,10 +4,8 @@ import {
   getButton,
   setButtonPressed
 } from './icons.js';
-import {
-  getQuantificationGroups,
-  renderQuantification
-} from './quantification.js';
+import {getQuantificationGroups} from '../services/quantification.js';
+import {renderQuantification} from './quantificationUI.js';
 
 /**
  * @import {

@@ -60,6 +60,9 @@ src/
                       AnnotationService: annotation logic and state store on
                       top of DwvAppService, based on dwv
                       dev/viewer/annot.service.js (keep in sync)
+    quantification.js annotation quantification groups (labels, values
+                      formatting), based on dwv
+                      dev/viewer/viewer.ui.quantification.js
     overlays.js       dwv overlay config
   appgui.js           Gui: owns Toolbar + RightPanel, progress bar, div id helpers
   gui/
@@ -68,8 +71,9 @@ src/
     annotationUI.js   AnnotationComponent: annotation list renderer of the
                       AnnotationService state, based on dwv
                       dev/viewer/viewer.ui.annot.js (keep in sync)
-    quantification.js annotation quantification groups and rendering, based
-                      on dwv dev/viewer/viewer.ui.quantification.js
+    quantificationUI.js
+                      annotation quantification rendering, based on dwv
+                      dev/viewer/viewer.ui.quantification.js
     dropboxLoader.js  drag and drop / file input loader
     modal.js, meta.js DICOM tags modal and meta flattening
     icons.js          inline SVG icons and button helpers
@@ -135,14 +139,16 @@ and must be kept in sync with it:
 | --- | --- |
 | `src/services/annotationService.js` | `dev/viewer/annot.service.js` |
 | `src/gui/annotationUI.js` | `dev/viewer/viewer.ui.annot.js` |
-| `src/gui/quantification.js` | `dev/viewer/viewer.ui.quantification.js` |
+| `src/services/quantification.js` | `dev/viewer/viewer.ui.quantification.js` (logic) |
+| `src/gui/quantificationUI.js` | `dev/viewer/viewer.ui.quantification.js` (`renderQuantification`) |
 
 - When changing them, check the dwv source for the version pinned in
   `package.json` and keep structure, naming and logic close to it so
   upstream changes can be ported as diffs. Keep local adaptations (shadow
   root lookups, uid-suffixed ids, `DwvAppService` instead of `ViewerService`,
   icons, theme classes) minimal and easy to spot. File names follow the
-  local camelCase convention and can differ from the dwv ones.
+  local camelCase convention and can differ from the dwv ones; a dwv
+  file can be split between `services/` (logic) and `gui/` (rendering).
 - When bumping `dwv`, diff these dwv sources between the old and new
   versions and port relevant changes.
 - Fixes that are not specific to this project belong upstream in dwv too;
