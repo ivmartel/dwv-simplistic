@@ -1,5 +1,5 @@
 /**
- * @import {DwvService} from '../service/dwvService.js';
+ * @import {DwvAppService} from '../service/dwvAppService.js';
  */
 
 /**
@@ -22,11 +22,11 @@ export function getDropboxElement(appId) {
 export class DropboxLoader {
 
   /**
-   * The dwv service.
+   * The dwv app service.
    *
-   * @type {DwvService}
+   * @type {DwvAppService}
    */
-  #dwvService;
+  #dwvAppService;
 
   /**
    * The GUI UID.
@@ -48,12 +48,12 @@ export class DropboxLoader {
   #hoverClassName = 'hover';
 
   /**
-   * @param {DwvService} dwvService The dwv service.
+   * @param {DwvAppService} dwvAppService The dwv app service.
    */
-  constructor(dwvService) {
-    this.#dwvService = dwvService;
-    this.#uid = dwvService.getOptions().uid;
-    this.#rootDoc = dwvService.getOptions().rootDocument;
+  constructor(dwvAppService) {
+    this.#dwvAppService = dwvAppService;
+    this.#uid = dwvAppService.getOptions().uid;
+    this.#rootDoc = dwvAppService.getOptions().rootDocument;
   }
 
   /**
@@ -119,7 +119,7 @@ export class DropboxLoader {
   #onDrop = (event) => {
     this.#defaultHandleDragEvent(event);
     // load files
-    this.#dwvService.loadFiles(event.dataTransfer.files);
+    this.#dwvAppService.loadFiles(event.dataTransfer.files);
   };
 
   /**
@@ -129,7 +129,7 @@ export class DropboxLoader {
    */
   #onInputFile = (event) => {
     if (event.target && event.target.files) {
-      this.#dwvService.loadFiles(event.target.files);
+      this.#dwvAppService.loadFiles(event.target.files);
     }
   };
 

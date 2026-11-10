@@ -38,7 +38,7 @@ page URL).
 - Tests live in `tests/`, mirroring `src/` (e.g. `src/gui/meta.js` ->
   `tests/gui/meta.test.js`), named `*.test.js`. They are linted like sources.
 - Import `describe`/`test`/`expect` explicitly from `vitest` (no globals).
-- `dwv` imports work in tests; prefer testing pure helpers and `DwvService`
+- `dwv` imports work in tests; prefer testing pure helpers and `DwvAppService`
   logic over full rendering (no canvas in jsdom).
 - Coverage: v8 provider over `src/**/*.js`, reports (text, html, lcov) in the
   git-ignored `build/coverage/` folder; open `build/coverage/index.html` for
@@ -54,10 +54,11 @@ src/
                       shadow DOM (header/content/footer), injects CSS, calls startApp
   applauncher.js      startApp(uid, options, rootDoc): wires service, GUI, dropbox
   service/
-    dwvService.js     DwvService (EventTarget): the only wrapper around dwv's App
+    dwvAppService.js  DwvAppService (EventTarget): the only wrapper around
+                      dwv's App
     annotationService.js
                       AnnotationService: annotation logic and state store on
-                      top of DwvService, based on dwv
+                      top of DwvAppService, based on dwv
                       dev/viewer/annot.service.js (keep in sync)
   appgui.js           Gui: owns Toolbar + RightPanel, progress bar, div id helpers
   gui/
@@ -85,17 +86,17 @@ build/                demo site (build/demo/) and coverage (build/coverage/)
 
 ## Architecture notes
 
-- Data flow: `DwvComponent` -> `startApp` -> `DwvService` + `Gui` + `DropboxLoader`.
-  GUI classes never touch the dwv `App` directly; they call `DwvService`
+- Data flow: `DwvComponent` -> `startApp` -> `DwvAppService` + `Gui` + `DropboxLoader`.
+  GUI classes never touch the dwv `App` directly; they call `DwvAppService`
   methods and listen to its `CustomEvent`s (`loadprogress`, `dataloaded`,
   `dataready`, `presetnames`, `ismanualpreset`, `dataadd`, `dataremove`,
   `drawlayeradd`, `annotationadd|update|remove|select`). Event payloads live in `event.detail`.
-  Add new app-level interactions (loading, tools, layout) to `DwvService`
+  Add new app-level interactions (loading, tools, layout) to `DwvAppService`
   and expose them the same way.
 - Exception: annotations mirror the dwv viewer (`dev/viewer`).
   `AnnotationService` (`src/service/annotationService.js`, no DOM access)
-  works on dwv objects itself, through the controllers `DwvService` exposes like dwv's
-  `ViewerService` (`getDataController`, `getStageController`,
+  works on dwv objects itself, through the controllers `DwvAppService`
+  exposes like dwv's `ViewerService` (`getDataController`, `getStageController`,
   `getUndoController`, `createAnnotationData`,
   `addAndRenderAnnotationData`). It uses `DrawController`, draw layers and
   `DicomWriter` directly, listens to `annotationgroupeditablechange` on
@@ -105,7 +106,7 @@ build/                demo site (build/demo/) and coverage (build/coverage/)
   service actions. Both are created by `RightPanel`. Keep that split to
   ease syncing with dwv.
 - Everything renders inside a shadow root. Look elements up through
-  `rootDocument` (`dwvService.getOptions().rootDocument`), never `document`
+  `rootDocument` (`dwvAppService.getOptions().rootDocument`), never `document`
   directly. Several components can coexist on a page, so all element ids are
   suffixed with the app uid (`layerGroup-<uid>`, `header-<uid>`, ...); use the
   helpers in `appgui.js` or the same pattern.
@@ -139,7 +140,7 @@ and must be kept in sync with it:
 - When changing them, check the dwv source for the version pinned in
   `package.json` and keep structure, naming and logic close to it so
   upstream changes can be ported as diffs. Keep local adaptations (shadow
-  root lookups, uid-suffixed ids, `DwvService` instead of `ViewerService`,
+  root lookups, uid-suffixed ids, `DwvAppService` instead of `ViewerService`,
   icons, theme classes) minimal and easy to spot. File names follow the
   local camelCase convention and can differ from the dwv ones.
 - When bumping `dwv`, diff these dwv sources between the old and new
@@ -157,7 +158,7 @@ Enforced by eslint (`eslint.config.js` + `config/eslint.config-full.js`):
 - JSDoc is required on functions, classes and methods (typescript flavor):
   descriptions are complete sentences ending with a period, one blank line
   between description and tags, `@param`/`@returns` with types. Type-only
-  imports use `@import` in a JSDoc block (e.g. `@import {DwvService} from '../service/dwvService.js';`).
+  imports use `@import` in a JSDoc block (e.g. `@import {DwvAppService} from '../service/dwvAppService.js';`).
 - Use private class fields/methods (`#field`) for internal state, as in the
   existing classes. Prefer `typeof x !== 'undefined'` checks, matching the
   surrounding code.

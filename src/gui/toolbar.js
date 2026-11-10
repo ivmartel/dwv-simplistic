@@ -11,7 +11,7 @@ import {
 } from './icons.js';
 
 /**
- * @import {DwvService} from '../service/dwvService.js';
+ * @import {DwvAppService} from '../service/dwvAppService.js';
  */
 
 /**
@@ -162,11 +162,11 @@ export class Toolbar {
   #lgDivHeight;
 
   /**
-   * The dwv service.
+   * The dwv app service.
    *
-   * @type {DwvService}
+   * @type {DwvAppService}
    */
-  #dwvService;
+  #dwvAppService;
 
   /**
    * The list of all tool names.
@@ -232,13 +232,13 @@ export class Toolbar {
   #modal;
 
   /**
-   * @param {DwvService} dwvService The dwv service.
+   * @param {DwvAppService} dwvAppService The dwv app service.
    * @param {string[]} optionGuiTools The list of gui tools.
    */
-  constructor(dwvService, optionGuiTools) {
-    this.#dwvService = dwvService;
-    this.#uid = dwvService.getOptions().uid;
-    this.#rootDoc = dwvService.getOptions().rootDocument;
+  constructor(dwvAppService, optionGuiTools) {
+    this.#dwvAppService = dwvAppService;
+    this.#uid = dwvAppService.getOptions().uid;
+    this.#rootDoc = dwvAppService.getOptions().rootDocument;
 
     // default gui tools
     const defaultGuiTools = [
@@ -256,7 +256,7 @@ export class Toolbar {
     }
 
     // build tool names
-    const appToolNames = dwvService.getToolNames();
+    const appToolNames = dwvAppService.getToolNames();
     this.#toolNames = appToolNames.concat(this.#guiToolNames);
 
     if (appToolNames.includes('WindowLevel')) {
@@ -264,7 +264,7 @@ export class Toolbar {
     }
     if (appToolNames.includes('Draw')) {
       this.#toolExtras['Draw'] = 'DrawShapes';
-      this.#shapes = dwvService.getShapeNames();
+      this.#shapes = dwvAppService.getShapeNames();
       this.#selectedShape = this.#shapes[0];
     }
 
@@ -272,31 +272,31 @@ export class Toolbar {
     this.#modal = new Modal(this.#uid, this.#rootDoc);
 
     // watch data ready
-    this.#dwvService.addEventListener('dataready', (event) => {
+    this.#dwvAppService.addEventListener('dataready', (event) => {
       const dataReady = event.detail.value;
       if (dataReady) {
         // enable tools
         this.#enableToolUIs();
 
         // activate first runnable
-        const runnableTool = this.#dwvService.getFirstRunnableTool();
+        const runnableTool = this.#dwvAppService.getFirstRunnableTool();
         if (runnableTool !== undefined) {
           this.applyTool(runnableTool);
         }
 
         // option preset is default if preset
-        const presetName = this.#dwvService.getOptionWlPresetName();
+        const presetName = this.#dwvAppService.getOptionWlPresetName();
         if (typeof presetName !== 'undefined') {
           this.setSelectedPreset(presetName);
         }
       }
     });
     // watch preset names
-    this.#dwvService.addEventListener('presetnames', (event) => {
+    this.#dwvAppService.addEventListener('presetnames', (event) => {
       this.addPresetOptions(event.detail.value);
     });
     // watch is manual preset
-    this.#dwvService.addEventListener('ismanualpreset', (event) => {
+    this.#dwvAppService.addEventListener('ismanualpreset', (event) => {
       const isManual = event.detail.value;
       const preset = this.#selectedPreset;
       const manualStr = 'manual';
@@ -414,7 +414,7 @@ export class Toolbar {
     if (typeof features === 'undefined' && tool === 'Draw') {
       features = {shapeName: this.#selectedShape};
     }
-    this.#dwvService.applyTool(tool, features);
+    this.#dwvAppService.applyTool(tool, features);
 
     // deactivate all
     this.#markAllToolUIsAsActive(false);
@@ -437,7 +437,7 @@ export class Toolbar {
    * @param {string} preset The preset name.
    */
   applyPreset(preset) {
-    this.#dwvService.applyPreset(preset);
+    this.#dwvAppService.applyPreset(preset);
   }
 
   /**
@@ -473,7 +473,7 @@ export class Toolbar {
       if (this.#guiToolNames.includes(toolName)) {
         canRun = true;
       } else {
-        canRun = this.#dwvService.canRunTool(toolName);
+        canRun = this.#dwvAppService.canRunTool(toolName);
       }
       this.#enableToolUI(toolName, canRun);
     }
@@ -513,14 +513,14 @@ export class Toolbar {
    * Handle display reset.
    */
   onDisplayReset() {
-    this.#dwvService.reset();
+    this.#dwvAppService.reset();
   };
 
   /**
    * Toggle the viewer this.#orientation.
    */
   toggleOrientation() {
-    this.#dwvService.toggleOrientation();
+    this.#dwvAppService.toggleOrientation();
   };
 
   /**
@@ -609,7 +609,7 @@ export class Toolbar {
     modalTitle.appendChild(document.createTextNode('DICOM Tags'));
 
     // TODO allow for different dataid
-    const metaData = this.#dwvService.getMetaData();
+    const metaData = this.#dwvAppService.getMetaData();
 
     // InstanceNumber
     const instanceElement = metaData['00200013'];

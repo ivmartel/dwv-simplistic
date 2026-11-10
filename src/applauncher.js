@@ -1,7 +1,7 @@
 
 import {Gui} from './appgui.js';
 import {DropboxLoader} from './gui/dropboxLoader.js';
-import {DwvService} from './service/dwvService.js';
+import {DwvAppService} from './service/dwvAppService.js';
 
 /**
  * Application launcher.
@@ -14,12 +14,12 @@ import {DwvService} from './service/dwvService.js';
  * - tools (string[]): list of tools.
  * @param {Document} [rootDoc] Optional root document,
  *   defaults to `window.document`.
- * @returns {DwvService} The created service, call its `dispose` method
+ * @returns {DwvAppService} The created service, call its `dispose` method
  *   to release its resources.
  */
 export function startApp(uid, options, rootDoc) {
   // create service
-  const dwvService = new DwvService({
+  const dwvAppService = new DwvAppService({
     uid,
     tools: options.tools,
     wlpreset: options.wlpreset,
@@ -31,13 +31,13 @@ export function startApp(uid, options, rootDoc) {
 
   // app gui
   const dwvAppGui = new Gui(
-    dwvService,
+    dwvAppService,
     optionGuiTools
   );
   dwvAppGui.init();
 
   // setup drop box
-  const dropBoxLoader = new DropboxLoader(dwvService);
+  const dropBoxLoader = new DropboxLoader(dwvAppService);
   dropBoxLoader.init();
 
   // show/hide drop box
@@ -47,11 +47,11 @@ export function startApp(uid, options, rootDoc) {
     const isLoading = progress !== 0 && progress !== 100;
     dropBoxLoader.showDropbox(!isLoading && !isLoaded);
   };
-  dwvService.addEventListener('loadprogress', function (event) {
+  dwvAppService.addEventListener('loadprogress', function (event) {
     progress = event.detail.value;
     autoShowDropbox();
   });
-  dwvService.addEventListener('dataloaded', function (event) {
+  dwvAppService.addEventListener('dataloaded', function (event) {
     isLoaded = event.detail.value;
     autoShowDropbox();
   });
@@ -59,9 +59,9 @@ export function startApp(uid, options, rootDoc) {
   // load from options if defined
   if (typeof options !== 'undefined') {
     if (typeof options.uri !== 'undefined') {
-      dwvService.loadFromUri(options.uri);
+      dwvAppService.loadFromUri(options.uri);
     } else if (typeof options.urls !== 'undefined') {
-      dwvService.loadURLs(options.urls);
+      dwvAppService.loadURLs(options.urls);
     } else {
       dropBoxLoader.showDropbox(true);
     }
@@ -69,5 +69,5 @@ export function startApp(uid, options, rootDoc) {
     dropBoxLoader.showDropbox(true);
   }
 
-  return dwvService;
+  return dwvAppService;
 };

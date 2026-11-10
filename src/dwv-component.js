@@ -12,7 +12,7 @@ import themeBlue from './theme/blue.css';
 import themePink from './theme/pink.css';
 
 /**
- * @import {DwvService} from './service/dwvService.js';
+ * @import {DwvAppService} from './service/dwvAppService.js';
  */
 
 /**
@@ -110,11 +110,11 @@ export function splitAttribute(value) {
  */
 export class DwvComponent extends HTMLElement {
   /**
-   * The dwv service, defined while the viewer is running.
+   * The dwv app service, defined while the viewer is running.
    *
-   * @type {DwvService|undefined}
+   * @type {DwvAppService|undefined}
    */
-  #dwvService;
+  #dwvAppService;
 
   constructor() {
     // Always call super first in constructor
@@ -127,7 +127,7 @@ export class DwvComponent extends HTMLElement {
    */
   connectedCallback() {
     // already running: the element was moved
-    if (typeof this.#dwvService !== 'undefined') {
+    if (typeof this.#dwvAppService !== 'undefined') {
       return;
     }
 
@@ -232,7 +232,7 @@ export class DwvComponent extends HTMLElement {
     }
 
     // start app
-    this.#dwvService = startApp(appId, options, this.shadowRoot);
+    this.#dwvAppService = startApp(appId, options, this.shadowRoot);
   }
 
   /**
@@ -243,9 +243,9 @@ export class DwvComponent extends HTMLElement {
     // a move disconnects and reconnects the element synchronously:
     // only release the viewer if it is still disconnected afterwards
     queueMicrotask(() => {
-      if (!this.isConnected && typeof this.#dwvService !== 'undefined') {
-        this.#dwvService.dispose();
-        this.#dwvService = undefined;
+      if (!this.isConnected && typeof this.#dwvAppService !== 'undefined') {
+        this.#dwvAppService.dispose();
+        this.#dwvAppService = undefined;
         this.shadowRoot.replaceChildren();
       }
     });

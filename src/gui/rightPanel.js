@@ -6,7 +6,7 @@ import {
 } from './icons.js';
 
 /**
- * @import {DwvService} from '../service/dwvService.js';
+ * @import {DwvAppService} from '../service/dwvAppService.js';
  */
 
 /**
@@ -63,11 +63,11 @@ export function getRightPanelElements(appId) {
 export class RightPanel {
 
   /**
-   * The dwv service.
+   * The dwv app service.
    *
-   * @type {DwvService}
+   * @type {DwvAppService}
    */
-  #dwvService;
+  #dwvAppService;
 
   /**
    * The GUI UID.
@@ -98,14 +98,14 @@ export class RightPanel {
   #annotComponent;
 
   /**
-   * @param {DwvService} dwvService The dwv service.
+   * @param {DwvAppService} dwvAppService The dwv app service.
    */
-  constructor(dwvService) {
-    this.#dwvService = dwvService;
-    this.#uid = dwvService.getOptions().uid;
-    this.#rootDoc = dwvService.getOptions().rootDocument;
+  constructor(dwvAppService) {
+    this.#dwvAppService = dwvAppService;
+    this.#uid = dwvAppService.getOptions().uid;
+    this.#rootDoc = dwvAppService.getOptions().rootDocument;
 
-    this.#annotService = new AnnotationService(dwvService);
+    this.#annotService = new AnnotationService(dwvAppService);
     this.#annotComponent = new AnnotationComponent(
       this.#annotService, this.#rootDoc, this.#uid);
   }
@@ -170,7 +170,7 @@ export class RightPanel {
         content.style.display = 'block';
         resizer.style.display = 'block';
       }
-      this.#dwvService.onResize();
+      this.#dwvAppService.onResize();
     });
 
     // activate resizing
@@ -190,7 +190,7 @@ export class RightPanel {
       const newWidth = startWidth - (event.clientX - startX);
       if (newWidth > minPanelWidth && newWidth < maxPanelWidth) {
         rightPanel.style.width = newWidth + 'px';
-        this.#dwvService.onResize();
+        this.#dwvAppService.onResize();
       }
     };
     // stop resizing

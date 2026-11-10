@@ -2,7 +2,7 @@ import {Toolbar} from './gui/toolbar.js';
 import {RightPanel} from './gui/rightPanel.js';
 
 /**
- * @import {DwvService} from './service/dwvService.js';
+ * @import {DwvAppService} from './service/dwvAppService.js';
  */
 
 /**
@@ -69,17 +69,17 @@ export class Gui {
   #rightPanel;
 
   /**
-   * @param {DwvService} dwvService The dwv service.
+   * @param {DwvAppService} dwvAppService The dwv app service.
    * @param {string[]} optionGuiTools The list of gui tools.
    */
-  constructor(dwvService, optionGuiTools) {
-    this.#uid = dwvService.getOptions().uid;
-    this.#rootDoc = dwvService.getOptions().rootDocument;
+  constructor(dwvAppService, optionGuiTools) {
+    this.#uid = dwvAppService.getOptions().uid;
+    this.#rootDoc = dwvAppService.getOptions().rootDocument;
 
-    this.#toolbar = new Toolbar(dwvService, optionGuiTools);
-    this.#rightPanel = new RightPanel(dwvService);
+    this.#toolbar = new Toolbar(dwvAppService, optionGuiTools);
+    this.#rightPanel = new RightPanel(dwvAppService);
 
-    dwvService.addEventListener('loadprogress', (event) => {
+    dwvAppService.addEventListener('loadprogress', (event) => {
       this.setProgress(event.detail.value);
     });
   };

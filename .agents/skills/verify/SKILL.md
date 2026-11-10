@@ -1,6 +1,6 @@
 ---
 name: verify
-description: Verify a change in dwv-simplistic before calling it done. Runs the same checks as CI (lint, tests with coverage, production build), checks repo-specific rules (JSDoc, uid-suffixed ids, rootDocument lookups, DwvService boundary, dist/ not committed, demo build) and, for UI changes, drives the dev server with a DICOM input. Use after editing src/, tests/, config/, demo/ or dependencies, or when asked to "verify", "check" or "make sure CI passes".
+description: Verify a change in dwv-simplistic before calling it done. Runs the same checks as CI (lint, tests with coverage, production build), checks repo-specific rules (JSDoc, uid-suffixed ids, rootDocument lookups, DwvAppService boundary, dist/ not committed, demo build) and, for UI changes, drives the dev server with a DICOM input. Use after editing src/, tests/, config/, demo/ or dependencies, or when asked to "verify", "check" or "make sure CI passes".
 ---
 
 # Verify
@@ -50,7 +50,7 @@ yarn run test-ci
   `src/` path, named `*.test.js`, importing `describe`/`test`/`expect` from
   `vitest`.
 - Check the coverage text summary for the touched files; new logic in
-  `DwvService` or pure helpers should be exercised. No thresholds are
+  `DwvAppService` or pure helpers should be exercised. No thresholds are
   enforced, so flag uncovered new code instead of failing.
 
 ## 4. Production build
@@ -67,12 +67,12 @@ Must succeed with no new webpack errors. Output goes to the git-ignored
 Read `git diff` and check:
 
 - **Element lookups** go through `rootDocument`
-  (`dwvService.getOptions().rootDocument`), never `document.getElementById`
+  (`dwvAppService.getOptions().rootDocument`), never `document.getElementById`
   etc. (the component renders in a shadow root).
 - **Element ids** are suffixed with the app uid (`<name>-<uid>`), using the
   helpers in `src/appgui.js` or the same pattern.
-- **DwvService boundary**: GUI code does not touch the dwv `App` directly; new
-  app-level interactions are `DwvService` methods and/or `CustomEvent`s with
+- **DwvAppService boundary**: GUI code does not touch the dwv `App` directly; new
+  app-level interactions are `DwvAppService` methods and/or `CustomEvent`s with
   payload in `event.detail`. Exception: `src/service/annotationService.js` (and
   `src/gui/annotationUI.js`, `quantification.js`) mirror dwv `dev/viewer`
   code and may use dwv objects via the exposed controllers; keep them in

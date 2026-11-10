@@ -22,9 +22,9 @@ import {overlayConfig} from '../gui/overlays.js';
 const _LOAD_TIMERS = false;
 
 /**
- * DWV service.
+ * DWV app service.
  */
-export class DwvService extends EventTarget {
+export class DwvAppService extends EventTarget {
   /**
    * List of default annotation shape names.
    *

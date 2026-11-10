@@ -77,9 +77,9 @@ class MockAnnotationGroup extends EventTarget {
 }
 
 /**
- * Mock dwv service.
+ * Mock dwv app service.
  */
-class MockDwvService extends EventTarget {
+class MockDwvAppService extends EventTarget {
   data = new Map();
   drawLayer = {
     setLabelsVisibility: vi.fn(),
@@ -135,26 +135,26 @@ class MockDwvService extends EventTarget {
 /**
  * Get a connected service with one annotation group.
  *
- * @returns {object} The mock dwv service, annotation group
+ * @returns {object} The mock dwv app service, annotation group
  *   and annotation service.
  */
 function getConnectedService() {
-  const dwvService = new MockDwvService();
+  const dwvAppService = new MockDwvAppService();
   const group = new MockAnnotationGroup(
     [getAnnotation('a0'), getAnnotation('a1')]);
-  dwvService.data.set('1', {annotationGroup: group});
-  dwvService.data.set('0', {image: {}});
-  const service = new AnnotationService(dwvService);
+  dwvAppService.data.set('1', {annotationGroup: group});
+  dwvAppService.data.set('0', {image: {}});
+  const service = new AnnotationService(dwvAppService);
   service.connect();
-  dwvService.fire('dataadd', {dataid: '0'});
-  dwvService.fire('dataadd', {dataid: '1'});
-  return {dwvService, group, service};
+  dwvAppService.fire('dataadd', {dataid: '0'});
+  dwvAppService.fire('dataadd', {dataid: '1'});
+  return {dwvAppService, group, service};
 }
 
 describe('AnnotationService', () => {
 
   test('starts with an empty state', () => {
-    const service = new AnnotationService(new MockDwvService());
+    const service = new AnnotationService(new MockDwvAppService());
     expect(service.getSnapshot()).toEqual(
       {groups: [], selected: undefined});
   });
@@ -182,23 +182,23 @@ describe('AnnotationService', () => {
   });
 
   test('notifies subscribers until unsubscribed', () => {
-    const {dwvService, service} = getConnectedService();
+    const {dwvAppService, service} = getConnectedService();
     const listener = vi.fn();
     const unsubscribe = service.subscribe(listener);
-    dwvService.fire('annotationadd',
+    dwvAppService.fire('annotationadd',
       {dataid: '1', data: getAnnotation('a2')});
     expect(listener).toHaveBeenCalledTimes(1);
     unsubscribe();
-    dwvService.fire('annotationadd',
+    dwvAppService.fire('annotationadd',
       {dataid: '1', data: getAnnotation('a3')});
     expect(listener).toHaveBeenCalledTimes(1);
   });
 
   test('handles annotation add, update and remove', () => {
-    const {dwvService, service} = getConnectedService();
+    const {dwvAppService, service} = getConnectedService();
     const before = service.getSnapshot().groups[0];
 
-    dwvService.fire('annotationadd',
+    dwvAppService.fire('annotationadd',
       {dataid: '1', data: getAnnotation('a2')});
     let group = service.getSnapshot().groups[0];
     expect(group.annotations.map((item) => item.id))
@@ -206,20 +206,20 @@ describe('AnnotationService', () => {
     // unchanged annotations keep their identity
     expect(group.annotations[0]).toBe(before.annotations[0]);
 
-    dwvService.fire('annotationupdate',
+    dwvAppService.fire('annotationupdate',
       {dataid: '1', data: getAnnotation('a1', {colour: '#000000'})});
     group = service.getSnapshot().groups[0];
     expect(group.annotations[1].colour).toBe('#000000');
     expect(group.annotations[0]).toBe(before.annotations[0]);
 
-    dwvService.fire('annotationremove',
+    dwvAppService.fire('annotationremove',
       {dataid: '1', data: getAnnotation('a0')});
     group = service.getSnapshot().groups[0];
     expect(group.annotations.map((item) => item.id)).toEqual(['a1', 'a2']);
   });
 
   test('handles selection', () => {
-    const {dwvService, service} = getConnectedService();
+    const {dwvAppService, service} = getConnectedService();
     expect(service.selectAnnotation('1', 'unknown')).toBe(false);
     expect(service.getSnapshot().selected).toBeUndefined();
 
@@ -231,31 +231,31 @@ describe('AnnotationService', () => {
     expect(service.getSnapshot()).toBe(state);
 
     // tap on an annotation
-    dwvService.fire('tap',
+    dwvAppService.fire('tap',
       {annotations: [{dataid: '1', annotationid: 'a0'}]});
     expect(service.getSnapshot().selected)
       .toEqual({dataId: '1', annotationId: 'a0'});
     // tap outside
-    dwvService.fire('tap', {annotations: []});
+    dwvAppService.fire('tap', {annotations: []});
     expect(service.getSnapshot().selected).toBeUndefined();
 
     // annotationselect
-    dwvService.fire('annotationselect', {dataid: '1', annotationid: 'a1'});
+    dwvAppService.fire('annotationselect', {dataid: '1', annotationid: 'a1'});
     expect(service.getSnapshot().selected)
       .toEqual({dataId: '1', annotationId: 'a1'});
     // removing the selected annotation clears the selection
-    dwvService.fire('annotationremove',
+    dwvAppService.fire('annotationremove',
       {dataid: '1', data: getAnnotation('a1')});
     expect(service.getSnapshot().selected).toBeUndefined();
   });
 
   test('follows the group editable state', () => {
-    const {dwvService, group, service} = getConnectedService();
+    const {dwvAppService, group, service} = getConnectedService();
     service.setAnnotationGroupEditable('1', false);
     expect(service.getSnapshot().groups[0].editable).toBe(false);
 
     // no more listening once the data is removed
-    dwvService.fire('dataremove', {dataid: '1'});
+    dwvAppService.fire('dataremove', {dataid: '1'});
     expect(service.getSnapshot().groups).toEqual([]);
     const state = service.getSnapshot();
     group.setEditable(true);
@@ -263,37 +263,37 @@ describe('AnnotationService', () => {
   });
 
   test('sets labels and annotation visibility', () => {
-    const {dwvService, service} = getConnectedService();
+    const {dwvAppService, service} = getConnectedService();
     expect(service.setLabelsVisibility('1', false)).toBe(true);
-    expect(dwvService.drawLayer.setLabelsVisibility)
+    expect(dwvAppService.drawLayer.setLabelsVisibility)
       .toHaveBeenCalledWith(false);
     expect(service.getSnapshot().groups[0].labelsVisible).toBe(false);
 
     service.setAnnotationVisibility('1', 'a1', false);
-    expect(dwvService.drawLayer.setAnnotationVisibility)
+    expect(dwvAppService.drawLayer.setAnnotationVisibility)
       .toHaveBeenCalledWith('a1', false);
     const annotations = service.getSnapshot().groups[0].annotations;
     expect(annotations[1].visible).toBe(false);
     expect(annotations[0].visible).toBe(true);
 
     // visibility is kept on update
-    dwvService.fire('annotationupdate',
+    dwvAppService.fire('annotationupdate',
       {dataid: '1', data: getAnnotation('a1')});
     expect(service.getSnapshot().groups[0].annotations[1].visible)
       .toBe(false);
   });
 
   test('adds an annotation group on the active view layer', () => {
-    const {dwvService, service} = getConnectedService();
+    const {dwvAppService, service} = getConnectedService();
     expect(service.addAnnotationGroup()).toBe(false);
-    expect(dwvService.createAnnotationData).not.toHaveBeenCalled();
+    expect(dwvAppService.createAnnotationData).not.toHaveBeenCalled();
 
-    dwvService.viewLayer = {getDataId: () => '0'};
+    dwvAppService.viewLayer = {getDataId: () => '0'};
     expect(service.getDefaultGroupReference())
       .toEqual({refDataId: '0', divId: 'layerGroup-0'});
     expect(service.addAnnotationGroup()).toBe(true);
-    expect(dwvService.createAnnotationData).toHaveBeenCalledWith('0');
-    expect(dwvService.addAndRenderAnnotationData)
+    expect(dwvAppService.createAnnotationData).toHaveBeenCalledWith('0');
+    expect(dwvAppService.addAndRenderAnnotationData)
       .toHaveBeenCalledWith({id: 'new'}, 'layerGroup-0', '0');
   });
 
@@ -303,12 +303,12 @@ describe('AnnotationService', () => {
   });
 
   test('stops listening on dispose', () => {
-    const {dwvService, service} = getConnectedService();
+    const {dwvAppService, service} = getConnectedService();
     const listener = vi.fn();
     service.subscribe(listener);
     service.dispose();
     const state = service.getSnapshot();
-    dwvService.fire('annotationadd',
+    dwvAppService.fire('annotationadd',
       {dataid: '1', data: getAnnotation('a2')});
     expect(service.getSnapshot()).toBe(state);
     expect(listener).not.toHaveBeenCalled();
