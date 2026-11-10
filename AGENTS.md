@@ -60,6 +60,7 @@ src/
                       AnnotationService: annotation logic and state store on
                       top of DwvAppService, based on dwv
                       dev/viewer/annot.service.js (keep in sync)
+    overlays.js       dwv overlay config
   appgui.js           Gui: owns Toolbar + RightPanel, progress bar, div id helpers
   gui/
     toolbar.js        tools, shapes, WL presets, reset/orientation/fullscreen/tags
@@ -72,7 +73,6 @@ src/
     dropboxLoader.js  drag and drop / file input loader
     modal.js, meta.js DICOM tags modal and meta flattening
     icons.js          inline SVG icons and button helpers
-    overlays.js       dwv overlay config
   theme/              light/dark/blue/pink + common CSS (Material 3 color roles,
                       see src/theme/readme.md)
   dwv-component.css   component styles
