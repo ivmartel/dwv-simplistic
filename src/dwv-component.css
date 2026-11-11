@@ -356,6 +356,11 @@ button:enabled:hover {
     margin-right: 10px;
   }
 
+  .tags-search {
+    width: 50%;
+    margin: 5px 0 10px;
+  }
+
   .modal-content-scroll {
     height: 85%;
     overflow: auto;

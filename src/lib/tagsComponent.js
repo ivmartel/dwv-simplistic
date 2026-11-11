@@ -9,7 +9,8 @@
 
 /**
  * Tags component: renders the tags service state as an instance
- *   number slider and a tags table, and calls the service actions.
+ *   number slider, a search input and a tags table, and calls
+ *   the service actions.
  */
 export class TagsComponent {
 
@@ -63,6 +64,13 @@ export class TagsComponent {
   #sliderLabel;
 
   /**
+   * The tags search input.
+   *
+   * @type {HTMLInputElement|undefined}
+   */
+  #searchInput;
+
+  /**
    * The scrollable tags table container.
    *
    * @type {HTMLDivElement|undefined}
@@ -97,8 +105,8 @@ export class TagsComponent {
   }
 
   /**
-   * Get the content elements: title, instance number slider and
-   *   scrollable tags table. Always returns the same elements.
+   * Get the content elements: title, instance number slider,
+   *   search input and scrollable tags table. Always returns the same elements.
    *
    * @returns {HTMLElement[]} The content elements.
    */
@@ -142,14 +150,29 @@ export class TagsComponent {
     sliderDiv.appendChild(slider);
     sliderDiv.appendChild(sliderLabel);
 
+    // search input
+    const searchInput = document.createElement('input');
+    searchInput.type = 'search';
+    searchInput.id = 'tags-search-' + this.#uid;
+    searchInput.placeholder = 'Search tags';
+    searchInput.title = 'Search in tag names and values';
+    searchInput.className = 'tags-search';
+    searchInput.addEventListener('input', (event) => {
+      this.#tagsService.setSearch(event.target.value);
+    });
+    // container div
+    const searchDiv = document.createElement('div');
+    searchDiv.appendChild(searchInput);
+
     // div with enabled scroll
     const scrollDiv = document.createElement('div');
     scrollDiv.className = 'modal-content-scroll';
 
     this.#slider = slider;
     this.#sliderLabel = sliderLabel;
+    this.#searchInput = searchInput;
     this.#scrollDiv = scrollDiv;
-    this.#content = [title, sliderDiv, scrollDiv];
+    this.#content = [title, sliderDiv, searchDiv, scrollDiv];
   }
 
   /**
@@ -179,9 +202,22 @@ export class TagsComponent {
       typeof state.instanceNumber !== 'undefined'
         ? state.instanceNumber : ''));
 
+    // search
+    if (this.#searchInput.value !== state.search) {
+      this.#searchInput.value = state.search;
+    }
+
     // table
     if (state.tags !== previous?.tags) {
-      this.#scrollDiv.replaceChildren(arrayToHtmlTable(state.tags));
+      let table;
+      if (state.tags.length === 0 && state.search.trim().length !== 0) {
+        table = document.createElement('p');
+        table.appendChild(document.createTextNode(
+          'No tag matching \'' + state.search.trim() + '\'.'));
+      } else {
+        table = arrayToHtmlTable(state.tags);
+      }
+      this.#scrollDiv.replaceChildren(table);
     }
   };
 

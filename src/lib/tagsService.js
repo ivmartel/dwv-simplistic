@@ -25,7 +25,9 @@ import {getTagFromKey, getDicomTagInfo} from 'dwv';
  *   empty if the data has no InstanceNumber.
  * @property {string|undefined} instanceNumber The selected
  *   instance number.
- * @property {TagItemState[]} tags The tags of the selected instance.
+ * @property {string} search The search string, empty for no search.
+ * @property {TagItemState[]} tags The tags of the selected instance
+ *   matching the search.
  */
 
 /**
@@ -63,6 +65,25 @@ export function getInstanceNumbers(metaData) {
 }
 
 /**
+ * Filter tags with a search string: keep the tags which name or value
+ *   contains it, case insensitive.
+ *
+ * @param {TagItemState[]} tags The tags to filter.
+ * @param {string} search The search string, empty or blank for no search.
+ * @returns {TagItemState[]} The matching tags, the input array
+ *   if there is no search.
+ */
+export function filterTags(tags, search) {
+  const term = search.trim().toLowerCase();
+  if (term.length === 0) {
+    return tags;
+  }
+  return tags.filter((tag) =>
+    String(tag.name).toLowerCase().includes(term) ||
+    String(tag.value).toLowerCase().includes(term));
+}
+
+/**
  * Tags service: framework agnostic DICOM tags logic and state
  *   on top of the dwv app service, no DOM access.
  *
@@ -88,11 +109,23 @@ export class TagsService {
   #metaData;
 
   /**
+   * All the tags of the selected instance (not filtered).
+   *
+   * @type {TagItemState[]}
+   */
+  #allTags = [];
+
+  /**
    * The current snapshot.
    *
    * @type {TagsState}
    */
-  #snapshot = {instanceNumbers: [], instanceNumber: undefined, tags: []};
+  #snapshot = {
+    instanceNumbers: [],
+    instanceNumber: undefined,
+    search: '',
+    tags: []
+  };
 
   /**
    * The state change listeners.
@@ -176,10 +209,28 @@ export class TagsService {
       instanceNumber === this.#snapshot.instanceNumber) {
       return;
     }
+    this.#allTags = getMetaArray(this.#metaData, instanceNumber);
     this.#emit({
       ...this.#snapshot,
       instanceNumber,
-      tags: getMetaArray(this.#metaData, instanceNumber)
+      tags: filterTags(this.#allTags, this.#snapshot.search)
+    });
+  }
+
+  /**
+   * Set the search string: only the tags which name or value
+   *   contains it are kept, case insensitive.
+   *
+   * @param {string} search The search string, empty for no search.
+   */
+  setSearch(search) {
+    if (search === this.#snapshot.search) {
+      return;
+    }
+    this.#emit({
+      ...this.#snapshot,
+      search,
+      tags: filterTags(this.#allTags, search)
     });
   }
 
@@ -200,23 +251,32 @@ export class TagsService {
   /**
    * Handle 'dataloaded' event: reset the state from the
    *   loaded meta data, or clear it when a new load starts.
+   *   The search string is kept.
    *
    * @param {CustomEvent} event The event.
    */
   #onDataLoaded(event) {
     if (!event.detail.value) {
       this.#metaData = undefined;
-      this.#emit({instanceNumbers: [], instanceNumber: undefined, tags: []});
+      this.#allTags = [];
+      this.#emit({
+        ...this.#snapshot,
+        instanceNumbers: [],
+        instanceNumber: undefined,
+        tags: []
+      });
       return;
     }
     // TODO allow for different dataid
     this.#metaData = this.#dwvAppService.getMetaData();
     const instanceNumbers = getInstanceNumbers(this.#metaData);
     const instanceNumber = instanceNumbers[0];
+    this.#allTags = getMetaArray(this.#metaData, instanceNumber);
     this.#emit({
+      ...this.#snapshot,
       instanceNumbers,
       instanceNumber,
-      tags: getMetaArray(this.#metaData, instanceNumber)
+      tags: filterTags(this.#allTags, this.#snapshot.search)
     });
   }
 

@@ -3,7 +3,8 @@ import {describe, test, expect} from 'vitest';
 import {
   TagsService,
   getInstanceNumbers,
-  getMetaArray
+  getMetaArray,
+  filterTags
 } from '../../src/lib/tagsService.js';
 
 /**
@@ -66,12 +67,34 @@ describe('getInstanceNumbers', () => {
   });
 });
 
+describe('filterTags', () => {
+  const tags = [
+    {name: 'PatientName', value: 'Doe^John'},
+    {name: 'Rows', value: 512},
+    {name: 'Modality', value: 'MR'}
+  ];
+
+  test('returns the input without search', () => {
+    expect(filterTags(tags, '')).toBe(tags);
+    expect(filterTags(tags, '  ')).toBe(tags);
+  });
+
+  test('matches names and values, case insensitive', () => {
+    expect(filterTags(tags, 'patient')).toEqual([tags[0]]);
+    expect(filterTags(tags, ' JOHN ')).toEqual([tags[0]]);
+    expect(filterTags(tags, '51')).toEqual([tags[1]]);
+    expect(filterTags(tags, 'o')).toEqual(tags);
+    expect(filterTags(tags, 'xyz')).toEqual([]);
+  });
+});
+
 describe('TagsService', () => {
   test('starts empty', () => {
     const tagsService = new TagsService(getFakeService(meta));
     expect(tagsService.getSnapshot()).toEqual({
       instanceNumbers: [],
       instanceNumber: undefined,
+      search: '',
       tags: []
     });
   });
@@ -114,6 +137,35 @@ describe('TagsService', () => {
     expect(state.instanceNumbers).toBe(before.instanceNumbers);
     expect(state.instanceNumber).toBe('3');
     expect(state.tags[1]).toEqual({name: 'InstanceNumber', value: '3'});
+  });
+
+  test('filters the tags with a search string', () => {
+    const service = getFakeService(meta);
+    const tagsService = new TagsService(service);
+    tagsService.connect();
+    dispatchDataLoaded(service, true);
+    const before = tagsService.getSnapshot();
+    tagsService.setSearch('');
+    // no change: same snapshot
+    expect(tagsService.getSnapshot()).toBe(before);
+    tagsService.setSearch('instance');
+    let state = tagsService.getSnapshot();
+    expect(state.search).toBe('instance');
+    expect(state.tags).toEqual([{name: 'InstanceNumber', value: '1'}]);
+    // kept on instance number change
+    tagsService.setInstanceNumber('2');
+    state = tagsService.getSnapshot();
+    expect(state.tags).toEqual([{name: 'InstanceNumber', value: '2'}]);
+    // kept on new data
+    dispatchDataLoaded(service, false);
+    expect(tagsService.getSnapshot().search).toBe('instance');
+    expect(tagsService.getSnapshot().tags).toEqual([]);
+    dispatchDataLoaded(service, true);
+    expect(tagsService.getSnapshot().tags)
+      .toEqual([{name: 'InstanceNumber', value: '1'}]);
+    // clear search
+    tagsService.setSearch('');
+    expect(tagsService.getSnapshot().tags.length).toBe(2);
   });
 
   test('loads merged meta data', () => {
