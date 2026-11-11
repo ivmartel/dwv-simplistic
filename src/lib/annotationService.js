@@ -13,7 +13,7 @@ import {
 
 /**
  * Note: highly inspired from the dwv viewer
- *   and 'dev/viewer/annot.service.js'.
+ *   and 'dev/viewer/src/annotationService.js'.
  */
 
 /**
@@ -82,7 +82,7 @@ function getAnnotationItemState(annotation, visible) {
 
 /**
  * Annotation service: framework agnostic annotation logic and state
- *   on top of the viewer service, no DOM access.
+ *   on top of the dwv app service, no DOM access.
  *
  * The state follows the external store contract
  *   (`subscribe` / `getSnapshot`). Actions are methods keyed by
@@ -135,7 +135,7 @@ export class AnnotationService {
   #listeners = new Set();
 
   /**
-   * The viewer service event handlers.
+   * The dwv app service event handlers.
    *
    * @type {Record<string, Function>}
    */
@@ -151,10 +151,10 @@ export class AnnotationService {
   };
 
   /**
-   * @param {DwvAppService} service The associated dwv app service.
+   * @param {DwvAppService} dwvAppService The associated dwv app service.
    */
-  constructor(service) {
-    this.#dwvAppService = service;
+  constructor(dwvAppService) {
+    this.#dwvAppService = dwvAppService;
   }
 
   // store contract
@@ -186,7 +186,7 @@ export class AnnotationService {
   // lifecycle
 
   /**
-   * Listen to the viewer service events.
+   * Listen to the dwv app service events.
    */
   connect() {
     for (const [type, handler] of Object.entries(this.#handlers)) {
@@ -195,7 +195,7 @@ export class AnnotationService {
   }
 
   /**
-   * Stop listening to the viewer service and annotation groups events,
+   * Stop listening to the dwv app service and annotation groups events,
    *   remove the subscribers.
    */
   dispose() {

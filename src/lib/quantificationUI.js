@@ -4,7 +4,7 @@
 
 /**
  * Note: highly inspired from the dwv viewer
- *   and 'dev/viewer/viewer.ui.quantification.js'
+ *   and 'dev/viewer/src/quantificationUI.js'
  *   (rendering part, logic in './quantification.js').
  */
 

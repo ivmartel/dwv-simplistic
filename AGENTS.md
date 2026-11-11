@@ -60,20 +60,20 @@ src/
     annotationService.js
                       AnnotationService: annotation logic and state store on
                       top of DwvAppService, based on dwv
-                      dev/viewer/annot.service.js (keep in sync)
+                      dev/viewer/src/annotationService.js (keep in sync)
     quantification.js annotation quantification groups (labels, values
                       formatting), based on dwv
-                      dev/viewer/viewer.ui.quantification.js
+                      dev/viewer/src/quantification.js
     overlays.js       dwv overlay config
     toolbar.js        tools, shapes, WL presets, reset/orientation/fullscreen/tags
     rightPanel.js     side panel hosting annotations
     annotationComponent.js
                       AnnotationComponent: annotation list renderer of the
                       AnnotationService state, based on dwv
-                      dev/viewer/viewer.ui.annot.js (keep in sync)
+                      dev/viewer/src/annotationComponent.js (keep in sync)
     quantificationUI.js
                       annotation quantification rendering, based on dwv
-                      dev/viewer/viewer.ui.quantification.js
+                      dev/viewer/src/quantificationUI.js
     dropboxLoader.js  drag and drop / file input loader
     modal.js          modal dialog
     tagsService.js    TagsService: DICOM tags logic and state store
@@ -102,10 +102,11 @@ build/                demo site (build/demo/) and coverage (build/coverage/)
   `drawlayeradd`, `annotationadd|update|remove|select`). Event payloads live in `event.detail`.
   Add new app-level interactions (loading, tools, layout) to `DwvAppService`
   and expose them the same way.
-- Exception: annotations mirror the dwv viewer (`dev/viewer`).
+- Exception: annotations mirror the dwv viewer (`dev/viewer/src`).
   `AnnotationService` (`src/lib/annotationService.js`, no DOM access)
   works on dwv objects itself, through the controllers `DwvAppService`
-  exposes like dwv's `ViewerService` (`getDataController`, `getStageController`,
+  exposes like the dwv viewer `DwvAppService` (`getDataController`,
+  `getStageController`,
   `getUndoController`, `createAnnotationData`,
   `addAndRenderAnnotationData`). It uses `DrawController`, draw layers and
   `DicomWriter` directly, listens to `annotationgroupeditablechange` on
@@ -142,19 +143,20 @@ and must be kept in sync with it:
 
 | file | dwv source |
 | --- | --- |
-| `src/lib/annotationService.js` | `dev/viewer/annot.service.js` |
-| `src/lib/annotationComponent.js` | `dev/viewer/viewer.ui.annot.js` |
-| `src/lib/quantification.js` | `dev/viewer/viewer.ui.quantification.js` (logic) |
-| `src/lib/quantificationUI.js` | `dev/viewer/viewer.ui.quantification.js` (`renderQuantification`) |
+| `src/lib/annotationService.js` | `dev/viewer/src/annotationService.js` |
+| `src/lib/annotationComponent.js` | `dev/viewer/src/annotationComponent.js` |
+| `src/lib/quantification.js` | `dev/viewer/src/quantification.js` |
+| `src/lib/quantificationUI.js` | `dev/viewer/src/quantificationUI.js` |
 
 - When changing them, check the dwv source for the version pinned in
   `package.json` and keep structure, naming and logic close to it so
   upstream changes can be ported as diffs. Keep local adaptations (shadow
-  root lookups, uid-suffixed ids, `DwvAppService` instead of `ViewerService`,
-  icons, theme classes) minimal and easy to spot. File names follow the
-  local camelCase convention and can differ from the dwv ones; a dwv
-  file can be split between a logic file and a rendering file (e.g.
-  `quantification.js` and `quantificationUI.js`).
+  root lookups, uid-suffixed ids, `dwv` package imports, icons, theme
+  classes) minimal and easy to spot. The local `DwvAppService` is its
+  own implementation and is not synced with the dwv viewer one.
+  Up to v0.37.0-beta.24 the dwv sources had other names (`annot.service.js`,
+  `viewer.ui.annot.js`, `viewer.ui.quantification.js`, `viewer.service.js`
+  in `dev/pacs`).
 - When bumping `dwv`, diff these dwv sources between the old and new
   versions and port relevant changes.
 - Fixes that are not specific to this project belong upstream in dwv too;
