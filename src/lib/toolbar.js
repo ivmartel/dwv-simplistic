@@ -4,7 +4,8 @@ import {
   getLayerGroupDivId
 } from '../appgui.js';
 import {Modal} from './modal.js';
-import {TagsTable} from './tagsTable.js';
+import {TagsService} from './tagsService.js';
+import {TagsTableUI} from './tagsTableUI.js';
 import {
   getButton,
   getIconElement
@@ -555,8 +556,9 @@ export class Toolbar {
    * Open the DICOM tags modal.
    */
   openTagsModal() {
-    const tagsTable = new TagsTable(this.#dwvAppService);
-    this.#modal.open(tagsTable.getContent());
+    const tagsTableUI = new TagsTableUI(
+      new TagsService(this.#dwvAppService), this.#uid);
+    this.#modal.open(tagsTableUI.getContent());
   };
 
   /**
