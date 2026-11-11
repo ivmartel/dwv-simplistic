@@ -76,10 +76,11 @@ src/
                       dev/viewer/viewer.ui.quantification.js
     dropboxLoader.js  drag and drop / file input loader
     modal.js          modal dialog
-    tagsService.js    TagsService: DICOM tags logic (instance numbers, meta
-                      flattening)
-    tagsTableUI.js    TagsTableUI: DICOM tags modal content rendering
-                      (instance slider and tags table)
+    tagsService.js    TagsService: DICOM tags logic and state store
+                      (instance numbers, meta flattening), same design
+                      as AnnotationService
+    tagsComponent.js  TagsComponent: DICOM tags modal renderer of the
+                      TagsService state (instance slider and tags table)
     icons.js          inline SVG icons and button helpers
   theme/              light/dark/blue/pink + common CSS (Material 3 color roles,
                       see src/theme/readme.md)

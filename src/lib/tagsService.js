@@ -5,8 +5,60 @@ import {getTagFromKey, getDicomTagInfo} from 'dwv';
  */
 
 /**
- * DICOM tags service: instance numbers and flattened tags
- * (rendering in './tagsTableUI.js').
+ * Note: follows the design of './annotationService.js'
+ *   (logic and state here, rendering in './tagsComponent.js').
+ */
+
+/**
+ * Tag state: plain data, do not modify.
+ *
+ * @typedef {object} TagItemState
+ * @property {string} name The tag name.
+ * @property {string|number} value The tag value.
+ */
+
+/**
+ * Tags state: plain data, do not modify.
+ *
+ * @typedef {object} TagsState
+ * @property {number[]} instanceNumbers The sorted instance numbers,
+ *   empty if the data has no InstanceNumber.
+ * @property {number|undefined} instanceNumber The selected
+ *   instance number.
+ * @property {TagItemState[]} tags The tags of the selected instance.
+ */
+
+/**
+ * Get the sorted list of instance numbers of meta data.
+ *
+ * @param {object} metaData The meta data.
+ * @returns {number[]} The instance numbers, empty if the meta data
+ *   has no InstanceNumber.
+ */
+export function getInstanceNumbers(metaData) {
+  // InstanceNumber
+  const instanceElement = metaData['00200013'];
+  if (typeof instanceElement === 'undefined') {
+    return [];
+  }
+  let instanceNumberValue = instanceElement.value;
+  if (typeof instanceNumberValue === 'string') {
+    instanceNumberValue = [instanceNumberValue];
+  }
+  // convert string to numbers and sort
+  return instanceNumberValue.map(Number).sort(function (a, b) {
+    return a - b;
+  });
+}
+
+/**
+ * Tags service: framework agnostic DICOM tags logic and state
+ *   on top of the dwv app service, no DOM access.
+ *
+ * The state follows the external store contract
+ *   (`subscribe` / `getSnapshot`).
+ *
+ * Usage: `connect()` once before loading data, `dispose()` when done.
  */
 export class TagsService {
 
@@ -18,56 +70,143 @@ export class TagsService {
   #dwvAppService;
 
   /**
-   * @param {DwvAppService} dwvAppService The dwv app service.
+   * The meta data of the loaded data.
+   *
+   * @type {object|undefined}
    */
-  constructor(dwvAppService) {
-    this.#dwvAppService = dwvAppService;
-  }
+  #metaData;
 
   /**
-   * Get the meta data.
+   * The current snapshot.
    *
-   * @returns {object} The meta data.
+   * @type {TagsState}
    */
-  #getMetaData() {
-    // TODO allow for different dataid
-    return this.#dwvAppService.getMetaData();
-  }
+  #snapshot = {instanceNumbers: [], instanceNumber: undefined, tags: []};
 
   /**
-   * Get the sorted list of instance numbers.
+   * The state change listeners.
    *
-   * @returns {number[]|undefined} The instance numbers, undefined if
-   *   the meta data has no InstanceNumber.
+   * @type {Set<Function>}
    */
-  getInstanceNumbers() {
-    // InstanceNumber
-    const instanceElement = this.#getMetaData()['00200013'];
-    // list of possible instance numbers
-    let instanceNumbers;
-    if (typeof instanceElement !== 'undefined') {
-      let instanceNumberValue = instanceElement.value;
-      if (typeof instanceNumberValue === 'string') {
-        instanceNumberValue = [instanceNumberValue];
-      }
-      // convert string to numbers
-      instanceNumbers = instanceNumberValue.map(Number);
-      // sort
-      instanceNumbers.sort(function (a, b) {
-        return a - b;
-      });
+  #listeners = new Set();
+
+  /**
+   * The dwv app service event handlers.
+   *
+   * @type {Record<string, Function>}
+   */
+  #handlers = {
+    dataloaded: (event) => this.#onDataLoaded(event)
+  };
+
+  /**
+   * @param {DwvAppService} service The associated dwv app service.
+   */
+  constructor(service) {
+    this.#dwvAppService = service;
+  }
+
+  // store contract
+
+  /**
+   * Get the current state. Returns the same object as long
+   *   as the state does not change.
+   *
+   * @returns {TagsState} The state.
+   */
+  getSnapshot = () => {
+    return this.#snapshot;
+  };
+
+  /**
+   * Subscribe to state changes.
+   *
+   * @param {Function} listener The listener, called without
+   *   arguments after each change.
+   * @returns {Function} The unsubscribe function.
+   */
+  subscribe = (listener) => {
+    this.#listeners.add(listener);
+    return () => {
+      this.#listeners.delete(listener);
+    };
+  };
+
+  // lifecycle
+
+  /**
+   * Listen to the dwv app service events.
+   */
+  connect() {
+    for (const [type, handler] of Object.entries(this.#handlers)) {
+      this.#dwvAppService.addEventListener(type, handler);
     }
-    return instanceNumbers;
   }
 
   /**
-   * Get the tags of an instance as a flat array.
+   * Stop listening to the dwv app service events, remove the subscribers.
+   */
+  dispose() {
+    for (const [type, handler] of Object.entries(this.#handlers)) {
+      this.#dwvAppService.removeEventListener(type, handler);
+    }
+    this.#listeners.clear();
+  }
+
+  // actions
+
+  /**
+   * Select the instance number to show the tags of.
    *
    * @param {number} instanceNumber The instance number.
-   * @returns {object[]} The list of {name, value} tags.
    */
-  getTags(instanceNumber) {
-    return getMetaArray(this.#getMetaData(), instanceNumber);
+  setInstanceNumber(instanceNumber) {
+    if (typeof this.#metaData === 'undefined' ||
+      instanceNumber === this.#snapshot.instanceNumber) {
+      return;
+    }
+    this.#emit({
+      ...this.#snapshot,
+      instanceNumber,
+      tags: getMetaArray(this.#metaData, instanceNumber)
+    });
+  }
+
+  // internals
+
+  /**
+   * Set a new snapshot and notify the listeners.
+   *
+   * @param {TagsState} snapshot The new snapshot.
+   */
+  #emit(snapshot) {
+    this.#snapshot = snapshot;
+    for (const listener of this.#listeners) {
+      listener();
+    }
+  }
+
+  /**
+   * Handle 'dataloaded' event: reset the state from the
+   *   loaded meta data, or clear it when a new load starts.
+   *
+   * @param {CustomEvent} event The event.
+   */
+  #onDataLoaded(event) {
+    if (!event.detail.value) {
+      this.#metaData = undefined;
+      this.#emit({instanceNumbers: [], instanceNumber: undefined, tags: []});
+      return;
+    }
+    // TODO allow for different dataid
+    this.#metaData = this.#dwvAppService.getMetaData();
+    const instanceNumbers = getInstanceNumbers(this.#metaData);
+    const instanceNumber = instanceNumbers[0];
+    this.#emit({
+      instanceNumbers,
+      instanceNumber,
+      tags: getMetaArray(this.#metaData, instanceNumber)
+    });
   }
 
 } // class TagsService
@@ -77,7 +216,7 @@ export class TagsService {
  *
  * @param {any} meta The meta data.
  * @param {number} instanceNumber The instance number.
- * @returns {string[]} The meta data as a flat string array.
+ * @returns {TagItemState[]} The meta data as a flat array.
  */
 export function getMetaArray(meta, instanceNumber) {
   let reducer;

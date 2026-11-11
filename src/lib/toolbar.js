@@ -5,7 +5,7 @@ import {
 } from '../appgui.js';
 import {Modal} from './modal.js';
 import {TagsService} from './tagsService.js';
-import {TagsTableUI} from './tagsTableUI.js';
+import {TagsComponent} from './tagsComponent.js';
 import {
   getButton,
   getIconElement
@@ -233,6 +233,20 @@ export class Toolbar {
   #modal;
 
   /**
+   * DICOM tags service.
+   *
+   * @type {TagsService}
+   */
+  #tagsService;
+
+  /**
+   * DICOM tags component.
+   *
+   * @type {TagsComponent}
+   */
+  #tagsComponent;
+
+  /**
    * @param {DwvAppService} dwvAppService The dwv app service.
    * @param {string[]} optionGuiTools The list of gui tools.
    */
@@ -271,6 +285,8 @@ export class Toolbar {
 
     // modal dialog
     this.#modal = new Modal(this.#uid, this.#rootDoc);
+    this.#tagsService = new TagsService(dwvAppService);
+    this.#tagsComponent = new TagsComponent(this.#tagsService, this.#uid);
 
     // watch data ready
     this.#dwvAppService.addEventListener('dataready', (event) => {
@@ -348,6 +364,9 @@ export class Toolbar {
     }
     // init modal
     this.#modal.init();
+
+    this.#tagsService.connect();
+    this.#tagsComponent.registerListeners();
   };
 
   /**
@@ -556,9 +575,7 @@ export class Toolbar {
    * Open the DICOM tags modal.
    */
   openTagsModal() {
-    const tagsTableUI = new TagsTableUI(
-      new TagsService(this.#dwvAppService), this.#uid);
-    this.#modal.open(tagsTableUI.getContent());
+    this.#modal.open(this.#tagsComponent.getContent());
   };
 
   /**
