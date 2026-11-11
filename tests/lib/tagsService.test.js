@@ -33,13 +33,32 @@ const meta = {
   '00200013': {vr: 'IS', value: ['3', '1', '2']}
 };
 
+// merged meta data of multi file data (see dwv `mergeObjects`)
+const mergedMeta = {
+  mergeId: ['10', '2', '1'],
+  '00020010': {vr: 'UI', value: ['1.2.840.10008.1.2.1']},
+  '00200013': {vr: 'IS', value: {10: ['10'], 2: ['2'], 1: ['1']}},
+  '00100010': {vr: 'PN', value: ['Doe^John']},
+  '00080018': {vr: 'UI', value: {10: ['1.10'], 2: ['1.2'], 1: ['1.1']}}
+};
+
 describe('getInstanceNumbers', () => {
   test('returns sorted instance numbers', () => {
-    expect(getInstanceNumbers(meta)).toEqual([1, 2, 3]);
+    expect(getInstanceNumbers(meta)).toEqual(['1', '2', '3']);
   });
 
   test('handles a single string instance number', () => {
-    expect(getInstanceNumbers({'00200013': {value: '7'}})).toEqual([7]);
+    expect(getInstanceNumbers({'00200013': {value: '7'}})).toEqual(['7']);
+  });
+
+  test('returns sorted merge ids of merged meta data', () => {
+    expect(getInstanceNumbers(mergedMeta)).toEqual(['1', '2', '10']);
+  });
+
+  test('sorts merge ids with a second id suffix', () => {
+    const merged = {mergeId: ['2-1', '1-1', '2-0', '1-0']};
+    expect(getInstanceNumbers(merged))
+      .toEqual(['1-0', '1-1', '2-0', '2-1']);
   });
 
   test('returns an empty array without instance number', () => {
@@ -66,8 +85,8 @@ describe('TagsService', () => {
     dispatchDataLoaded(service, true);
     expect(calls).toBe(1);
     const state = tagsService.getSnapshot();
-    expect(state.instanceNumbers).toEqual([1, 2, 3]);
-    expect(state.instanceNumber).toBe(1);
+    expect(state.instanceNumbers).toEqual(['1', '2', '3']);
+    expect(state.instanceNumber).toBe('1');
     expect(state.tags[1]).toEqual({name: 'InstanceNumber', value: '1'});
   });
 
@@ -86,15 +105,31 @@ describe('TagsService', () => {
     tagsService.connect();
     dispatchDataLoaded(service, true);
     const before = tagsService.getSnapshot();
-    tagsService.setInstanceNumber(1);
+    tagsService.setInstanceNumber('1');
     // no change: same snapshot
     expect(tagsService.getSnapshot()).toBe(before);
-    tagsService.setInstanceNumber(3);
+    tagsService.setInstanceNumber('3');
     const state = tagsService.getSnapshot();
     expect(state).not.toBe(before);
     expect(state.instanceNumbers).toBe(before.instanceNumbers);
-    expect(state.instanceNumber).toBe(3);
+    expect(state.instanceNumber).toBe('3');
     expect(state.tags[1]).toEqual({name: 'InstanceNumber', value: '3'});
+  });
+
+  test('loads merged meta data', () => {
+    const service = getFakeService(mergedMeta);
+    const tagsService = new TagsService(service);
+    tagsService.connect();
+    dispatchDataLoaded(service, true);
+    expect(tagsService.getSnapshot().instanceNumbers)
+      .toEqual(['1', '2', '10']);
+    tagsService.setInstanceNumber('10');
+    expect(tagsService.getSnapshot().tags).toEqual([
+      {name: 'TransferSyntaxUID', value: '1.2.840.10008.1.2.1'},
+      {name: 'InstanceNumber', value: '10'},
+      {name: 'PatientName', value: 'Doe^John'},
+      {name: 'SOPInstanceUID', value: '1.10'}
+    ]);
   });
 
   test('stops listening on dispose', () => {

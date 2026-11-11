@@ -93,7 +93,7 @@ describe('TagsComponent', () => {
     const slider = sliderDiv.querySelector('input');
     slider.value = '2';
     slider.dispatchEvent(new Event('input'));
-    expect(tagsService.getSnapshot().instanceNumber).toBe(3);
+    expect(tagsService.getSnapshot().instanceNumber).toBe('3');
     expect(sliderDiv.querySelector('label').textContent).toBe('3');
     expect(scrollDiv.textContent).toContain('InstanceNumber3');
   });

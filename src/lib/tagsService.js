@@ -21,9 +21,9 @@ import {getTagFromKey, getDicomTagInfo} from 'dwv';
  * Tags state: plain data, do not modify.
  *
  * @typedef {object} TagsState
- * @property {number[]} instanceNumbers The sorted instance numbers,
+ * @property {string[]} instanceNumbers The sorted instance numbers,
  *   empty if the data has no InstanceNumber.
- * @property {number|undefined} instanceNumber The selected
+ * @property {string|undefined} instanceNumber The selected
  *   instance number.
  * @property {TagItemState[]} tags The tags of the selected instance.
  */
@@ -31,23 +31,34 @@ import {getTagFromKey, getDicomTagInfo} from 'dwv';
 /**
  * Get the sorted list of instance numbers of meta data.
  *
+ * For merged meta data (multi file data), they are the dwv merge ids:
+ *   instance numbers with a possible '-<secondId>' suffix, used as keys
+ *   of the merged values (see dwv `mergeObjects`).
+ *
  * @param {object} metaData The meta data.
- * @returns {number[]} The instance numbers, empty if the meta data
+ * @returns {string[]} The instance numbers, empty if the meta data
  *   has no InstanceNumber.
  */
 export function getInstanceNumbers(metaData) {
-  // InstanceNumber
-  const instanceElement = metaData['00200013'];
-  if (typeof instanceElement === 'undefined') {
-    return [];
+  let instanceNumbers;
+  if (typeof metaData.mergeId !== 'undefined') {
+    // merged meta data
+    instanceNumbers = metaData.mergeId.map(String);
+  } else {
+    // InstanceNumber
+    const instanceElement = metaData['00200013'];
+    if (typeof instanceElement === 'undefined') {
+      return [];
+    }
+    let instanceNumberValue = instanceElement.value;
+    if (typeof instanceNumberValue === 'string') {
+      instanceNumberValue = [instanceNumberValue];
+    }
+    instanceNumbers = instanceNumberValue.map(String);
   }
-  let instanceNumberValue = instanceElement.value;
-  if (typeof instanceNumberValue === 'string') {
-    instanceNumberValue = [instanceNumberValue];
-  }
-  // convert string to numbers and sort
-  return instanceNumberValue.map(Number).sort(function (a, b) {
-    return a - b;
+  // numerical sort
+  return instanceNumbers.sort(function (a, b) {
+    return parseFloat(a) - parseFloat(b) || a.localeCompare(b);
   });
 }
 
@@ -158,7 +169,7 @@ export class TagsService {
   /**
    * Select the instance number to show the tags of.
    *
-   * @param {number} instanceNumber The instance number.
+   * @param {string} instanceNumber The instance number.
    */
   setInstanceNumber(instanceNumber) {
     if (typeof this.#metaData === 'undefined' ||
@@ -215,7 +226,7 @@ export class TagsService {
  * Get the meta data as an array.
  *
  * @param {any} meta The meta data.
- * @param {number} instanceNumber The instance number.
+ * @param {string} instanceNumber The instance number.
  * @returns {TagItemState[]} The meta data as a flat array.
  */
 export function getMetaArray(meta, instanceNumber) {
@@ -225,7 +236,8 @@ export function getMetaArray(meta, instanceNumber) {
   } else {
     reducer = getTagReducer(meta);
   }
-  const keys = Object.keys(meta);
+  // skip the dwv merge ids of merged meta data
+  const keys = Object.keys(meta).filter((key) => key !== 'mergeId');
   return keys.reduce(reducer, []);
 }
 
@@ -260,7 +272,7 @@ function getTagReducer(tagData) {
  * Get a DICOM data array reducer.
  *
  * @param {any} tagData DICOM data.
- * @param {number} instanceNumber The instance number.
+ * @param {string} instanceNumber The instance number.
  * @param {string} prefix The prefix.
  * @returns {Function} The data reducer.
  */
