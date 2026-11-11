@@ -35,8 +35,8 @@ page URL).
 
 - [Vitest](https://vitest.dev/) with the `jsdom` environment
   ([vitest.config.js](vitest.config.js)); `vite` is a required peer dependency.
-- Tests live in `tests/`, mirroring `src/` (e.g. `src/lib/meta.js` ->
-  `tests/lib/meta.test.js`), named `*.test.js`. They are linted like sources.
+- Tests live in `tests/`, mirroring `src/` (e.g. `src/lib/toolbar.js` ->
+  `tests/lib/toolbar.test.js`), named `*.test.js`. They are linted like sources.
 - Import `describe`/`test`/`expect` explicitly from `vitest` (no globals).
 - `dwv` imports work in tests; prefer testing pure helpers and `DwvAppService`
   logic over full rendering (no canvas in jsdom).
@@ -75,7 +75,9 @@ src/
                       annotation quantification rendering, based on dwv
                       dev/viewer/viewer.ui.quantification.js
     dropboxLoader.js  drag and drop / file input loader
-    modal.js, meta.js DICOM tags modal and meta flattening
+    modal.js          modal dialog
+    tagsTable.js      TagsTable: DICOM tags modal content (instance slider
+                      and tags table) and meta flattening
     icons.js          inline SVG icons and button helpers
   theme/              light/dark/blue/pink + common CSS (Material 3 color roles,
                       see src/theme/readme.md)
