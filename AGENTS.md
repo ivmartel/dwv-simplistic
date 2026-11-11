@@ -68,7 +68,8 @@ src/
   gui/
     toolbar.js        tools, shapes, WL presets, reset/orientation/fullscreen/tags
     rightPanel.js     side panel hosting annotations
-    annotationUI.js   AnnotationComponent: annotation list renderer of the
+    annotationComponent.js
+                      AnnotationComponent: annotation list renderer of the
                       AnnotationService state, based on dwv
                       dev/viewer/viewer.ui.annot.js (keep in sync)
     quantificationUI.js
@@ -106,7 +107,7 @@ build/                demo site (build/demo/) and coverage (build/coverage/)
   `DicomWriter` directly, listens to `annotationgroupeditablechange` on
   the annotation group and exposes an immutable state through the external
   store contract (`subscribe` / `getSnapshot`). `AnnotationComponent`
-  (`src/gui/annotationUI.js`) only renders that state and calls the
+  (`src/gui/annotationComponent.js`) only renders that state and calls the
   service actions. Both are created by `RightPanel`. Keep that split to
   ease syncing with dwv.
 - Everything renders inside a shadow root. Look elements up through
@@ -138,7 +139,7 @@ and must be kept in sync with it:
 | file | dwv source |
 | --- | --- |
 | `src/services/annotationService.js` | `dev/viewer/annot.service.js` |
-| `src/gui/annotationUI.js` | `dev/viewer/viewer.ui.annot.js` |
+| `src/gui/annotationComponent.js` | `dev/viewer/viewer.ui.annot.js` |
 | `src/services/quantification.js` | `dev/viewer/viewer.ui.quantification.js` (logic) |
 | `src/gui/quantificationUI.js` | `dev/viewer/viewer.ui.quantification.js` (`renderQuantification`) |
 

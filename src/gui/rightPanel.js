@@ -1,5 +1,5 @@
 import {AnnotationService} from '../services/annotationService.js';
-import {AnnotationComponent} from './annotationUI.js';
+import {AnnotationComponent} from './annotationComponent.js';
 import {
   getButton,
   toggleButtonPressed
