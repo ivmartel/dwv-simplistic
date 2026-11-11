@@ -54,9 +54,6 @@ export class Modal {
     const contentDiv = document.createElement('div');
     contentDiv.id = 'modal-content-' + this.#uid;
     contentDiv.className = 'modal-content';
-    contentDiv.style.width = '80%';
-    contentDiv.style.height = '80%';
-    contentDiv.style.margin = '5% auto';
 
     // main div
     const modalDiv = this.#rootDoc.getElementById(

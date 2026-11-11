@@ -85,5 +85,21 @@ button.active:enabled path {
   }
   .modal-content-scroll {
     background-color: var(--surface-container-high);
+
+    th {
+      background-color: var(--primary-color);
+      color: var(--on-primary-color);
+      border-color: var(--outline);
+    }
+    td {
+      border-color: var(--surface-container);
+    }
+    tbody tr:nth-child(even) {
+      background-color: var(--surface-container);
+    }
+    tbody tr:hover {
+      background-color: var(--primary-container);
+      color: var(--on-primary-container);
+    }
   }
 }

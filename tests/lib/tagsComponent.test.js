@@ -62,14 +62,15 @@ describe('TagsComponent', () => {
   test('returns the same content elements', () => {
     const {component} = setup(meta);
     const content = component.getContent();
-    expect(content.length).toBe(4);
+    expect(content.length).toBe(3);
     expect(content[0].textContent).toBe('DICOM Tags');
     expect(component.getContent()).toBe(content);
   });
 
   test('renders the loaded state', () => {
     const {service, component} = setup(meta);
-    const [, sliderDiv, , scrollDiv] = component.getContent();
+    const [, controlsDiv, scrollDiv] = component.getContent();
+    const sliderDiv = controlsDiv.querySelector('span');
     dispatchDataLoaded(service, true);
     const slider = sliderDiv.querySelector('input');
     expect(slider.id).toBe('instancenumber-slider-test');
@@ -82,13 +83,14 @@ describe('TagsComponent', () => {
   test('renders a state loaded before the first content request', () => {
     const {service, component} = setup(meta);
     dispatchDataLoaded(service, true);
-    const [, , , scrollDiv] = component.getContent();
+    const [, , scrollDiv] = component.getContent();
     expect(scrollDiv.textContent).toContain('InstanceNumber1');
   });
 
   test('selects the instance number on slider input', () => {
     const {service, tagsService, component} = setup(meta);
-    const [, sliderDiv, , scrollDiv] = component.getContent();
+    const [, controlsDiv, scrollDiv] = component.getContent();
+    const sliderDiv = controlsDiv.querySelector('span');
     dispatchDataLoaded(service, true);
     const slider = sliderDiv.querySelector('input');
     slider.value = '2';
@@ -100,9 +102,9 @@ describe('TagsComponent', () => {
 
   test('filters the tags on search input', () => {
     const {service, tagsService, component} = setup(meta);
-    const [, , searchDiv, scrollDiv] = component.getContent();
+    const [, controlsDiv, scrollDiv] = component.getContent();
     dispatchDataLoaded(service, true);
-    const search = searchDiv.querySelector('input');
+    const search = controlsDiv.querySelector('input[type=search]');
     expect(search.id).toBe('tags-search-test');
     search.value = 'transfer';
     search.dispatchEvent(new Event('input'));
@@ -116,14 +118,15 @@ describe('TagsComponent', () => {
 
   test('syncs the search input with the state', () => {
     const {tagsService, component} = setup(meta);
-    const [, , searchDiv] = component.getContent();
+    const [, controlsDiv] = component.getContent();
     tagsService.setSearch('abc');
-    expect(searchDiv.querySelector('input').value).toBe('abc');
+    expect(controlsDiv.querySelector('input[type=search]').value).toBe('abc');
   });
 
   test('hides the slider without instance number', () => {
     const {service, component} = setup({width: {value: 512}});
-    const [, sliderDiv, , scrollDiv] = component.getContent();
+    const [, controlsDiv, scrollDiv] = component.getContent();
+    const sliderDiv = controlsDiv.querySelector('span');
     dispatchDataLoaded(service, true);
     expect(sliderDiv.style.display).toBe('none');
     expect(scrollDiv.textContent).toContain('width512');
@@ -131,7 +134,7 @@ describe('TagsComponent', () => {
 
   test('stops rendering on dispose', () => {
     const {service, component} = setup(meta);
-    const [, , , scrollDiv] = component.getContent();
+    const [, , scrollDiv] = component.getContent();
     component.dispose();
     dispatchDataLoaded(service, true);
     expect(scrollDiv.textContent).toBe('Empty input array...');

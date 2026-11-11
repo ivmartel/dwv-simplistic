@@ -105,8 +105,9 @@ export class TagsComponent {
   }
 
   /**
-   * Get the content elements: title, instance number slider,
-   *   search input and scrollable tags table. Always returns the same elements.
+   * Get the content elements: title, controls (search input and
+   *   instance number slider) and scrollable tags table.
+   *   Always returns the same elements.
    *
    * @returns {HTMLElement[]} The content elements.
    */
@@ -145,10 +146,10 @@ export class TagsComponent {
       this.#tagsService.setInstanceNumber(
         instanceNumbers[event.target.value]);
     });
-    // container div
-    const sliderDiv = document.createElement('div');
-    sliderDiv.appendChild(slider);
-    sliderDiv.appendChild(sliderLabel);
+    // container span (hidden without instance number)
+    const sliderSpan = document.createElement('span');
+    sliderSpan.appendChild(slider);
+    sliderSpan.appendChild(sliderLabel);
 
     // search input
     const searchInput = document.createElement('input');
@@ -160,9 +161,11 @@ export class TagsComponent {
     searchInput.addEventListener('input', (event) => {
       this.#tagsService.setSearch(event.target.value);
     });
-    // container div
-    const searchDiv = document.createElement('div');
-    searchDiv.appendChild(searchInput);
+    // controls div: search and slider on the same line
+    const controlsDiv = document.createElement('div');
+    controlsDiv.className = 'tags-controls';
+    controlsDiv.appendChild(searchInput);
+    controlsDiv.appendChild(sliderSpan);
 
     // div with enabled scroll
     const scrollDiv = document.createElement('div');
@@ -172,7 +175,7 @@ export class TagsComponent {
     this.#sliderLabel = sliderLabel;
     this.#searchInput = searchInput;
     this.#scrollDiv = scrollDiv;
-    this.#content = [title, sliderDiv, searchDiv, scrollDiv];
+    this.#content = [title, controlsDiv, scrollDiv];
   }
 
   /**

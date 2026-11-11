@@ -290,7 +290,6 @@ button:enabled:hover {
   padding-top: 5px;
   border-top: 1px solid;
   cursor: default;
-  font-size: 0.9em;
 
   /* group title and values on one line, wrap if needed */
   .quantification-group {
@@ -343,8 +342,18 @@ button:enabled:hover {
   height: 100%; /* Full height */
 
   .modal-content {
+    /* size and position */
+    box-sizing: border-box;
+    width: 60%;
+    min-width: min(400px, 95%);
+    max-width: 900px;
+    height: 70%;
+    margin: 10vh auto;
     padding: 20px;
-    overflow: auto;
+    /* title and controls on top, scrollable part takes the rest */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
   }
 
   h2 {
@@ -356,28 +365,49 @@ button:enabled:hover {
     margin-right: 10px;
   }
 
+  .tags-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 10px;
+  }
   .tags-search {
-    width: 50%;
-    margin: 5px 0 10px;
+    flex: 1;
+    min-width: 150px;
   }
 
   .modal-content-scroll {
-    height: 85%;
+    flex: 1;
+    min-height: 0;
     overflow: auto;
 
     table {
       width: 100%;
       border-collapse: collapse;
     }
-    tr {
-      border-width: thin;
-      border-style: solid;
-    }
     th {
+      position: sticky;
+      top: 0;
       text-align: left;
+      border-bottom: 2px solid;
+    }
+    td {
+      border-bottom: thin solid;
+      vertical-align: top;
     }
     td, th {
-      padding: 10px;
+      padding: 6px 10px;
+    }
+    /* name column */
+    td:first-child {
+      width: 35%;
+      font-weight: 500;
+    }
+    /* value column: wrap long values (UIDs, arrays) */
+    td:last-child {
+      font-family: monospace;
+      overflow-wrap: anywhere;
     }
   }
 }
