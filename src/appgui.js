@@ -1,8 +1,8 @@
-import {Toolbar} from './gui/toolbar.js';
-import {RightPanel} from './gui/rightPanel.js';
+import {Toolbar} from './lib/toolbar.js';
+import {RightPanel} from './lib/rightPanel.js';
 
 /**
- * @import {DwvAppService} from './services/dwvAppService.js';
+ * @import {DwvAppService} from './lib/dwvAppService.js';
  */
 
 /**

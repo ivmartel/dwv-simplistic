@@ -3,7 +3,7 @@ import {i18n} from 'dwv';
 /**
  * Note: highly inspired from the dwv viewer
  *   and 'dev/viewer/viewer.ui.quantification.js'
- *   (logic part, rendering in '../gui/quantificationUI.js').
+ *   (logic part, rendering in './quantificationUI.js').
  */
 
 /**

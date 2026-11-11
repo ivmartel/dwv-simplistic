@@ -1,8 +1,8 @@
 import {getDwvVersion} from 'dwv';
 import {startApp} from './applauncher.js';
-import {getDropboxElement} from './gui/dropboxLoader.js';
-import {getRightPanelElements} from './gui/rightPanel.js';
-import {getModalElement} from './gui/modal.js';
+import {getDropboxElement} from './lib/dropboxLoader.js';
+import {getRightPanelElements} from './lib/rightPanel.js';
+import {getModalElement} from './lib/modal.js';
 
 import styles from './dwv-component.css';
 import themeCommon from './theme/common.css';
@@ -12,7 +12,7 @@ import themeBlue from './theme/blue.css';
 import themePink from './theme/pink.css';
 
 /**
- * @import {DwvAppService} from './services/dwvAppService.js';
+ * @import {DwvAppService} from './lib/dwvAppService.js';
  */
 
 /**

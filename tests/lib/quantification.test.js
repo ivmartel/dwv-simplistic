@@ -2,7 +2,7 @@ import {describe, test, expect} from 'vitest';
 import {
   formatQuantificationValue,
   getQuantificationGroups
-} from '../../src/services/quantification.js';
+} from '../../src/lib/quantification.js';
 
 describe('getQuantificationGroups', () => {
   test('undefined quantification', () => {

@@ -1,6 +1,6 @@
 import {describe, test, expect} from 'vitest';
 
-import {getMetaArray} from '../../src/gui/meta.js';
+import {getMetaArray} from '../../src/lib/meta.js';
 
 describe('getMetaArray', () => {
   test('flattens simple meta data', () => {

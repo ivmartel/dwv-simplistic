@@ -11,7 +11,7 @@ import {
 } from './icons.js';
 
 /**
- * @import {DwvAppService} from '../services/dwvAppService.js';
+ * @import {DwvAppService} from './dwvAppService.js';
  */
 
 /**

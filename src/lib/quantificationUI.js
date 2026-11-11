@@ -1,11 +1,11 @@
 /**
- * @import {QuantificationGroup} from '../services/quantification.js';
+ * @import {QuantificationGroup} from './quantification.js';
  */
 
 /**
  * Note: highly inspired from the dwv viewer
  *   and 'dev/viewer/viewer.ui.quantification.js'
- *   (rendering part, logic in '../services/quantification.js').
+ *   (rendering part, logic in './quantification.js').
  */
 
 /**

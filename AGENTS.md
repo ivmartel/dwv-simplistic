@@ -35,8 +35,8 @@ page URL).
 
 - [Vitest](https://vitest.dev/) with the `jsdom` environment
   ([vitest.config.js](vitest.config.js)); `vite` is a required peer dependency.
-- Tests live in `tests/`, mirroring `src/` (e.g. `src/gui/meta.js` ->
-  `tests/gui/meta.test.js`), named `*.test.js`. They are linted like sources.
+- Tests live in `tests/`, mirroring `src/` (e.g. `src/lib/meta.js` ->
+  `tests/lib/meta.test.js`), named `*.test.js`. They are linted like sources.
 - Import `describe`/`test`/`expect` explicitly from `vitest` (no globals).
 - `dwv` imports work in tests; prefer testing pure helpers and `DwvAppService`
   logic over full rendering (no canvas in jsdom).
@@ -53,7 +53,8 @@ src/
   dwv-component.js    <dwv-simple> custom element: reads attributes, builds the
                       shadow DOM (header/content/footer), injects CSS, calls startApp
   applauncher.js      startApp(uid, options, rootDoc): wires service, GUI, dropbox
-  services/
+  appgui.js           Gui: owns Toolbar + RightPanel, progress bar, div id helpers
+  lib/
     dwvAppService.js  DwvAppService (EventTarget): the only wrapper around
                       dwv's App
     annotationService.js
@@ -64,8 +65,6 @@ src/
                       formatting), based on dwv
                       dev/viewer/viewer.ui.quantification.js
     overlays.js       dwv overlay config
-  appgui.js           Gui: owns Toolbar + RightPanel, progress bar, div id helpers
-  gui/
     toolbar.js        tools, shapes, WL presets, reset/orientation/fullscreen/tags
     rightPanel.js     side panel hosting annotations
     annotationComponent.js
@@ -99,7 +98,7 @@ build/                demo site (build/demo/) and coverage (build/coverage/)
   Add new app-level interactions (loading, tools, layout) to `DwvAppService`
   and expose them the same way.
 - Exception: annotations mirror the dwv viewer (`dev/viewer`).
-  `AnnotationService` (`src/services/annotationService.js`, no DOM access)
+  `AnnotationService` (`src/lib/annotationService.js`, no DOM access)
   works on dwv objects itself, through the controllers `DwvAppService`
   exposes like dwv's `ViewerService` (`getDataController`, `getStageController`,
   `getUndoController`, `createAnnotationData`,
@@ -107,7 +106,7 @@ build/                demo site (build/demo/) and coverage (build/coverage/)
   `DicomWriter` directly, listens to `annotationgroupeditablechange` on
   the annotation group and exposes an immutable state through the external
   store contract (`subscribe` / `getSnapshot`). `AnnotationComponent`
-  (`src/gui/annotationComponent.js`) only renders that state and calls the
+  (`src/lib/annotationComponent.js`) only renders that state and calls the
   service actions. Both are created by `RightPanel`. Keep that split to
   ease syncing with dwv.
 - Everything renders inside a shadow root. Look elements up through
@@ -138,10 +137,10 @@ and must be kept in sync with it:
 
 | file | dwv source |
 | --- | --- |
-| `src/services/annotationService.js` | `dev/viewer/annot.service.js` |
-| `src/gui/annotationComponent.js` | `dev/viewer/viewer.ui.annot.js` |
-| `src/services/quantification.js` | `dev/viewer/viewer.ui.quantification.js` (logic) |
-| `src/gui/quantificationUI.js` | `dev/viewer/viewer.ui.quantification.js` (`renderQuantification`) |
+| `src/lib/annotationService.js` | `dev/viewer/annot.service.js` |
+| `src/lib/annotationComponent.js` | `dev/viewer/viewer.ui.annot.js` |
+| `src/lib/quantification.js` | `dev/viewer/viewer.ui.quantification.js` (logic) |
+| `src/lib/quantificationUI.js` | `dev/viewer/viewer.ui.quantification.js` (`renderQuantification`) |
 
 - When changing them, check the dwv source for the version pinned in
   `package.json` and keep structure, naming and logic close to it so
@@ -149,7 +148,8 @@ and must be kept in sync with it:
   root lookups, uid-suffixed ids, `DwvAppService` instead of `ViewerService`,
   icons, theme classes) minimal and easy to spot. File names follow the
   local camelCase convention and can differ from the dwv ones; a dwv
-  file can be split between `services/` (logic) and `gui/` (rendering).
+  file can be split between a logic file and a rendering file (e.g.
+  `quantification.js` and `quantificationUI.js`).
 - When bumping `dwv`, diff these dwv sources between the old and new
   versions and port relevant changes.
 - Fixes that are not specific to this project belong upstream in dwv too;
@@ -165,7 +165,7 @@ Enforced by eslint (`eslint.config.js` + `config/eslint.config-full.js`):
 - JSDoc is required on functions, classes and methods (typescript flavor):
   descriptions are complete sentences ending with a period, one blank line
   between description and tags, `@param`/`@returns` with types. Type-only
-  imports use `@import` in a JSDoc block (e.g. `@import {DwvAppService} from '../services/dwvAppService.js';`).
+  imports use `@import` in a JSDoc block (e.g. `@import {DwvAppService} from './dwvAppService.js';`).
 - Use private class fields/methods (`#field`) for internal state, as in the
   existing classes. Prefer `typeof x !== 'undefined'` checks, matching the
   surrounding code.

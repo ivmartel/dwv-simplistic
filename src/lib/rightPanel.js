@@ -1,4 +1,4 @@
-import {AnnotationService} from '../services/annotationService.js';
+import {AnnotationService} from './annotationService.js';
 import {AnnotationComponent} from './annotationComponent.js';
 import {
   getButton,
@@ -6,7 +6,7 @@ import {
 } from './icons.js';
 
 /**
- * @import {DwvAppService} from '../services/dwvAppService.js';
+ * @import {DwvAppService} from './dwvAppService.js';
  */
 
 /**

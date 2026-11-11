@@ -6,7 +6,7 @@ import {
   setButtonPressed,
   isButtonPressed,
   toggleButtonPressed
-} from '../../src/gui/icons.js';
+} from '../../src/lib/icons.js';
 
 describe('getIconElement', () => {
   test('returns an svg with a path', () => {
