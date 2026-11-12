@@ -244,52 +244,129 @@ button:enabled:hover {
   user-select: none;
 }
 
-/* right panel content */
+/* right panel content (see doc/design/annotationComponent.md) */
 .data-list {
   list-style-type: none;
+  margin: 0;
   padding: 5px;
+  /* medium body text */
+  font: 400 14px/20px arial, sans-serif;
 
+  .data-item + .data-item {
+    margin-top: 8px;
+  }
   .data-item-header {
-    padding-bottom: 10px;
     display: flex;
     align-items: center;
     .data-item-name {
       flex: 1;
+      /* large label text */
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 500;
     }
   }
 
-  #addannotationgroupitem {
-    display: none;
+  /* icon buttons: 28px hit area, 18px icon */
+  .data-item-actions,
+  .data-item-list-item-actions {
+    display: flex;
+    align-items: center;
+    button {
+      width: 28px;
+      height: 28px;
+      padding: 0;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      svg {
+        width: 18px;
+        height: 18px;
+      }
+    }
+    /* colour swatch */
+    input[type=color] {
+      width: 20px;
+      height: 20px;
+      margin: 0 4px;
+      padding: 0;
+      border: 0;
+      cursor: pointer;
+    }
+    input[type=color]::-webkit-color-swatch-wrapper {
+      padding: 0;
+    }
+    input[type=color]::-webkit-color-swatch {
+      border: 0;
+      border-radius: 2px;
+    }
+    input[type=color]::-moz-color-swatch {
+      border: 0;
+      border-radius: 2px;
+    }
+    input[type=color]:disabled {
+      cursor: default;
+      opacity: 0.38;
+    }
   }
 }
 .data-item-list {
   list-style-type: none;
+  margin: 0;
   padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
-.data-item-list li {
-  border-width: 1px;
-  border-style: solid;
-  padding: 5px;
-  margin-bottom: 5px;
+.data-item-list-item {
+  padding-left: 8px;
+  border-radius: 4px;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  .data-item-list-item-content {
-    flex: 1;
-    svg {
-      vertical-align: middle;
-    }
+}
+/* row content: shape icon and label */
+.data-item-list-item-content {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font: inherit;
+  text-align: left;
+  .shape-icon {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
   }
 }
-.data-item-list li:hover {
-  cursor: pointer;
+.data-item-list-item-content:enabled:hover {
+  /* hover is shown by the row */
+  filter: none;
+}
+.data-item-list-item-label {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.data-item-list-item-label.not-viewable {
+  text-decoration-line: line-through;
+}
+.data-item-list-empty {
+  padding-left: 8px;
+  font-style: italic;
 }
 .data-item-list-item-details {
   flex-basis: 100%;
-  margin-top: 5px;
-  padding-top: 5px;
+  margin: 0 8px 4px 0;
+  padding-top: 4px;
   border-top: 1px solid;
-  cursor: default;
+  /* small body text */
+  font-size: 12px;
+  line-height: 16px;
 
   /* group title and values on one line, wrap if needed */
   .quantification-group {
@@ -304,20 +381,22 @@ button:enabled:hover {
     margin-top: 0;
   }
   .quantification-title {
-    font-weight: bold;
+    /* medium label text */
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 500;
   }
   /* pairs flow in the group line (avoids the title alone on a line) */
   .quantification {
     display: contents;
     div {
       display: flex;
+      align-items: baseline;
       gap: 0.3em;
     }
     dt {
-      opacity: 0.75;
-    }
-    dt::after {
-      content: ':';
+      opacity: 0.7;
+      font-size: 0.9em;
     }
     dd {
       margin: 0;
@@ -327,8 +406,24 @@ button:enabled:hover {
   }
   .quantification-empty {
     font-style: italic;
-    opacity: 0.75;
   }
+}
+
+/* snackbar */
+.dwv {
+  position: relative;
+}
+.snackbar {
+  position: absolute;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%);
+  z-index: 20;
+  max-width: 80%;
+  padding: 14px 16px;
+  border-radius: 4px;
+  font: 400 14px/20px arial, sans-serif;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
 /* modal dialog */

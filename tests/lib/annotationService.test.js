@@ -297,9 +297,14 @@ describe('AnnotationService', () => {
       .toHaveBeenCalledWith({id: 'new'}, 'layerGroup-0', '0');
   });
 
-  test('throws when saving an unknown group', () => {
+  test('reports an error when saving an unknown group', () => {
     const {service} = getConnectedService();
-    expect(() => service.getAnnotationGroupAsDicom('unknown')).toThrow();
+    const onError = vi.fn();
+    service.addEventListener('error', onError);
+    expect(service.getAnnotationGroupAsDicom('unknown')).toBeUndefined();
+    expect(onError).toHaveBeenCalledTimes(1);
+    expect(onError.mock.calls[0][0].detail.error.message)
+      .toMatch('Cannot find annotation group');
   });
 
   test('stops listening on dispose', () => {

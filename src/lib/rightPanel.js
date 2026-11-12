@@ -4,6 +4,7 @@ import {
   getButton,
   toggleButtonPressed
 } from './icons.js';
+import {showSnackbar} from './snackbar.js';
 
 /**
  * @import {DwvAppService} from './dwvAppService.js';
@@ -126,6 +127,13 @@ export class RightPanel {
     this.#setupUI();
 
     this.#annotService.connect();
+    this.#annotService.addEventListener('error', (event) => {
+      const container =
+        this.#rootDoc.getElementById('dwv-' + this.#uid);
+      if (container) {
+        showSnackbar(container, event.detail.error.message);
+      }
+    });
     this.#annotComponent.registerListeners();
   }
 

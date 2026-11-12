@@ -43,7 +43,6 @@ const icons = {
   goto: 'M480.28-96Q401-96 331-126t-122.5-82.5Q156-261 126-330.96t-30-149.5Q96-560 126-629.5q30-69.5 82.5-122T330.96-834q69.96-30 149.5-30t149.04 30q69.5 30 122 82.5T834-629.28q30 69.73 30 149Q864-401 834-331t-82.5 122.5Q699-156 629.28-126q-69.73 30-149 30Zm-.28-72q130 0 221-91t91-221q0-130-91-221t-221-91q-130 0-221 91t-91 221q0 130 91 221t221 91Zm0-72q-100 0-170-70t-70-170q0-100 70-170t170-70q100 0 170 70t70 170q0 100-70 170t-170 70Zm0-72q70 0 119-49t49-119q0-70-49-119t-119-49q-70 0-119 49t-49 119q0 70 49 119t119 49Zm-.21-96Q450-408 429-429.21t-21-51Q408-510 429.21-531t51-21Q510-552 531-530.79t21 51Q552-450 530.79-429t-51 21Z',
   // info
   info: 'M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z',
-  info_off: 'M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z',
   // delete
   delete: 'M312-144q-29.7 0-50.85-21.15Q240-186.3 240-216v-480h-48v-72h192v-48h192v48h192v72h-48v479.57Q720-186 698.85-165T648-144H312Zm336-552H312v480h336v-480ZM384-288h72v-336h-72v336Zm120 0h72v-336h-72v336ZM312-696v480-480Z',
   // lock
@@ -55,10 +54,23 @@ const icons = {
   label: 'M168-192q-29.7 0-50.85-21.16Q96-234.32 96-264.04v-432.24Q96-726 117.15-747T168-768h420q16.85 0 31.92 7.5Q635-753 646-739l194 259-194 259q-11 14-26.08 21.5Q604.85-192 588-192H168Zm0-72h420l162-216-162-216H168v432Zm210-216Z',
   label_off: 'm729-333-51-51 72-96-162.21-216h-221.7L294-768h293.87q17.13 0 32.13 7.5 15 7.5 26 21.5l194 259-111 147Zm-561 69h426L168-691v427ZM802-56 642-216q-8 11-21 17.5t-27 6.5H168q-29.7 0-50.85-21.15Q96-234.3 96-264v-432q0-13.93 5-25.97Q106-734 115-744l-59-59 51-51 746 747-51 51ZM558-540Zm-177 63Z',
 
+  // question mark
+  questionmark: 'M424-320q0-81 14.5-116.5T500-514q41-36 62.5-62.5T584-637q0-41-27.5-68T480-732q-51 0-77.5 31T365-638l-103-44q21-64 77-111t141-47q105 0 161.5 58.5T698-641q0 50-21.5 85.5T609-475q-49 47-59.5 71.5T539-320H424Zm56 240q-33 0-56.5-23.5T400-160q0-33 23.5-56.5T480-240q33 0 56.5 23.5T560-160q0 33-23.5 56.5T480-80Z',
+
   // add
   add: 'M444-444H240v-72h204v-204h72v204h204v72H516v204h-72v-204Z'
 };
 /* eslint-enable @stylistic/js/max-len */
+
+/**
+ * Check if an icon exists for the input concept.
+ *
+ * @param {string} name The concept.
+ * @returns {boolean} True if an icon exists.
+ */
+export function hasIcon(name) {
+  return typeof icons[name.toLowerCase()] !== 'undefined';
+}
 
 /**
  * Get an HTML element representing the input concept.
@@ -97,20 +109,18 @@ export function getButton(name) {
 }
 
 /**
- * Set a button as pressed or not.
+ * Set a button as pressed or not: sets its `aria-pressed` attribute
+ *   and, if the button has an `_off` icon, uses it when pressed.
  *
  * @param {HTMLButtonElement} button The button to set state.
  * @param {boolean} state True to set as pressed.
  */
 export function setButtonPressed(button, state) {
   const name = button.name;
-  if (state) {
-    button.value = '1';
-    button.replaceChildren(getIconElement(name + '_off'));
-  } else {
-    button.value = '0';
-    button.replaceChildren(getIconElement(name));
-  }
+  button.value = state ? '1' : '0';
+  button.setAttribute('aria-pressed', String(state));
+  const iconName = state && hasIcon(name + '_off') ? name + '_off' : name;
+  button.replaceChildren(getIconElement(iconName));
 }
 
 /**

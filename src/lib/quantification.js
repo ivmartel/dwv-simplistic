@@ -24,6 +24,14 @@ const quantificationLabels = {
 };
 
 /**
+ * Specific quantification short labels, others use the lowercase key
+ *   (lowercase keys, compared case insensitive).
+ */
+const quantificationShortLabels = {
+  surface: 'area'
+};
+
+/**
  * Get a readable label for a quantification key.
  *
  * @param {string} key The quantification key.
@@ -41,6 +49,20 @@ function getQuantificationLabel(key) {
   }
   // general rule: 'someKey' -> 'some key'
   return key.replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase();
+}
+
+/**
+ * Get a short label for a quantification key.
+ *
+ * @param {string} key The quantification key.
+ * @returns {string} The short label.
+ */
+function getQuantificationShortLabel(key) {
+  const specific = quantificationShortLabels[key.toLowerCase()];
+  if (typeof specific !== 'undefined') {
+    return specific;
+  }
+  return key.toLowerCase();
 }
 
 /**
@@ -71,11 +93,20 @@ export function formatQuantificationValue(value, unit) {
 }
 
 /**
+ * Quantification item: a full label, a short label and a value.
+ *
+ * @typedef {object} QuantificationItem
+ * @property {string} label The full label.
+ * @property {string} shortLabel The short label.
+ * @property {string} value The formatted value.
+ */
+
+/**
  * Quantification group: a title and label/value pairs.
  *
  * @typedef {object} QuantificationGroup
  * @property {string} title The group title.
- * @property {{label: string, value: string}[]} items The group items.
+ * @property {QuantificationItem[]} items The group items.
  */
 
 /**
@@ -110,6 +141,7 @@ export function getQuantificationGroups(quantification, titles) {
     }
     const item = {
       label: getQuantificationLabel(key),
+      shortLabel: getQuantificationShortLabel(key),
       value: formatQuantificationValue(quant.value, quant.unit)
     };
     if (pixelValueKeys.includes(key.toLowerCase())) {

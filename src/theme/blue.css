@@ -13,6 +13,16 @@
   /* selected button */
   --primary-container: #d7e3ff;
   --on-primary-container: #00458f;
+  /* accent: pressed toggle icons */
+  --primary: #005cbb;
+  /* secondary accent: selected list items */
+  --secondary-container: #dae2f9;
+  --on-secondary-container: #131c2b;
+  /* secondary text */
+  --on-surface-variant: #44474f;
+  /* snackbar */
+  --inverse-surface: #2f3033;
+  --inverse-on-surface: #f1f0f4;
   /* border */
   --outline: #74777f;
 }
@@ -33,10 +43,6 @@ button:disabled path {
   filter: brightness(80%);
 }
 
-/* right panel content */
-.data-item-list li:hover {
-  filter: brightness(90%);
-}
 
 /* side panel */
 .resizer:hover, .resizer:active {

@@ -88,9 +88,12 @@ function getAnnotationItemState(annotation, visible) {
  *   (`subscribe` / `getSnapshot`). Actions are methods keyed by
  *   data id and annotation id; dwv objects are not exposed.
  *
+ * Errors of actions are reported as `error` events, with
+ *   the error in `event.detail.error`.
+ *
  * Usage: `connect()` once before loading data, `dispose()` when done.
  */
-export class AnnotationService {
+export class AnnotationService extends EventTarget {
 
   /**
    * The dwv app service.
@@ -154,6 +157,7 @@ export class AnnotationService {
    * @param {DwvAppService} dwvAppService The associated dwv app service.
    */
   constructor(dwvAppService) {
+    super();
     this.#dwvAppService = dwvAppService;
   }
 
@@ -404,13 +408,32 @@ export class AnnotationService {
   }
 
   /**
+   * Get an annotation group as a DICOM SR blob. A failure is
+   *   reported as an `error` event.
+   *
+   * @param {string} dataId The annotation group data id.
+   * @returns {Blob|undefined} The DICOM SR blob, undefined on failure.
+   */
+  getAnnotationGroupAsDicom(dataId) {
+    try {
+      return this.#getAnnotationGroupAsDicom(dataId);
+    } catch (error) {
+      logger.error(error.message);
+      this.dispatchEvent(new CustomEvent('error', {detail: {error}}));
+      return undefined;
+    }
+  }
+
+  // internals
+
+  /**
    * Get an annotation group as a DICOM SR blob.
    *
    * @param {string} dataId The annotation group data id.
    * @returns {Blob} The DICOM SR blob.
    * @throws {Error} If the group is not found or the writing fails.
    */
-  getAnnotationGroupAsDicom(dataId) {
+  #getAnnotationGroupAsDicom(dataId) {
     const annotationGroup = this.#getAnnotationGroup(dataId);
     if (typeof annotationGroup === 'undefined') {
       throw new Error(`Cannot find annotation group with id ${dataId}`);
@@ -430,8 +453,6 @@ export class AnnotationService {
     const dicomBuffer = writer.getBuffer(dicomElements);
     return new Blob([dicomBuffer], {type: 'application/dicom'});
   }
-
-  // internals
 
   /**
    * Get an annotation group from the data controller.

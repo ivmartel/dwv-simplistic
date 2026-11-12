@@ -3,6 +3,7 @@ import {describe, test, expect} from 'vitest';
 import {
   getIconElement,
   getButton,
+  hasIcon,
   setButtonPressed,
   isButtonPressed,
   toggleButtonPressed
@@ -28,6 +29,14 @@ describe('getIconElement', () => {
   });
 });
 
+describe('hasIcon', () => {
+  test('is case insensitive and false on unknown name', () => {
+    expect(hasIcon('Ruler')).toBe(true);
+    expect(hasIcon('questionmark')).toBe(true);
+    expect(hasIcon('unknown')).toBe(false);
+  });
+});
+
 describe('button state', () => {
   test('getButton sets name and title', () => {
     const button = getButton('Lock');
@@ -42,11 +51,21 @@ describe('button state', () => {
 
     setButtonPressed(button, true);
     expect(isButtonPressed(button)).toBe(true);
+    expect(button.getAttribute('aria-pressed')).toBe('true');
     expect(button.firstChild.innerHTML).toBe(offIcon);
 
     setButtonPressed(button, false);
     expect(isButtonPressed(button)).toBe(false);
+    expect(button.getAttribute('aria-pressed')).toBe('false');
     expect(button.firstChild.innerHTML).not.toBe(offIcon);
+  });
+
+  test('setButtonPressed keeps the icon without off icon', () => {
+    const button = getButton('Info');
+    const icon = getIconElement('info').innerHTML;
+    setButtonPressed(button, true);
+    expect(button.getAttribute('aria-pressed')).toBe('true');
+    expect(button.firstChild.innerHTML).toBe(icon);
   });
 
   test('toggleButtonPressed flips the state', () => {

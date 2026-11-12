@@ -65,16 +65,64 @@ button.active:enabled path {
 }
 
 /* right panel content */
-.data-item-list li {
-  background-color: var(--surface-container-high);
-  /* avoid jumps on select */
-  border-color: transparent;
+.data-item-name {
+  color: var(--on-surface-container);
 }
-.data-item-list .selected {
-  border-color: var(--on-primary-container);
+/* icon buttons: transparent, state layer on hover */
+.data-item-actions button,
+.data-item-list-item-actions button {
+  background-color: transparent;
+}
+.data-item-actions button:enabled:hover,
+.data-item-list-item-actions button:enabled:hover {
+  filter: none;
+  background-color: color-mix(
+    in srgb, var(--on-surface-container) 8%, transparent);
+}
+.data-item-actions button:enabled path,
+.data-item-list-item-actions button:enabled path {
+  fill: var(--on-surface-container);
+}
+/* toggle on */
+.data-item-actions button[aria-pressed="true"]:enabled path,
+.data-item-list-item-actions button[aria-pressed="true"]:enabled path {
+  fill: var(--primary);
+}
+.data-item-list-item {
+  background-color: var(--surface-container-high);
+  color: var(--on-surface-container);
+}
+.data-item-list-item:hover {
+  background-color: color-mix(
+    in srgb, var(--on-surface-container) 8%, var(--surface-container-high));
+}
+.data-item-list-item.selected {
+  background-color: var(--secondary-container);
+  color: var(--on-secondary-container);
+}
+.data-item-list-item.selected:hover {
+  background-color: color-mix(
+    in srgb, var(--on-secondary-container) 8%, var(--secondary-container));
+}
+.data-item-list-item-content {
+  background-color: transparent;
+  color: inherit;
+}
+.data-item-list-item-content:enabled path {
+  fill: currentColor;
+}
+.data-item-list-empty,
+.data-item-list-item-details dt {
+  color: var(--on-surface-variant);
 }
 .data-item-list-item-details {
   border-color: var(--outline);
+}
+
+/* snackbar */
+.snackbar {
+  background-color: var(--inverse-surface);
+  color: var(--inverse-on-surface);
 }
 
 /* modal dialog */

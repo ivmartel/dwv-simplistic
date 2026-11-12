@@ -76,6 +76,7 @@ src/
                       dev/viewer/src/quantificationUI.js
     dropboxLoader.js  drag and drop / file input loader
     modal.js          modal dialog
+    snackbar.js       transient message (annotation service errors)
     tagsService.js    TagsService: DICOM tags logic and state store
                       (instance numbers, meta flattening), same design
                       as AnnotationService
@@ -133,6 +134,9 @@ build/                demo site (build/demo/) and coverage (build/coverage/)
   ([dwv repo](https://github.com/ivmartel/dwv)) before changing calls.
 - Public API documentation of `<dwv-simple>` attributes is the JSDoc on
   `DwvComponent`; keep it in sync when adding or changing attributes.
+- `doc/design/`: component design specs, framework agnostic. Read the spec
+  before changing a component and keep it up to date with behaviour
+  or style changes.
 
 ## dwv linked files
 

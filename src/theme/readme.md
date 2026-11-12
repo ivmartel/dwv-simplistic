@@ -1,6 +1,6 @@
 # Theme
 
-Inspired from [Material Design 3](https://m3.material.io/) and its [color roles](https://m3.material.io/styles/color/roles). Mainly using surface, primary and outline.
+Inspired from [Material Design 3](https://m3.material.io/) and its [color roles](https://m3.material.io/styles/color/roles). Mainly using surface, primary, secondary and outline.
 
 ## Surface
 
@@ -25,6 +25,24 @@ Inspired from [Material Design 3](https://m3.material.io/) and its [color roles]
 -> 'primary' for buttons, 'primary container' for selected buttons and selected elements border
 
 Note: primary colors have to be visible on all types of surface.
+
+Additional accent:
+
+- Primary: pressed toggle icons (`aria-pressed="true"`) in the annotation list
+
+## Secondary
+
+> Use secondary roles for less prominent components in the UI such as filter chips.
+
+- Secondary container: Fill color for selected list items
+- On secondary container: Text and icons against secondary container
+
+-> selected annotation in the annotation list
+
+## Surface variant and inverse
+
+- On surface variant: secondary text (empty list, quantification labels)
+- Inverse surface / inverse on surface: snackbar
 
 ## Outline
 

@@ -41,6 +41,13 @@ describe('getQuantificationGroups', () => {
     expect(groups[1].items.map(item => item.label)).toStrictEqual([
       'mean', 'standard deviation', '25th percentile'
     ]);
+    // short labels
+    expect(groups[0].items.map(item => item.shortLabel)).toStrictEqual([
+      'length', 'area', 'angle', 'somekey', 'width', 'height'
+    ]);
+    expect(groups[1].items.map(item => item.shortLabel)).toStrictEqual([
+      'mean', 'stddev', 'p25'
+    ]);
     expect(groups[1].items[0].value).toMatch(/^35.47 HU$/);
     expect(groups[1].items[1].value).toMatch(/^0.123$/);
     expect(groups[0].items[3].value).toMatch(/^150.3$/);
@@ -70,6 +77,12 @@ describe('getQuantificationGroups', () => {
     expect(groups[0].title).toBe('Geometry');
     expect(groups[0].items).toHaveLength(1);
     expect(groups[0].items[0].label).toBe('radius');
+  });
+
+  test('key as short label', () => {
+    const groups = getQuantificationGroups({median: {value: 1}});
+    expect(groups[0].items[0].label).toBe('median');
+    expect(groups[0].items[0].shortLabel).toBe('median');
   });
 });
 

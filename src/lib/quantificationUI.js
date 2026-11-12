@@ -18,7 +18,7 @@ export function renderQuantification(detailsDiv, groups) {
   if (groups.length === 0) {
     const emptyDiv = document.createElement('div');
     emptyDiv.className = 'quantification-empty';
-    emptyDiv.appendChild(document.createTextNode('No quantification.'));
+    emptyDiv.appendChild(document.createTextNode('No quantification'));
     detailsDiv.replaceChildren(emptyDiv);
     return;
   }
@@ -30,12 +30,14 @@ export function renderQuantification(detailsDiv, groups) {
     const list = document.createElement('dl');
     list.className = 'quantification';
     for (const item of group.items) {
+      // short label, full label in the tooltip
       const term = document.createElement('dt');
-      term.appendChild(document.createTextNode(item.label));
+      term.appendChild(document.createTextNode(item.shortLabel));
       const value = document.createElement('dd');
       value.appendChild(document.createTextNode(item.value));
       // wrap pair to allow several per line
       const pair = document.createElement('div');
+      pair.title = item.label;
       pair.appendChild(term);
       pair.appendChild(value);
       list.appendChild(pair);
