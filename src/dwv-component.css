@@ -21,6 +21,7 @@ progress {
   /* occupy space left by panel */
   flex: 1;
   min-height: 0;
+  min-width: 0;
 }
 .layer {
   position: absolute;
@@ -216,32 +217,69 @@ button:enabled:hover {
   margin: 1em;
 }
 
-/* side panel */
-.sidepanel {
-  padding: 2px;
-  width: 24px;
-
+/* right panel (see doc/design/rightPanel.md) */
+.right-panel-toggle-strip {
+  flex: none;
+  padding: 4px 2px 0 2px;
+  border-left: 1px solid;
+}
+.right-panel-toggle-strip[hidden] {
+  display: none;
+}
+.right-panel {
+  flex: none;
+  position: relative;
+  width: 0;
+  border-left: 0 solid;
+  /* clip, not hidden: focus cannot scroll it and hide the handle */
+  overflow: clip;
+}
+.right-panel.open {
+  border-left-width: 1px;
+}
+.right-panel.resizing {
+  user-select: none;
+}
+.right-panel-resize-handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 6px;
+  z-index: 1;
+  cursor: col-resize;
+  touch-action: none;
+  outline: none;
+}
+.right-panel-content {
+  height: 100%;
   display: flex;
   flex-direction: column;
 }
-.sidepanel-header {
-  button {
-    padding: 0;
-  }
+.right-panel-header {
+  padding: 4px 2px 0 0;
+  display: flex;
+  justify-content: flex-end;
 }
-.sidepanel-content {
-  display: none;
-
-  overflow: auto;
+.right-panel-body {
   flex: 1;
   min-height: 0;
+  overflow-y: auto;
+  padding: 0 8px 8px 8px;
 }
-.resizer {
-  display: none;
-
-  width: 5px;
-  cursor: col-resize;
-  user-select: none;
+/* icon button: 24px hit area, 18px icon */
+.right-panel-toggle {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  svg {
+    width: 18px;
+    height: 18px;
+  }
 }
 
 /* right panel content (see doc/design/annotationComponent.md) */

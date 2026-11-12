@@ -1,64 +1,190 @@
 import {AnnotationComponent} from './annotationComponent.js';
-import {
-  getButton,
-  toggleButtonPressed
-} from './icons.js';
+import {getIconElement} from './icons.js';
 
 /**
  * @import {DwvAppService} from './dwvAppService.js';
  * @import {AnnotationService} from './annotationService.js';
  */
 
+// panel widths, see doc/design/rightPanel.md
 /**
- * Get the right panel HTML elements.
+ * Initial panel width in pixels.
  *
- * @param {string} appId The app id.
- * @returns {HTMLElement[]} List of panel elements.
+ * @type {number}
  */
-export function getRightPanelElements(appId) {
-  // resizer
-  const resizer = document.createElement('div');
-  resizer.id = 'resizer-' + appId;
-  resizer.className = 'resizer';
-  resizer.part = 'resizer';
+export const PANEL_INITIAL_WIDTH = 300;
+/**
+ * Minimum panel width in pixels.
+ *
+ * @type {number}
+ */
+export const PANEL_MIN_WIDTH = 200;
+/**
+ * Maximum panel width as a ratio of the window width.
+ *
+ * @type {number}
+ */
+export const PANEL_MAX_WIDTH_RATIO = 0.5;
+/**
+ * Keyboard resize step in pixels.
+ *
+ * @type {number}
+ */
+export const PANEL_KEY_STEP = 20;
 
-  // right panel
-  const rightPanel = document.createElement('div');
-  rightPanel.id = 'right-panel-' + appId;
-  rightPanel.className = 'rightPanel sidepanel';
-  rightPanel.part = 'rightPanel';
-
-  // right panel header
-  const header = document.createElement('div');
-  header.id = 'right-panel-header-' + appId;
-  header.className = 'sidepanel-header';
-  header.part = 'right-panel-header';
-
-  // toggle button
-  const toggleButton = getButton('RightPanelOpen');
-  toggleButton.id = 'togglebtn-' + appId;
-  toggleButton.className = 'togglebtn';
-  toggleButton.part = 'togglebtn';
-  toggleButton.addEventListener('click', function (event) {
-    toggleButtonPressed(event.target);
-  });
-  header.appendChild(toggleButton);
-
-  // right panel content
-  const content = document.createElement('div');
-  content.id = 'right-panel-content-' + appId;
-  content.className = 'sidepanel-content';
-  content.part = 'right-panel-content';
-
-  // fill right panel
-  rightPanel.appendChild(header);
-  rightPanel.appendChild(content);
-
-  return [resizer, rightPanel];
+/**
+ * Get the maximum panel width: 60% of the window width, rounded,
+ * and never below the minimum width.
+ *
+ * @param {number} windowWidth The window width in pixels.
+ * @returns {number} The maximum width in pixels.
+ */
+export function getMaxPanelWidth(windowWidth) {
+  return Math.max(
+    PANEL_MIN_WIDTH, Math.round(windowWidth * PANEL_MAX_WIDTH_RATIO));
 }
 
 /**
- * Righ panel class.
+ * Round and clamp a panel width to the width limits.
+ *
+ * @param {number} width The input width in pixels.
+ * @param {number} windowWidth The window width in pixels.
+ * @returns {number} The clamped width in pixels.
+ */
+export function clampPanelWidth(width, windowWidth) {
+  return Math.min(
+    getMaxPanelWidth(windowWidth),
+    Math.max(PANEL_MIN_WIDTH, Math.round(width)));
+}
+
+/**
+ * Get the panel width resulting from a resize key press.
+ *
+ * @param {string} key The keyboard event key.
+ * @param {number} width The current width in pixels.
+ * @param {number} windowWidth The window width in pixels.
+ * @returns {number|undefined} The new width in pixels (clamped),
+ *   undefined if the key is not a resize key.
+ */
+export function getKeyResizeWidth(key, width, windowWidth) {
+  let newWidth;
+  if (key === 'ArrowLeft') {
+    newWidth = width + PANEL_KEY_STEP;
+  } else if (key === 'ArrowRight') {
+    newWidth = width - PANEL_KEY_STEP;
+  } else if (key === 'Home') {
+    newWidth = PANEL_MIN_WIDTH;
+  } else if (key === 'End') {
+    newWidth = getMaxPanelWidth(windowWidth);
+  }
+  if (typeof newWidth === 'undefined') {
+    return undefined;
+  }
+  return clampPanelWidth(newWidth, windowWidth);
+}
+
+/**
+ * Get the right panel element id.
+ *
+ * @param {string} uid The app uid.
+ * @returns {string} The id.
+ */
+export function getRightPanelDivId(uid) {
+  return 'right-panel-' + uid;
+}
+
+/**
+ * Get the right panel body element id, the parent of the panel content.
+ *
+ * @param {string} uid The app uid.
+ * @returns {string} The id.
+ */
+export function getRightPanelBodyDivId(uid) {
+  return 'right-panel-content-' + uid;
+}
+
+/**
+ * Get a right panel toggle button.
+ *
+ * @param {string} uid The app uid.
+ * @param {boolean} isOpenToggle True for the toggle shown when the panel
+ *   is open (it closes it).
+ * @returns {HTMLButtonElement} The button.
+ */
+function getToggleButton(uid, isOpenToggle) {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'right-panel-toggle';
+  button.part = 'right-panel-toggle';
+  button.title = isOpenToggle ? 'Close panel' : 'Open panel';
+  button.setAttribute('aria-expanded', String(isOpenToggle));
+  button.setAttribute('aria-controls', getRightPanelDivId(uid));
+  button.appendChild(
+    getIconElement(isOpenToggle ? 'chevronright' : 'chevronleft'));
+  return button;
+}
+
+/**
+ * Get the right panel HTML elements, in closed state.
+ *
+ * @param {string} appId The app id.
+ * @returns {HTMLElement[]} The toggle strip and the panel elements.
+ */
+export function getRightPanelElements(appId) {
+  // toggle strip (closed only)
+  const toggleStrip = document.createElement('div');
+  toggleStrip.id = 'right-panel-toggle-strip-' + appId;
+  toggleStrip.className = 'right-panel-toggle-strip';
+  toggleStrip.part = 'right-panel-toggle-strip';
+  toggleStrip.appendChild(getToggleButton(appId, false));
+
+  // panel
+  const panel = document.createElement('aside');
+  panel.id = getRightPanelDivId(appId);
+  panel.className = 'right-panel';
+  panel.part = 'right-panel';
+  panel.setAttribute('aria-hidden', 'true');
+  panel.setAttribute('inert', '');
+
+  // resize handle
+  const resizeHandle = document.createElement('div');
+  resizeHandle.className = 'right-panel-resize-handle';
+  resizeHandle.part = 'right-panel-resize-handle';
+  resizeHandle.tabIndex = 0;
+  resizeHandle.title = 'Resize panel';
+  resizeHandle.setAttribute('role', 'separator');
+  resizeHandle.setAttribute('aria-orientation', 'vertical');
+  resizeHandle.setAttribute('aria-controls', panel.id);
+  resizeHandle.setAttribute('aria-label', 'Resize panel');
+
+  // header
+  const header = document.createElement('div');
+  header.className = 'right-panel-header';
+  header.part = 'right-panel-header';
+  header.appendChild(getToggleButton(appId, true));
+
+  // body
+  const body = document.createElement('div');
+  body.id = getRightPanelBodyDivId(appId);
+  body.className = 'right-panel-body';
+  body.part = 'right-panel-body';
+
+  // content, fixed to the panel width
+  const content = document.createElement('div');
+  content.className = 'right-panel-content';
+  content.part = 'right-panel-content';
+  content.appendChild(header);
+  content.appendChild(body);
+
+  panel.appendChild(resizeHandle);
+  panel.appendChild(content);
+
+  return [toggleStrip, panel];
+}
+
+/**
+ * Right panel class: foldable and resizable side panel
+ * (see doc/design/rightPanel.md).
  */
 export class RightPanel {
 
@@ -84,18 +210,46 @@ export class RightPanel {
   #rootDoc;
 
   /**
-   * Annotation service.
-   *
-   * @type {AnnotationService}
-   */
-  #annotService;
-
-  /**
    * Annotation component.
    *
    * @type {AnnotationComponent}
    */
   #annotComponent;
+
+  /**
+   * Open state.
+   *
+   * @type {boolean}
+   */
+  #isOpen = false;
+
+  /**
+   * Panel width when open, in pixels.
+   *
+   * @type {number}
+   */
+  #width = PANEL_INITIAL_WIDTH;
+
+  /**
+   * Pointer drag resize in progress.
+   *
+   * @type {boolean}
+   */
+  #isResizing = false;
+
+  /**
+   * Pointer x at resize start.
+   *
+   * @type {number}
+   */
+  #startX = 0;
+
+  /**
+   * Width at resize start.
+   *
+   * @type {number}
+   */
+  #startWidth = 0;
 
   /**
    * @param {DwvAppService} dwvAppService The dwv app service.
@@ -106,18 +260,8 @@ export class RightPanel {
     this.#uid = dwvAppService.getOptions().uid;
     this.#rootDoc = dwvAppService.getOptions().rootDocument;
 
-    this.#annotService = annotService;
     this.#annotComponent = new AnnotationComponent(
-      this.#annotService, this.#rootDoc, this.#uid);
-  }
-
-  /**
-   * Get the right panel content div id.
-   *
-   * @returns {string} The id.
-   */
-  #getRightPanelContentDivId() {
-    return 'right-panel-content-' + this.#uid;
+      annotService, this.#rootDoc, this.#uid);
   }
 
   /**
@@ -125,81 +269,193 @@ export class RightPanel {
    */
   init() {
     this.#setupUI();
+    this.#render();
 
     this.#annotComponent.registerListeners();
   }
 
   /**
-   * Setup the UI: bind app and panel actions.
+   * Is the panel open.
+   *
+   * @returns {boolean} True if open.
+   */
+  isOpen() {
+    return this.#isOpen;
+  }
+
+  /**
+   * Get the panel width when open.
+   *
+   * @returns {number} The width in pixels.
+   */
+  getWidth() {
+    return this.#width;
+  }
+
+  /**
+   * Open or close the panel and move the focus to the visible toggle.
+   *
+   * @param {boolean} open True to open.
+   */
+  setOpen(open) {
+    if (open === this.#isOpen) {
+      return;
+    }
+    this.#isOpen = open;
+    this.#render();
+    // refit the view to its new size
+    this.#dwvAppService.onResize();
+    const toggle = open
+      ? this.#getPanel()?.querySelector('.right-panel-toggle')
+      : this.#getToggleStrip()?.querySelector('.right-panel-toggle');
+    toggle?.focus();
+  }
+
+  /**
+   * Set the panel width, rounded and clamped to the width limits.
+   *
+   * @param {number} width The width in pixels.
+   */
+  setWidth(width) {
+    const newWidth = clampPanelWidth(width, window.innerWidth);
+    if (newWidth === this.#width) {
+      return;
+    }
+    this.#width = newWidth;
+    this.#render();
+    // refit the view to its new size
+    if (this.#isOpen) {
+      this.#dwvAppService.onResize();
+    }
+  }
+
+  /**
+   * Get the panel element.
+   *
+   * @returns {HTMLElement|null} The element.
+   */
+  #getPanel() {
+    return this.#rootDoc.getElementById(getRightPanelDivId(this.#uid));
+  }
+
+  /**
+   * Get the toggle strip element.
+   *
+   * @returns {HTMLElement|null} The element.
+   */
+  #getToggleStrip() {
+    return this.#rootDoc.getElementById(
+      'right-panel-toggle-strip-' + this.#uid);
+  }
+
+  /**
+   * Get the resize handle element.
+   *
+   * @returns {HTMLElement|null} The element.
+   */
+  #getResizeHandle() {
+    return this.#getPanel()?.querySelector('.right-panel-resize-handle');
+  }
+
+  /**
+   * Render the panel state.
+   */
+  #render() {
+    const panel = this.#getPanel();
+    const toggleStrip = this.#getToggleStrip();
+    if (!panel || !toggleStrip) {
+      return;
+    }
+    const open = this.#isOpen;
+
+    toggleStrip.hidden = open;
+
+    panel.classList.toggle('open', open);
+    panel.classList.toggle('resizing', this.#isResizing);
+    panel.style.width = open ? this.#width + 'px' : '0';
+    if (open) {
+      panel.removeAttribute('aria-hidden');
+    } else {
+      panel.setAttribute('aria-hidden', 'true');
+    }
+    panel.toggleAttribute('inert', !open);
+
+    const content = panel.querySelector('.right-panel-content');
+    if (content) {
+      content.style.width = this.#width + 'px';
+    }
+
+    const handle = this.#getResizeHandle();
+    if (handle) {
+      handle.setAttribute('aria-valuenow', String(this.#width));
+      handle.setAttribute('aria-valuemin', String(PANEL_MIN_WIDTH));
+      handle.setAttribute('aria-valuemax',
+        String(getMaxPanelWidth(window.innerWidth)));
+    }
+  }
+
+  /**
+   * Setup the UI: bind the toggle and resize actions.
    */
   #setupUI() {
-    const toggleButton = this.#rootDoc.getElementById(
-      'togglebtn-' + this.#uid
-    );
-    const rightPanel = this.#rootDoc.getElementById(
-      'right-panel-' + this.#uid
-    );
-    const content = this.#rootDoc.getElementById(
-      this.#getRightPanelContentDivId()
-    );
-    const resizer = this.#rootDoc.getElementById(
-      'resizer-' + this.#uid
-    );
+    const panel = this.#getPanel();
+    const toggleStrip = this.#getToggleStrip();
+    const handle = this.#getResizeHandle();
+    if (!panel || !toggleStrip || !handle) {
+      return;
+    }
 
-    // sizes (have to be in sync with css)
-    const panelCollapsedWidth = 25;
-    const panelPadding = 10;
+    // toggles
+    toggleStrip.querySelector('.right-panel-toggle')
+      ?.addEventListener('click', () => {
+        this.setOpen(true);
+      });
+    panel.querySelector('.right-panel-header .right-panel-toggle')
+      ?.addEventListener('click', () => {
+        this.setOpen(false);
+      });
 
-    const minPanelWidth = 200;
-    const maxPanelWidth = 600;
-
-    let isResizing = false;
-    let startX = 0;
-    let startWidth = 0;
-
-    // collapse/expand button
-    toggleButton.addEventListener('click', () => {
-      if (rightPanel.clientWidth > panelCollapsedWidth + panelPadding) {
-        // collapse
-        rightPanel.style.width = panelCollapsedWidth + 'px';
-        content.style.display = 'none';
-        resizer.style.display = 'none';
-      } else {
-        // expand
-        rightPanel.style.width = '30%';
-        content.style.display = 'block';
-        resizer.style.display = 'block';
-      }
-      this.#dwvAppService.onResize();
-    });
-
-    // activate resizing
-    const onResizeStart = function (event) {
-      isResizing = true;
-      startX = event.clientX;
-      startWidth = rightPanel.offsetWidth;
-      // activate related listeners
-      document.addEventListener('mousemove', onResizing);
-      document.addEventListener('mouseup', onResizeStop);
-    };
-    // do resizing
-    const onResizing = (event) => {
-      if (!isResizing) {
+    // pointer resize
+    handle.addEventListener('pointerdown', (event) => {
+      if (event.button !== 0) {
         return;
       }
-      const newWidth = startWidth - (event.clientX - startX);
-      if (newWidth > minPanelWidth && newWidth < maxPanelWidth) {
-        rightPanel.style.width = newWidth + 'px';
-        this.#dwvAppService.onResize();
+      event.preventDefault();
+      handle.setPointerCapture?.(event.pointerId);
+      this.#isResizing = true;
+      this.#startX = event.clientX;
+      this.#startWidth = this.#width;
+      this.#render();
+    });
+    handle.addEventListener('pointermove', (event) => {
+      if (!this.#isResizing) {
+        return;
       }
+      // moving left widens the panel
+      this.setWidth(this.#startWidth - (event.clientX - this.#startX));
+    });
+    const onResizeEnd = (event) => {
+      if (!this.#isResizing) {
+        return;
+      }
+      if (handle.hasPointerCapture?.(event.pointerId)) {
+        handle.releasePointerCapture(event.pointerId);
+      }
+      this.#isResizing = false;
+      this.#render();
     };
-    // stop resizing
-    const onResizeStop = function () {
-      isResizing = false;
-      // stop related listeners
-      document.removeEventListener('mousemove', onResizing);
-      document.removeEventListener('mouseup', onResizeStop);
-    };
-    resizer.addEventListener('mousedown', onResizeStart);
+    handle.addEventListener('pointerup', onResizeEnd);
+    handle.addEventListener('pointercancel', onResizeEnd);
+
+    // keyboard resize
+    handle.addEventListener('keydown', (event) => {
+      const width = getKeyResizeWidth(
+        event.key, this.#width, window.innerWidth);
+      if (typeof width === 'undefined') {
+        return;
+      }
+      event.preventDefault();
+      this.setWidth(width);
+    });
   }
 };

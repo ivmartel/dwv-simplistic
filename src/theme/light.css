@@ -24,6 +24,8 @@
   --inverse-on-surface: #f1f0f4;
   /* outline: borders */
   --outline: #74777f;
+  /* outline variant: decorative borders (panel) */
+  --outline-variant: #c4c6d0;
   /* state effects for the neutral buttons */
   --hover-brightness: 90%;
   --disabled-brightness: 100%;

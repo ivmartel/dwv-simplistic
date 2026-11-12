@@ -67,16 +67,33 @@ button.active:enabled path {
   fill: var(--on-primary-container);
 }
 
-/* side panel */
-.sidepanel {
-  background-color: var(--surface-container);
+/* right panel */
+.right-panel-toggle-strip,
+.right-panel {
+  background-color: var(--surface-container,
+    color-mix(in srgb, var(--on-surface) 12%, transparent));
   color: var(--on-surface);
+  border-color: var(--outline-variant);
 }
-.resizer {
+.right-panel-resize-handle {
+  background-color: transparent;
+}
+.right-panel-resize-handle:hover,
+.right-panel-resize-handle:focus,
+.right-panel.resizing .right-panel-resize-handle {
   background-color: var(--primary);
 }
-.resizer:hover, .resizer:active {
-  filter: brightness(var(--hover-brightness, 120%));
+/* toggle: transparent icon button, state layer on hover */
+.right-panel-toggle {
+  background-color: transparent;
+}
+.right-panel-toggle:enabled:hover {
+  filter: none;
+  background-color: color-mix(
+    in srgb, var(--on-surface) 8%, transparent);
+}
+.right-panel-toggle:enabled path {
+  fill: var(--on-surface);
 }
 
 /* right panel content */

@@ -24,4 +24,6 @@
   --inverse-on-surface: #f1f0f4;
   /* outline: borders */
   --outline: #74777f;
+  /* outline variant: decorative borders (panel) */
+  --outline-variant: #c4c6d0;
 }

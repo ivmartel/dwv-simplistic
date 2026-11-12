@@ -22,7 +22,7 @@ Inspired from [Material Design 3](https://m3.material.io/) and its [color roles]
 - Primary container: Standout fill color against surface, for key components like FAB
 - On primary container: Text and icons against primary container
 
--> 'primary' for buttons, the side panel resizer and table headers, 'primary container' for selected buttons, pressed toggle buttons (`aria-pressed="true"`) in the annotation list and hovered table rows
+-> 'primary' for buttons, the right panel resize handle (hover, focus, drag) and table headers, 'primary container' for selected buttons, pressed toggle buttons (`aria-pressed="true"`) in the annotation list and hovered table rows
 
 Note: primary colors have to be visible on all types of surface. The light and dark themes use a neutral (grey) primary to stay monochrome, the colour accent is only in 'on primary container' (and the secondary container).
 
@@ -46,7 +46,9 @@ Note: primary colors have to be visible on all types of surface. The light and d
 
 - Outline: Important boundaries, such as a text field outline
 
--> drop box contour
+- Outline variant: Decorative elements, such as dividers
+
+-> 'outline' for the drop box contour, 'outline variant' for the right panel left border
 
 Note: outline color has be visible on all types of surface.
 
