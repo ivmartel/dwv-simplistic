@@ -44,7 +44,7 @@ jobs:
       if: steps.build-type.outputs.type != ''
       uses: actions/upload-artifact@v7
       with:
-        name: demo
+        name: dist
         path: build/demo
         if-no-files-found: error
         retention-days: 1
@@ -68,12 +68,12 @@ jobs:
     - name: Download demo
       uses: actions/download-artifact@v8
       with:
-        name: demo
-        path: ${{ runner.temp }}/demo
+        name: dist
+        path: ${{ runner.temp }}/dist
     - name: Push to gh-pages
       env:
         BUILD_TYPE: ${{ needs.build.outputs.build-type }}
-        DEMO_DIR: ${{ runner.temp }}/demo
+        DEMO_DIR: ${{ runner.temp }}/dist
       run: |
         git config user.email github-actions@github.com
         git config user.name github-actions
