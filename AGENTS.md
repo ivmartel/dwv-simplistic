@@ -84,7 +84,7 @@ src/
                       TagsService state (instance slider and tags table)
     icons.js          inline SVG icons and button helpers
   theme/              light/dark/blue/pink + common CSS (Material 3 color roles,
-                      see src/theme/readme.md)
+                      see doc/design/theme.md)
   dwv-component.css   component styles
 tests/                vitest unit tests, mirrors src/
 demo/                 demo index.html, PWA manifest, service worker, assets
