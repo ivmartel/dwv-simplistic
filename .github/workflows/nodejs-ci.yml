@@ -45,7 +45,7 @@ jobs:
       uses: actions/upload-artifact@v7
       with:
         name: demo
-        path: build/demo/
+        path: build/demo
         if-no-files-found: error
         retention-days: 1
 
@@ -75,10 +75,10 @@ jobs:
         BUILD_TYPE: ${{ needs.build.outputs.build-type }}
         DEMO_DIR: ${{ runner.temp }}/demo
       run: |
-        # ':?' aborts if BUILD_TYPE is empty or unset (avoids 'rm -Rf demo/*')
-        DEPLOY_DIR="./demo/${BUILD_TYPE:?}"
         git config user.email github-actions@github.com
         git config user.name github-actions
+        # ':?' aborts if BUILD_TYPE is empty or unset (avoids 'rm -Rf demo/*')
+        DEPLOY_DIR="./demo/${BUILD_TYPE:?}"
         mkdir -p "$DEPLOY_DIR"
         rm -Rf "${DEPLOY_DIR:?}"/*
         cp -Rf "$DEMO_DIR"/* "$DEPLOY_DIR"
