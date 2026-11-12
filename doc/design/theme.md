@@ -11,7 +11,7 @@ Inspired from [Material Design 3](https://m3.material.io/) and its [color roles]
 - Surface container: Default container color
 - Surface container high: High-emphasis container color
 
--> 'surface' for main background, 'surface container' for table and panels, ''surface container high' for elements on top of 'surface container'
+-> 'surface' for main background, 'surface container' for table and panels, 'surface container high' for elements on top of 'surface container', 'on surface' for text and icons on all of them
 
 ## Primary
 
@@ -22,13 +22,9 @@ Inspired from [Material Design 3](https://m3.material.io/) and its [color roles]
 - Primary container: Standout fill color against surface, for key components like FAB
 - On primary container: Text and icons against primary container
 
--> 'primary' for buttons, 'primary container' for selected buttons and selected elements border
+-> 'primary' for buttons, the side panel resizer and table headers, 'primary container' for selected buttons, pressed toggle buttons (`aria-pressed="true"`) in the annotation list and hovered table rows
 
-Note: primary colors have to be visible on all types of surface.
-
-Additional accent:
-
-- Primary: pressed toggle icons (`aria-pressed="true"`) in the annotation list
+Note: primary colors have to be visible on all types of surface. The light and dark themes use a neutral (grey) primary to stay monochrome, the colour accent is only in 'on primary container' (and the secondary container).
 
 ## Secondary
 
@@ -53,3 +49,7 @@ Additional accent:
 -> drop box contour
 
 Note: outline color has be visible on all types of surface.
+
+## Theme files
+
+Each theme (`src/theme/<name>.css`) only defines the color role custom properties above on `:host`, with their Material names (`--surface`, `--on-surface`, `--primary`, `--on-primary`...). All rules using them live in `src/theme/common.css`. Buttons use brightness filters for hover and disabled states; a theme can tune them with `--hover-brightness`, `--disabled-brightness` and `--disabled-icon-brightness` (defaults 120%, 80% and 80%, overridden by the light and dark themes for their neutral buttons).

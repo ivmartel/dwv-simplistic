@@ -1,50 +1,31 @@
 /* Light theme */
 :host {
-  /* main background */
+  /* surface: main background */
   --surface: #faf9fd;
+  /* text and icons on any surface */
   --on-surface: #1a1b1f;
-  /* panel */
+  /* surface container: panels, dialogs */
   --surface-container: #efedf0;
+  /* surface container high: elements on top of surface container */
   --surface-container-high: #e9e7eb;
-  --on-surface-container: #1a1b1f;
-  /* button */
-  --primary-color: #f0f0f0;
-  --on-primary-color: #333;
-  /* selected button */
+  /* primary: buttons */
+  --primary: #f0f0f0;
+  --on-primary: #333;
+  /* primary container: selected buttons, pressed toggles */
   --primary-container: #e1e1e8;
   --on-primary-container: #4a5bb9;
-  /* accent: pressed toggle icons */
-  --primary: #4a5bb9;
-  /* secondary accent: selected list items */
+  /* secondary container: selected list items */
   --secondary-container: #dfe1f9;
   --on-secondary-container: #1a1d33;
-  /* secondary text */
+  /* on surface variant: secondary text */
   --on-surface-variant: #44474f;
-  /* snackbar */
+  /* inverse surface: snackbar */
   --inverse-surface: #2f3033;
   --inverse-on-surface: #f1f0f4;
-  /* border */
+  /* outline: borders */
   --outline: #74777f;
-}
-
-/* drag&drop */
-.dropBoxBorder:hover {
-  filter: brightness(150%);
-}
-
-/* button/input */
-button:enabled:hover {
-  filter: brightness(90%);
-}
-button:disabled {
-  filter: brightness(100%);
-}
-button:disabled path {
-  filter: brightness(300%);
-}
-
-
-/* side panel */
-.resizer:hover, .resizer:active {
-  filter: brightness(90%);
+  /* state effects for the neutral buttons */
+  --hover-brightness: 90%;
+  --disabled-brightness: 100%;
+  --disabled-icon-brightness: 300%;
 }

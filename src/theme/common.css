@@ -32,24 +32,36 @@ path {
 .dropBoxBorder {
   border-color: var(--outline);
 }
+.dropBoxBorder:hover {
+  filter: brightness(150%);
+}
 
 /* button/input */
 input[type=color] {
-  background-color: var(--primary-color);
-  color: var(--on-primary-color);
+  background-color: var(--primary);
+  color: var(--on-primary);
 }
 button path {
-  fill: var(--on-primary-color);
+  fill: var(--on-primary);
 }
 button {
-  background-color: var(--primary-color);
-  color: var(--on-primary-color);
+  background-color: var(--primary);
+  color: var(--on-primary);
 }
 button.active {
   background-color: var(--primary-container);
 }
 button:enabled path {
-  fill: var(--on-primary-color);
+  fill: var(--on-primary);
+}
+button:enabled:hover {
+  filter: brightness(var(--hover-brightness, 120%));
+}
+button:disabled {
+  filter: brightness(var(--disabled-brightness, 80%));
+}
+button:disabled path {
+  filter: brightness(var(--disabled-icon-brightness, 80%));
 }
 button.active:enabled path {
   fill: var(--on-primary-container);
@@ -58,15 +70,18 @@ button.active:enabled path {
 /* side panel */
 .sidepanel {
   background-color: var(--surface-container);
-  color: var(--on-surface-container);
+  color: var(--on-surface);
 }
 .resizer {
-  background-color: var(--primary-color);
+  background-color: var(--primary);
+}
+.resizer:hover, .resizer:active {
+  filter: brightness(var(--hover-brightness, 120%));
 }
 
 /* right panel content */
 .data-item-name {
-  color: var(--on-surface-container);
+  color: var(--on-surface);
 }
 /* icon buttons: transparent, state layer on hover */
 .data-item-actions button,
@@ -77,24 +92,33 @@ button.active:enabled path {
 .data-item-list-item-actions button:enabled:hover {
   filter: none;
   background-color: color-mix(
-    in srgb, var(--on-surface-container) 8%, transparent);
+    in srgb, var(--on-surface) 8%, transparent);
 }
 .data-item-actions button:enabled path,
 .data-item-list-item-actions button:enabled path {
-  fill: var(--on-surface-container);
+  fill: var(--on-surface);
 }
 /* toggle on */
+.data-item-actions button[aria-pressed="true"]:enabled,
+.data-item-list-item-actions button[aria-pressed="true"]:enabled {
+  background-color: var(--primary-container);
+}
 .data-item-actions button[aria-pressed="true"]:enabled path,
 .data-item-list-item-actions button[aria-pressed="true"]:enabled path {
-  fill: var(--primary);
+  fill: var(--on-primary-container);
+}
+.data-item-actions button[aria-pressed="true"]:enabled:hover,
+.data-item-list-item-actions button[aria-pressed="true"]:enabled:hover {
+  background-color: color-mix(
+    in srgb, var(--on-primary-container) 8%, var(--primary-container));
 }
 .data-item-list-item {
   background-color: var(--surface-container-high);
-  color: var(--on-surface-container);
+  color: var(--on-surface);
 }
 .data-item-list-item:hover {
   background-color: color-mix(
-    in srgb, var(--on-surface-container) 8%, var(--surface-container-high));
+    in srgb, var(--on-surface) 8%, var(--surface-container-high));
 }
 .data-item-list-item.selected {
   background-color: var(--secondary-container);
@@ -129,14 +153,14 @@ button.active:enabled path {
 .modal {
   .modal-content {
     background-color: var(--surface-container);
-    color: var(--on-surface-container);
+    color: var(--on-surface);
   }
   .modal-content-scroll {
     background-color: var(--surface-container-high);
 
     th {
-      background-color: var(--primary-color);
-      color: var(--on-primary-color);
+      background-color: var(--primary);
+      color: var(--on-primary);
       border-color: var(--outline);
     }
     td {

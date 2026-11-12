@@ -87,7 +87,7 @@ The details element id is the same id prefixed with `qd-`.
 | Hover | pointer over the row | Background darkened with 8% of the text colour |
 | Selected | the annotation is the selected one | Secondary accent container background and matching text colour |
 | Not viewable | the annotation has no view controller on the current view | Label struck through |
-| Toggle on | lock / labels / visibility / info pressed | Icon in the primary colour (through `aria-pressed="true"`) |
+| Toggle on | lock / labels / visibility / info pressed | Primary container background, icon in the on primary container colour (through `aria-pressed="true"`) |
 | Empty group | no annotations | Italic "No annotation" in the secondary text colour |
 | No quantification | details open, no numeric values | Italic "No quantification" |
 
