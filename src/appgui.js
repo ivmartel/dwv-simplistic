@@ -3,6 +3,7 @@ import {RightPanel} from './lib/rightPanel.js';
 
 /**
  * @import {DwvAppService} from './lib/dwvAppService.js';
+ * @import {AnnotationService} from './lib/annotationService.js';
  */
 
 /**
@@ -70,14 +71,15 @@ export class Gui {
 
   /**
    * @param {DwvAppService} dwvAppService The dwv app service.
+   * @param {AnnotationService} annotService The annotation service.
    * @param {string[]} optionGuiTools The list of gui tools.
    */
-  constructor(dwvAppService, optionGuiTools) {
+  constructor(dwvAppService, annotService, optionGuiTools) {
     this.#uid = dwvAppService.getOptions().uid;
     this.#rootDoc = dwvAppService.getOptions().rootDocument;
 
     this.#toolbar = new Toolbar(dwvAppService, optionGuiTools);
-    this.#rightPanel = new RightPanel(dwvAppService);
+    this.#rightPanel = new RightPanel(dwvAppService, annotService);
 
     dwvAppService.addEventListener('loadprogress', (event) => {
       this.setProgress(event.detail.value);

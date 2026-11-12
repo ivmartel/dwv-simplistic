@@ -1,13 +1,12 @@
-import {AnnotationService} from './annotationService.js';
 import {AnnotationComponent} from './annotationComponent.js';
 import {
   getButton,
   toggleButtonPressed
 } from './icons.js';
-import {showSnackbar} from './snackbar.js';
 
 /**
  * @import {DwvAppService} from './dwvAppService.js';
+ * @import {AnnotationService} from './annotationService.js';
  */
 
 /**
@@ -100,13 +99,14 @@ export class RightPanel {
 
   /**
    * @param {DwvAppService} dwvAppService The dwv app service.
+   * @param {AnnotationService} annotService The annotation service.
    */
-  constructor(dwvAppService) {
+  constructor(dwvAppService, annotService) {
     this.#dwvAppService = dwvAppService;
     this.#uid = dwvAppService.getOptions().uid;
     this.#rootDoc = dwvAppService.getOptions().rootDocument;
 
-    this.#annotService = new AnnotationService(dwvAppService);
+    this.#annotService = annotService;
     this.#annotComponent = new AnnotationComponent(
       this.#annotService, this.#rootDoc, this.#uid);
   }
@@ -126,14 +126,6 @@ export class RightPanel {
   init() {
     this.#setupUI();
 
-    this.#annotService.connect();
-    this.#annotService.addEventListener('error', (event) => {
-      const container =
-        this.#rootDoc.getElementById('dwv-' + this.#uid);
-      if (container) {
-        showSnackbar(container, event.detail.error.message);
-      }
-    });
     this.#annotComponent.registerListeners();
   }
 

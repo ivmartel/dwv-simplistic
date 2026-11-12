@@ -1,7 +1,9 @@
 
-import {Gui} from './appgui.js';
+import {Gui, getDwvDivId} from './appgui.js';
 import {DropboxLoader} from './lib/dropboxLoader.js';
 import {DwvAppService} from './lib/dwvAppService.js';
+import {AnnotationService} from './lib/annotationService.js';
+import {showSnackbar} from './lib/snackbar.js';
 
 /**
  * Application launcher.
@@ -15,7 +17,7 @@ import {DwvAppService} from './lib/dwvAppService.js';
  * @param {Document} [rootDoc] Optional root document,
  *   defaults to `window.document`.
  * @returns {DwvAppService} The created service, call its `dispose` method
- *   to release its resources.
+ *   to release its resources (and the ones of the dependent services).
  */
 export function startApp(uid, options, rootDoc) {
   // create service
@@ -26,12 +28,20 @@ export function startApp(uid, options, rootDoc) {
     rootDocument: rootDoc
   });
 
+  // create annotation service
+  const annotService = new AnnotationService(dwvAppService);
+  annotService.connect();
+  dwvAppService.addEventListener('dispose', function () {
+    annotService.dispose();
+  });
+
   // gui tools
   const optionGuiTools = undefined; // available later (?)
 
   // app gui
   const dwvAppGui = new Gui(
     dwvAppService,
+    annotService,
     optionGuiTools
   );
   dwvAppGui.init();
@@ -39,6 +49,23 @@ export function startApp(uid, options, rootDoc) {
   // setup drop box
   const dropBoxLoader = new DropboxLoader(dwvAppService);
   dropBoxLoader.init();
+
+  // show messages in a snackbar
+  const showMessage = function (message) {
+    const container = dwvAppService.getOptions().rootDocument
+      .getElementById(getDwvDivId(uid));
+    if (container) {
+      showSnackbar(container, message);
+    }
+  };
+  const onError = function (event) {
+    showMessage(event.detail.error.message);
+  };
+  dwvAppService.addEventListener('error', onError);
+  dwvAppService.addEventListener('loadabort', function (event) {
+    showMessage(event.detail.message);
+  });
+  annotService.addEventListener('error', onError);
 
   // show/hide drop box
   let progress = 0;

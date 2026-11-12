@@ -383,11 +383,14 @@ export class DwvAppService extends EventTarget {
     this.#dwvApp.addEventListener('loadend', (/*event*/) => {
       if (nReceivedLoadError) {
         this.#dispatch('loadprogress', {value: 0});
-        alert('Received errors during load. Check log for details.');
+        this.#dispatch('error', {
+          error: new Error(
+            'Received errors during load. Check log for details.')
+        });
       }
       if (nReceivedLoadAbort) {
         this.#dispatch('loadprogress', {value: 0});
-        alert('Load was aborted.');
+        this.#dispatch('loadabort', {message: 'Load was aborted.'});
       }
     });
 
@@ -646,11 +649,13 @@ export class DwvAppService extends EventTarget {
   }
 
   /**
-   * Release the resources held by the service: abort the current loads,
+   * Release the resources held by the service: notify the dependent
+   * services with a `dispose` event, abort the current loads,
    * remove the window listeners and reset the dwv app.
    * The service should not be used afterwards.
    */
   dispose() {
+    this.dispatchEvent(new CustomEvent('dispose'));
     window.removeEventListener('resize', this.#dwvApp.onResize);
     window.removeEventListener('keydown', this.#onAbortKeydown);
     this.#dwvApp.abortAllLoads();

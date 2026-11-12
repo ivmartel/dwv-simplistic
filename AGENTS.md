@@ -52,7 +52,7 @@ src/
   index.js            public exports: startApp, DwvComponent
   dwv-component.js    <dwv-simple> custom element: reads attributes, builds the
                       shadow DOM (header/content/footer), injects CSS, calls startApp
-  applauncher.js      startApp(uid, options, rootDoc): wires service, GUI, dropbox
+  applauncher.js      startApp(uid, options, rootDoc): wires services, GUI, dropbox
   appgui.js           Gui: owns Toolbar + RightPanel, progress bar, div id helpers
   lib/
     dwvAppService.js  DwvAppService (EventTarget): the only wrapper around
@@ -76,7 +76,7 @@ src/
                       dev/viewer/src/quantificationUI.js
     dropboxLoader.js  drag and drop / file input loader
     modal.js          modal dialog
-    snackbar.js       transient message (annotation service errors)
+    snackbar.js       transient message (service errors, shown by startApp)
     tagsService.js    TagsService: DICOM tags logic and state store
                       (instance numbers, meta flattening), same design
                       as AnnotationService
@@ -100,7 +100,7 @@ build/                demo site (build/demo/) and coverage (build/coverage/)
   GUI classes never touch the dwv `App` directly; they call `DwvAppService`
   methods and listen to its `CustomEvent`s (`loadprogress`, `dataloaded`,
   `dataready`, `presetnames`, `ismanualpreset`, `dataadd`, `dataremove`,
-  `drawlayeradd`, `annotationadd|update|remove|select`). Event payloads live in `event.detail`.
+  `drawlayeradd`, `annotationadd|update|remove|select`, `error`, `loadabort`, `dispose`). Event payloads live in `event.detail`.
   Add new app-level interactions (loading, tools, layout) to `DwvAppService`
   and expose them the same way.
 - Exception: annotations mirror the dwv viewer (`dev/viewer/src`).
@@ -114,8 +114,11 @@ build/                demo site (build/demo/) and coverage (build/coverage/)
   the annotation group and exposes an immutable state through the external
   store contract (`subscribe` / `getSnapshot`). `AnnotationComponent`
   (`src/lib/annotationComponent.js`) only renders that state and calls the
-  service actions. Both are created by `RightPanel`. Keep that split to
-  ease syncing with dwv.
+  service actions. The service is created and connected by `startApp`
+  (`applauncher.js`), disposed on the `DwvAppService` `dispose` event,
+  and passed to `RightPanel` through `Gui`;
+  `RightPanel` creates the component. Keep that split to ease syncing
+  with dwv.
 - Everything renders inside a shadow root. Look elements up through
   `rootDocument` (`dwvAppService.getOptions().rootDocument`), never `document`
   directly. Several components can coexist on a page, so all element ids are

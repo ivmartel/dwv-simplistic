@@ -16,11 +16,14 @@ describe('DwvAppService', () => {
     // only scroll: jsdom has no canvas (needed by the draw tool)
     const service = new DwvAppService({uid: 'dispose', tools: ['Scroll']});
 
+    const onDispose = vi.fn();
+    service.addEventListener('dispose', onDispose);
     const spy = vi.spyOn(window, 'removeEventListener');
     service.dispose();
     const types = spy.mock.calls.map((call) => call[0]);
     expect(types).toContain('resize');
     expect(types).toContain('keydown');
+    expect(onDispose).toHaveBeenCalledTimes(1);
 
     spy.mockRestore();
     div.remove();
