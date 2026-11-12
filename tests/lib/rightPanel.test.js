@@ -13,16 +13,16 @@ import {
 } from '../../src/lib/rightPanel.js';
 
 describe('width limits', () => {
-  test('max is 60% of the window, rounded, never below min', () => {
-    expect(getMaxPanelWidth(1000)).toBe(600);
-    expect(getMaxPanelWidth(1001)).toBe(601);
+  test('max is 50% of the window, rounded, never below min', () => {
+    expect(getMaxPanelWidth(1000)).toBe(500);
+    expect(getMaxPanelWidth(1001)).toBe(501);
     expect(getMaxPanelWidth(100)).toBe(PANEL_MIN_WIDTH);
   });
 
   test('clamp rounds and clamps', () => {
     expect(clampPanelWidth(250.4, 1000)).toBe(250);
     expect(clampPanelWidth(10, 1000)).toBe(PANEL_MIN_WIDTH);
-    expect(clampPanelWidth(900, 1000)).toBe(600);
+    expect(clampPanelWidth(900, 1000)).toBe(500);
     expect(clampPanelWidth(300, 100)).toBe(PANEL_MIN_WIDTH);
   });
 
@@ -30,9 +30,9 @@ describe('width limits', () => {
     expect(getKeyResizeWidth('ArrowLeft', 300, 1000)).toBe(320);
     expect(getKeyResizeWidth('ArrowRight', 300, 1000)).toBe(280);
     expect(getKeyResizeWidth('ArrowRight', 210, 1000)).toBe(PANEL_MIN_WIDTH);
-    expect(getKeyResizeWidth('ArrowLeft', 590, 1000)).toBe(600);
+    expect(getKeyResizeWidth('ArrowLeft', 590, 1000)).toBe(500);
     expect(getKeyResizeWidth('Home', 300, 1000)).toBe(PANEL_MIN_WIDTH);
-    expect(getKeyResizeWidth('End', 300, 1000)).toBe(600);
+    expect(getKeyResizeWidth('End', 300, 1000)).toBe(500);
     expect(getKeyResizeWidth('Enter', 300, 1000)).toBeUndefined();
   });
 });
