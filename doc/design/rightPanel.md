@@ -1,8 +1,5 @@
 # Right panel: design spec
 
-Reference: dwv-simplistic
-[`rightPanel.js`](https://github.com/ivmartel/dwv-simplistic/blob/main/src/lib/rightPanel.js)
-
 ## Purpose
 
 Foldable and resizable side panel on the right of the image view. It is a
