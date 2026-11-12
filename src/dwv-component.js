@@ -58,15 +58,21 @@ export function splitAttribute(value) {
  * manually load dicom data from the local system.
  *
  * The inner div structure is:
+ * ```
  * <div class='dwv'>
  *   <div class='header'></div>
  *   <div class='content'>
  *     <div class='layerGroup'></div>
+ *     <aside class='right-panel'></aside>
  *   </div>
  *   <div class='footer'></div>
  * </div>
+ * ```
  * Each div css is overridable via `dwv-simple::part(dwv)` (replace `dwv`
  * by the desired div class name).
+ *
+ * The component renders in a shadow root without slot: children of the
+ * `dwv-simple` element are not displayed.
  *
  * Ref:
  * - {@link https://developer.mozilla.org/en-US/docs/Web/API/Web_components},
