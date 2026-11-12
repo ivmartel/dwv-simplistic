@@ -12,6 +12,18 @@ jobs:
     outputs:
       build-type: ${{ steps.build-type.outputs.type }}
     steps:
+    - name: Get build type
+      id: build-type
+      # main branch: 'trunk', release tag (v1.2.3): 'stable',
+      # anything else (other branches, pre-release tags, PRs): '' (no deploy)
+      run: |
+        if [[ "$GITHUB_REF" == refs/heads/main ]]; then
+          echo "type=trunk" >> "$GITHUB_OUTPUT"
+        elif [[ "$GITHUB_REF" =~ ^refs/tags/v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+          echo "type=stable" >> "$GITHUB_OUTPUT"
+        else
+          echo "type=" >> "$GITHUB_OUTPUT"
+        fi
     - name: Check out code
       uses: actions/checkout@v7
     - name: Setup Node.js
@@ -28,18 +40,6 @@ jobs:
       run: yarn run test-ci
     - name: Build
       run: yarn run build-demo
-    - name: Get build type
-      id: build-type
-      # main branch: 'trunk', release tag (v1.2.3): 'stable',
-      # anything else (other branches, pre-release tags, PRs): '' (no deploy)
-      run: |
-        if [[ "$GITHUB_REF" == refs/heads/main ]]; then
-          echo "type=trunk" >> "$GITHUB_OUTPUT"
-        elif [[ "$GITHUB_REF" =~ ^refs/tags/v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-          echo "type=stable" >> "$GITHUB_OUTPUT"
-        else
-          echo "type=" >> "$GITHUB_OUTPUT"
-        fi
     - name: Upload demo
       if: steps.build-type.outputs.type != ''
       uses: actions/upload-artifact@v7
