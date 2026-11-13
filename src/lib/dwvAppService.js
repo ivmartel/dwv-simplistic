@@ -149,7 +149,7 @@ export class DwvAppService extends EventTarget {
 
     // view config
     // Note: assuming only one layer group
-    this.#layerGroupDivId = 'layerGroup-' + options.uid;
+    this.#layerGroupDivId = options.viewerId + '-layerGroup';
     const viewConfig0 = new ViewConfig(this.#layerGroupDivId);
     const viewConfigs = {'*': [viewConfig0]};
 

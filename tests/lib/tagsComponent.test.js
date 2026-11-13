@@ -73,7 +73,7 @@ describe('TagsComponent', () => {
     const sliderDiv = controlsDiv.querySelector('span');
     dispatchDataLoaded(service, true);
     const slider = sliderDiv.querySelector('input');
-    expect(slider.id).toBe('instancenumber-slider-test');
+    expect(slider.id).toBe('test-instancenumber-slider');
     expect(slider.max).toBe('2');
     expect(sliderDiv.style.display).toBe('');
     expect(sliderDiv.querySelector('label').textContent).toBe('1');
@@ -105,7 +105,7 @@ describe('TagsComponent', () => {
     const [, controlsDiv, scrollDiv] = component.getContent();
     dispatchDataLoaded(service, true);
     const search = controlsDiv.querySelector('input[type=search]');
-    expect(search.id).toBe('tags-search-test');
+    expect(search.id).toBe('test-tags-search');
     search.value = 'transfer';
     search.dispatchEvent(new Event('input'));
     expect(tagsService.getSnapshot().search).toBe('transfer');

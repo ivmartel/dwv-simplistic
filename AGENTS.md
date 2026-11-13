@@ -52,7 +52,7 @@ src/
   index.js            public exports: startApp, DwvComponent
   dwv-component.js    <dwv-simple> custom element: reads attributes, builds the
                       shadow DOM (header/content/footer), injects CSS, calls startApp
-  applauncher.js      startApp(uid, options, rootDoc): wires services, GUI, dropbox
+  applauncher.js      startApp(viewerId, options, rootDoc): wires services, GUI, dropbox
   appgui.js           Gui: owns Toolbar + RightPanel, progress bar, div id helpers
   lib/
     dwvAppService.js  DwvAppService (EventTarget): the only wrapper around
@@ -119,27 +119,30 @@ build/                demo site (build/demo/) and coverage (build/coverage/)
   and passed to `RightPanel` through `Gui`;
   `RightPanel` creates the component. Keep that split to ease syncing
   with dwv.
-- Everything renders inside a shadow root. Look elements up through
-  `rootDocument` (`dwvAppService.getOptions().rootDocument`), never `document`
-  directly. Several components can coexist on a page, so all element ids are
-  suffixed with the app uid (`layerGroup-<uid>`, `header-<uid>`, ...); use the
-  helpers in `appgui.js` or the same pattern.
 - Supported viewer tools: `Scroll`, `ZoomAndPan`, `WindowLevel`, `Draw`
   (shapes: Ruler, Arrow, Rectangle, Circle, Ellipse, Protractor, Roi).
   Matching against user input is case insensitive.
-- CSS is imported as strings via `css-loader` and injected in a `<style>`
-  element. Themes use CSS custom properties; when two themes are given they
-  are switched with `prefers-color-scheme`.
 - The bundle is self-contained (dwv, konva, jszip and magic-wand are bundled).
   webpack emits the dwv web workers (`*.worker.min.js`) next to it, and they
   are loaded relative to the bundle URL.
 - `dwv` is pinned to an exact version in `package.json`; check its API
   ([dwv repo](https://github.com/ivmartel/dwv)) before changing calls.
-- Public API documentation of `<dwv-simple>` attributes is the JSDoc on
-  `DwvComponent`; keep it in sync when adding or changing attributes.
 - `doc/design/`: component design specs, framework agnostic. Read the spec
   before changing a component and keep it up to date with behaviour
   or style changes.
+
+## Web component
+
+- Public API documentation of `<dwv-simple>` attributes is the JSDoc on
+  `DwvComponent`; keep it in sync when adding or changing attributes.
+- Everything renders inside a shadow root. Look elements up through
+  `rootDocument` (`dwvAppService.getOptions().rootDocument`), never `document`
+  directly. Several components can coexist on a page, so all element ids are
+  prefixed with the viewer id (`<viewerId>-layerGroup`, `<viewerId>-header`,
+  ...); use the helpers in `appgui.js` or the same pattern.
+- CSS is imported as strings via `css-loader` and injected in a `<style>`
+  element. Themes use CSS custom properties; when two themes are given they
+  are switched with `prefers-color-scheme`.
 
 ## dwv linked files
 
@@ -158,7 +161,7 @@ and must be kept in sync with it:
 - When changing them, check the dwv source for the version pinned in
   `package.json` and keep structure, naming and logic close to it so
   upstream changes can be ported as diffs. Keep local adaptations (shadow
-  root lookups, uid-suffixed ids, `dwv` package imports, icons, theme
+  root lookups, viewer id prefixed ids, `dwv` package imports, icons, theme
   classes) minimal and easy to spot. The local `DwvAppService` is its
   own implementation and is not synced with the dwv viewer one.
   Up to v0.37.0-beta.24 the dwv sources had other names (`annot.service.js`,

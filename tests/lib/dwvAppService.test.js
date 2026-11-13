@@ -11,10 +11,10 @@ import {DwvAppService} from '../../src/lib/dwvAppService.js';
 describe('DwvAppService', () => {
   test('dispose removes the window listeners', () => {
     const div = document.createElement('div');
-    div.id = 'layerGroup-dispose';
+    div.id = 'dispose-layerGroup';
     document.body.appendChild(div);
     // only scroll: jsdom has no canvas (needed by the draw tool)
-    const service = new DwvAppService({uid: 'dispose', tools: ['Scroll']});
+    const service = new DwvAppService({viewerId: 'dispose', tools: ['Scroll']});
 
     const onDispose = vi.fn();
     service.addEventListener('dispose', onDispose);
@@ -31,11 +31,11 @@ describe('DwvAppService', () => {
 
   test('undo controller makes annotation commands undoable', () => {
     const div = document.createElement('div');
-    div.id = 'layerGroup-undo';
+    div.id = 'undo-layerGroup';
     document.body.appendChild(div);
     // get the service dwv app
     const initSpy = vi.spyOn(App.prototype, 'init');
-    const service = new DwvAppService({uid: 'undo', tools: ['Scroll']});
+    const service = new DwvAppService({viewerId: 'undo', tools: ['Scroll']});
     const app = initSpy.mock.contexts[0];
     initSpy.mockRestore();
 
@@ -67,9 +67,9 @@ describe('DwvAppService', () => {
 
   test('loadFromUri loads the urls of a key-value uri', () => {
     const div = document.createElement('div');
-    div.id = 'layerGroup-uri';
+    div.id = 'uri-layerGroup';
     document.body.appendChild(div);
-    const service = new DwvAppService({uid: 'uri', tools: ['Scroll']});
+    const service = new DwvAppService({viewerId: 'uri', tools: ['Scroll']});
     const spy = vi.spyOn(service, 'loadURLs').mockImplementation(() => {});
 
     const input = 'https://example.com/file.dcm';
@@ -87,11 +87,12 @@ describe('DwvAppService', () => {
 
   test('forwards the dwv load progress from the event detail', () => {
     const div = document.createElement('div');
-    div.id = 'layerGroup-progress';
+    div.id = 'progress-layerGroup';
     document.body.appendChild(div);
     // get the service dwv app
     const initSpy = vi.spyOn(App.prototype, 'init');
-    const service = new DwvAppService({uid: 'progress', tools: ['Scroll']});
+    const service =
+      new DwvAppService({viewerId: 'progress', tools: ['Scroll']});
     const app = initSpy.mock.contexts[0];
     initSpy.mockRestore();
 
@@ -110,11 +111,11 @@ describe('DwvAppService', () => {
 
   test('forwards the dwv annotation select from the event detail', () => {
     const div = document.createElement('div');
-    div.id = 'layerGroup-select';
+    div.id = 'select-layerGroup';
     document.body.appendChild(div);
     // get the service dwv app
     const initSpy = vi.spyOn(App.prototype, 'init');
-    const service = new DwvAppService({uid: 'select', tools: ['Scroll']});
+    const service = new DwvAppService({viewerId: 'select', tools: ['Scroll']});
     const app = initSpy.mock.contexts[0];
     initSpy.mockRestore();
 
@@ -133,11 +134,11 @@ describe('DwvAppService', () => {
 
   test('forwards the dwv tap from the event detail', () => {
     const div = document.createElement('div');
-    div.id = 'layerGroup-tap';
+    div.id = 'tap-layerGroup';
     document.body.appendChild(div);
     // get the service dwv app
     const initSpy = vi.spyOn(App.prototype, 'init');
-    const service = new DwvAppService({uid: 'tap', tools: ['Scroll']});
+    const service = new DwvAppService({viewerId: 'tap', tools: ['Scroll']});
     const app = initSpy.mock.contexts[0];
     initSpy.mockRestore();
 

@@ -191,11 +191,11 @@ export class Toolbar {
   #toolExtras = {};
 
   /**
-   * The GUI UID.
+   * The viewer id.
    *
    * @type {string}
    */
-  #uid;
+  #viewerId;
 
   /**
    * The root document.
@@ -252,7 +252,7 @@ export class Toolbar {
    */
   constructor(dwvAppService, optionGuiTools) {
     this.#dwvAppService = dwvAppService;
-    this.#uid = dwvAppService.getOptions().uid;
+    this.#viewerId = dwvAppService.getOptions().viewerId;
     this.#rootDoc = dwvAppService.getOptions().rootDocument;
 
     // default gui tools
@@ -284,9 +284,9 @@ export class Toolbar {
     }
 
     // modal dialog
-    this.#modal = new Modal(this.#uid, this.#rootDoc);
+    this.#modal = new Modal(this.#viewerId, this.#rootDoc);
     this.#tagsService = new TagsService(dwvAppService);
-    this.#tagsComponent = new TagsComponent(this.#tagsService, this.#uid);
+    this.#tagsComponent = new TagsComponent(this.#tagsService, this.#viewerId);
 
     // watch data ready
     this.#dwvAppService.addEventListener('dataready', (event) => {
@@ -356,7 +356,7 @@ export class Toolbar {
    */
   init() {
     const header = this.#rootDoc.getElementById(
-      getHeaderDivId(this.#uid));
+      getHeaderDivId(this.#viewerId));
     for (const toolName of this.#toolNames) {
       header.appendChild(getToolbarItem(toolName, this));
       // disable tool
@@ -378,7 +378,7 @@ export class Toolbar {
   getToolId(toolName) {
     let res;
     if (typeof toolName !== 'undefined') {
-      res = toolName.toLowerCase() + '-' + this.#uid;
+      res = this.#viewerId + '-' + toolName.toLowerCase();
     }
     return res;
   };
@@ -405,7 +405,7 @@ export class Toolbar {
 
     // update draw button to show shape
     const toolId = this.getToolId('Draw');
-    const button = this.#rootDoc.querySelector('#' + toolId);
+    const button = this.#rootDoc.getElementById(toolId);
     button.innerHTML = '';
     button.appendChild(getIconElement(name));
     button.title = name;
@@ -547,7 +547,7 @@ export class Toolbar {
    * Toogle full screen on and off.
    */
   toggleFullScreen() {
-    const lgDivId = getLayerGroupDivId(this.#uid);
+    const lgDivId = getLayerGroupDivId(this.#viewerId);
     const lgElement = this.#rootDoc.getElementById(lgDivId);
 
     // the app listens on window resize (see applaucher
@@ -555,7 +555,7 @@ export class Toolbar {
     // -> no need to manually call app.fitToContainer
 
     if (!document.fullscreenElement) {
-      const fsDivId = getDwvDivId(this.#uid);
+      const fsDivId = getDwvDivId(this.#viewerId);
       const fsElement = this.#rootDoc.getElementById(fsDivId);
       fsElement.requestFullscreen().then(() => {
         // if the layer group height was 0, the app set it to a fixed size.

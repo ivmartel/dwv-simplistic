@@ -8,7 +8,7 @@ import {showSnackbar} from './lib/snackbar.js';
 /**
  * Application launcher.
  *
- * @param {string} uid The app uid.
+ * @param {string} viewerId The viewer id, unique per viewer on the page.
  * @param {object} options Start options:
  * - uri (string): an URI with search parameters,
  * - urls (string[]): list of urls to load,
@@ -19,10 +19,10 @@ import {showSnackbar} from './lib/snackbar.js';
  * @returns {DwvAppService} The created service, call its `dispose` method
  *   to release its resources (and the ones of the dependent services).
  */
-export function startApp(uid, options, rootDoc) {
+export function startApp(viewerId, options, rootDoc) {
   // create service
   const dwvAppService = new DwvAppService({
-    uid,
+    viewerId,
     tools: options.tools,
     wlpreset: options.wlpreset,
     rootDocument: rootDoc
@@ -53,7 +53,7 @@ export function startApp(uid, options, rootDoc) {
   // show messages in a snackbar
   const showMessage = function (message) {
     const container = dwvAppService.getOptions().rootDocument
-      .getElementById(getDwvDivId(uid));
+      .getElementById(getDwvDivId(viewerId));
     if (container) {
       showSnackbar(container, message);
     }

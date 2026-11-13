@@ -9,31 +9,31 @@ import {RightPanel} from './lib/rightPanel.js';
 /**
  * Get the dwv div id.
  *
- * @param {string} uid The app unique id.
+ * @param {string} viewerId The viewer id.
  * @returns {string} The id.
  */
-export function getDwvDivId(uid) {
-  return 'dwv-' + uid;
+export function getDwvDivId(viewerId) {
+  return viewerId + '-dwv';
 };
 
 /**
  * Get the layer group div id.
  *
- * @param {string} uid The app unique id.
+ * @param {string} viewerId The viewer id.
  * @returns {string} The id.
  */
-export function getLayerGroupDivId(uid) {
-  return 'layerGroup-' + uid;
+export function getLayerGroupDivId(viewerId) {
+  return viewerId + '-layerGroup';
 };
 
 /**
  * Get the header div id.
  *
- * @param {string} uid The app unique id.
+ * @param {string} viewerId The viewer id.
  * @returns {string} The id.
  */
-export function getHeaderDivId(uid) {
-  return 'header-' + uid;
+export function getHeaderDivId(viewerId) {
+  return viewerId + '-header';
 };
 
 /**
@@ -42,11 +42,11 @@ export function getHeaderDivId(uid) {
 export class Gui {
 
   /**
-   * The GUI UID.
+   * The viewer id.
    *
    * @type {string}
    */
-  #uid;
+  #viewerId;
 
   /**
    * The root document.
@@ -75,7 +75,7 @@ export class Gui {
    * @param {string[]} optionGuiTools The list of gui tools.
    */
   constructor(dwvAppService, annotService, optionGuiTools) {
-    this.#uid = dwvAppService.getOptions().uid;
+    this.#viewerId = dwvAppService.getOptions().viewerId;
     this.#rootDoc = dwvAppService.getOptions().rootDocument;
 
     this.#toolbar = new Toolbar(dwvAppService, optionGuiTools);
@@ -109,7 +109,7 @@ export class Gui {
    * @returns {string} The id.
    */
   #getProgressDivId() {
-    return 'progress-' + this.#uid;
+    return this.#viewerId + '-progress';
   };
 
   /**
@@ -129,7 +129,7 @@ export class Gui {
       progressDiv.value = '0';
       // add as first header child
       const header = this.#rootDoc.getElementById(
-        getHeaderDivId(this.#uid));
+        getHeaderDivId(this.#viewerId));
       header.insertBefore(progressDiv, header.firstChild);
     }
     // remove or update value

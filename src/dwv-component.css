@@ -130,7 +130,7 @@ progress {
   border-width: 5px;
   border-style: dashed;
 }
-#input-file-link {
+.input-file-link {
   text-decoration-line: underline;
 }
 

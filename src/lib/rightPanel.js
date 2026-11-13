@@ -86,39 +86,39 @@ export function getKeyResizeWidth(key, width, windowWidth) {
 /**
  * Get the right panel element id.
  *
- * @param {string} uid The app uid.
+ * @param {string} viewerId The viewer id.
  * @returns {string} The id.
  */
-export function getRightPanelDivId(uid) {
-  return 'right-panel-' + uid;
+export function getRightPanelDivId(viewerId) {
+  return viewerId + '-right-panel';
 }
 
 /**
  * Get the right panel body element id, the parent of the panel content.
  *
- * @param {string} uid The app uid.
+ * @param {string} viewerId The viewer id.
  * @returns {string} The id.
  */
-export function getRightPanelBodyDivId(uid) {
-  return 'right-panel-content-' + uid;
+export function getRightPanelBodyDivId(viewerId) {
+  return viewerId + '-right-panel-content';
 }
 
 /**
  * Get a right panel toggle button.
  *
- * @param {string} uid The app uid.
+ * @param {string} viewerId The viewer id.
  * @param {boolean} isOpenToggle True for the toggle shown when the panel
  *   is open (it closes it).
  * @returns {HTMLButtonElement} The button.
  */
-function getToggleButton(uid, isOpenToggle) {
+function getToggleButton(viewerId, isOpenToggle) {
   const button = document.createElement('button');
   button.type = 'button';
   button.className = 'right-panel-toggle';
   button.part = 'right-panel-toggle';
   button.title = isOpenToggle ? 'Close panel' : 'Open panel';
   button.setAttribute('aria-expanded', String(isOpenToggle));
-  button.setAttribute('aria-controls', getRightPanelDivId(uid));
+  button.setAttribute('aria-controls', getRightPanelDivId(viewerId));
   button.appendChild(
     getIconElement(isOpenToggle ? 'chevronright' : 'chevronleft'));
   return button;
@@ -127,20 +127,20 @@ function getToggleButton(uid, isOpenToggle) {
 /**
  * Get the right panel HTML elements, in closed state.
  *
- * @param {string} appId The app id.
+ * @param {string} viewerId The viewer id.
  * @returns {HTMLElement[]} The toggle strip and the panel elements.
  */
-export function getRightPanelElements(appId) {
+export function getRightPanelElements(viewerId) {
   // toggle strip (closed only)
   const toggleStrip = document.createElement('div');
-  toggleStrip.id = 'right-panel-toggle-strip-' + appId;
+  toggleStrip.id = viewerId + '-right-panel-toggle-strip';
   toggleStrip.className = 'right-panel-toggle-strip';
   toggleStrip.part = 'right-panel-toggle-strip';
-  toggleStrip.appendChild(getToggleButton(appId, false));
+  toggleStrip.appendChild(getToggleButton(viewerId, false));
 
   // panel
   const panel = document.createElement('aside');
-  panel.id = getRightPanelDivId(appId);
+  panel.id = getRightPanelDivId(viewerId);
   panel.className = 'right-panel';
   panel.part = 'right-panel';
   panel.setAttribute('aria-hidden', 'true');
@@ -161,11 +161,11 @@ export function getRightPanelElements(appId) {
   const header = document.createElement('div');
   header.className = 'right-panel-header';
   header.part = 'right-panel-header';
-  header.appendChild(getToggleButton(appId, true));
+  header.appendChild(getToggleButton(viewerId, true));
 
   // body
   const body = document.createElement('div');
-  body.id = getRightPanelBodyDivId(appId);
+  body.id = getRightPanelBodyDivId(viewerId);
   body.className = 'right-panel-body';
   body.part = 'right-panel-body';
 
@@ -196,11 +196,11 @@ export class RightPanel {
   #dwvAppService;
 
   /**
-   * The GUI UID.
+   * The viewer id.
    *
    * @type {string}
    */
-  #uid;
+  #viewerId;
 
   /**
    * The root document.
@@ -257,11 +257,11 @@ export class RightPanel {
    */
   constructor(dwvAppService, annotService) {
     this.#dwvAppService = dwvAppService;
-    this.#uid = dwvAppService.getOptions().uid;
+    this.#viewerId = dwvAppService.getOptions().viewerId;
     this.#rootDoc = dwvAppService.getOptions().rootDocument;
 
     this.#annotComponent = new AnnotationComponent(
-      annotService, this.#rootDoc, this.#uid);
+      annotService, this.#rootDoc, this.#viewerId);
   }
 
   /**
@@ -335,7 +335,7 @@ export class RightPanel {
    * @returns {HTMLElement|null} The element.
    */
   #getPanel() {
-    return this.#rootDoc.getElementById(getRightPanelDivId(this.#uid));
+    return this.#rootDoc.getElementById(getRightPanelDivId(this.#viewerId));
   }
 
   /**
@@ -345,7 +345,7 @@ export class RightPanel {
    */
   #getToggleStrip() {
     return this.#rootDoc.getElementById(
-      'right-panel-toggle-strip-' + this.#uid);
+      this.#viewerId + '-right-panel-toggle-strip');
   }
 
   /**

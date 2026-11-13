@@ -1,12 +1,12 @@
 /**
  * Get the drop box HTML element.
  *
- * @param {string} appId The app id.
+ * @param {string} viewerId The viewer id.
  * @returns {HTMLElement} Drop box element.
  */
-export function getModalElement(appId) {
+export function getModalElement(viewerId) {
   const modalDiv = document.createElement('div');
-  modalDiv.id = 'modal-' + appId;
+  modalDiv.id = viewerId + '-modal';
   modalDiv.className = 'modal';
   return modalDiv;
 }
@@ -17,11 +17,11 @@ export function getModalElement(appId) {
 export class Modal {
 
   /**
-   * The GUI UID.
+   * The viewer id.
    *
    * @type {string}
    */
-  #uid;
+  #viewerId;
 
   /**
    * The root document.
@@ -31,11 +31,11 @@ export class Modal {
   #rootDoc;
 
   /**
-   * @param {string} uid The GUI UID.
+   * @param {string} viewerId The viewer id.
    * @param {Document} rootDoc Root document.
    */
-  constructor(uid, rootDoc) {
-    this.#uid = uid;
+  constructor(viewerId, rootDoc) {
+    this.#viewerId = viewerId;
     this.#rootDoc = rootDoc;
   }
 
@@ -52,12 +52,12 @@ export class Modal {
   #setupUI() {
     // content
     const contentDiv = document.createElement('div');
-    contentDiv.id = 'modal-content-' + this.#uid;
+    contentDiv.id = this.#viewerId + '-modal-content';
     contentDiv.className = 'modal-content';
 
     // main div
     const modalDiv = this.#rootDoc.getElementById(
-      'modal-' + this.#uid
+      this.#viewerId + '-modal'
     );
     modalDiv.appendChild(contentDiv);
 
@@ -77,13 +77,13 @@ export class Modal {
   open(content) {
     // show modal
     const modalDiv = this.#rootDoc.getElementById(
-      'modal-' + this.#uid
+      this.#viewerId + '-modal'
     );
     modalDiv.style.display = 'block';
 
     // add elements from input
     const modalContentDiv = this.#rootDoc.getElementById(
-      'modal-content-' + this.#uid
+      this.#viewerId + '-modal-content'
     );
     if (modalContentDiv && !modalContentDiv.hasChildNodes()) {
       for (const element of content) {

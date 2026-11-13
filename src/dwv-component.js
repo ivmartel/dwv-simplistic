@@ -137,28 +137,32 @@ export class DwvComponent extends HTMLElement {
       return;
     }
 
-    // use element id as appId if present or
-    // generate random
-    let appId;
+    // use element id as viewer id if present or
+    // generate random (starting with a letter to be a proper html id)
+    let viewerId;
     if (this.hasAttribute('id')) {
-      appId = this.getAttribute('id');
+      viewerId = this.getAttribute('id');
     } else {
-      appId = window.crypto.randomUUID().substring(0, 8);
+      const letters = 'abcdefghijklmnopqrstuvwxyz';
+      const letterIndex =
+        window.crypto.getRandomValues(new Uint8Array(1))[0] % letters.length;
+      viewerId = letters[letterIndex] +
+        window.crypto.randomUUID().substring(0, 8);
     }
 
     // main container
     const container = document.createElement('div');
-    container.id = 'dwv-' + appId;
+    container.id = viewerId + '-dwv';
     container.className = 'dwv';
     container.part = 'dwv';
 
     // fill container
-    container.appendChild(this.#getHeader(appId));
-    container.appendChild(this.#getContent(appId));
+    container.appendChild(this.#getHeader(viewerId));
+    container.appendChild(this.#getContent(viewerId));
     if (this.hasAttribute('showlegend')) {
-      container.appendChild(this.#getFooter(appId));
+      container.appendChild(this.#getFooter(viewerId));
     }
-    container.appendChild(this.#getExtra(appId));
+    container.appendChild(this.#getExtra(viewerId));
 
     // extra css for height and width
     let extraCss = '';
@@ -238,7 +242,7 @@ export class DwvComponent extends HTMLElement {
     }
 
     // start app
-    this.#dwvAppService = startApp(appId, options, this.shadowRoot);
+    this.#dwvAppService = startApp(viewerId, options, this.shadowRoot);
   }
 
   /**
@@ -260,12 +264,12 @@ export class DwvComponent extends HTMLElement {
   /**
    * Get the HTML header element.
    *
-   * @param {string} appId The app id.
+   * @param {string} viewerId The viewer id.
    * @returns {HTMLElement} The element.
    */
-  #getHeader(appId) {
+  #getHeader(viewerId) {
     const header = document.createElement('div');
-    header.id = 'header-' + appId;
+    header.id = viewerId + '-header';
     header.className = 'header';
     header.part = 'header';
 
@@ -275,28 +279,28 @@ export class DwvComponent extends HTMLElement {
   /**
    * Get the HTML content element.
    *
-   * @param {string} appId The app id.
+   * @param {string} viewerId The viewer id.
    * @returns {HTMLElement} The element.
    */
-  #getContent(appId) {
+  #getContent(viewerId) {
     // layer group
     const layerGroup = document.createElement('div');
-    layerGroup.id = 'layerGroup-' + appId;
+    layerGroup.id = viewerId + '-layerGroup';
     layerGroup.className = 'layerGroup';
     layerGroup.part = 'layerGroup';
     // drop box
-    const dropBox = getDropboxElement(appId);
+    const dropBox = getDropboxElement(viewerId);
     layerGroup.appendChild(dropBox);
 
     // main content div
     const content = document.createElement('div');
-    content.id = 'content-' + appId;
+    content.id = viewerId + '-content';
     content.className = 'content';
     content.part = 'content';
     content.appendChild(layerGroup);
 
     // right panel
-    const panelElements = getRightPanelElements(appId);
+    const panelElements = getRightPanelElements(viewerId);
     content.appendChild(panelElements[0]);
     content.appendChild(panelElements[1]);
 
@@ -306,10 +310,10 @@ export class DwvComponent extends HTMLElement {
   /**
    * Get the HTML footer element.
    *
-   * @param {string} appId The app id.
+   * @param {string} viewerId The viewer id.
    * @returns {HTMLElement} The element.
    */
-  #getFooter(appId) {
+  #getFooter(viewerId) {
     const dwvLink = document.createElement('a');
     dwvLink.href = 'https://github.com/ivmartel/dwv';
     dwvLink.title = 'dwv on github';
@@ -322,7 +326,7 @@ export class DwvComponent extends HTMLElement {
       ' ' + getDwvVersion() + '.'));
 
     const footer = document.createElement('div');
-    footer.id = 'footer-' + appId;
+    footer.id = viewerId + '-footer';
     footer.className = 'footer';
     footer.part = 'footer';
     footer.appendChild(para);
@@ -333,11 +337,11 @@ export class DwvComponent extends HTMLElement {
   /**
    * Get extra element.
    *
-   * @param {string} appId The app id.
+   * @param {string} viewerId The viewer id.
    * @returns {HTMLElement} The element.
    */
-  #getExtra(appId) {
-    const modal = getModalElement(appId);
+  #getExtra(viewerId) {
+    const modal = getModalElement(viewerId);
     return modal;
   }
 }

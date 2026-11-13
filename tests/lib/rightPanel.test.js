@@ -78,7 +78,7 @@ describe('RightPanel', () => {
     document.body.appendChild(container);
     onResize = vi.fn();
     const dwvAppService = {
-      getOptions: () => ({uid: 'rp', rootDocument: document}),
+      getOptions: () => ({viewerId: 'rp', rootDocument: document}),
       onResize: onResize
     };
     const annotService = {
@@ -93,9 +93,9 @@ describe('RightPanel', () => {
     container.remove();
   });
 
-  const getPanel = () => document.getElementById('right-panel-rp');
+  const getPanel = () => document.getElementById('rp-right-panel');
   const getStrip = () =>
-    document.getElementById('right-panel-toggle-strip-rp');
+    document.getElementById('rp-right-panel-toggle-strip');
   const getHandle = () =>
     getPanel().querySelector('.right-panel-resize-handle');
 

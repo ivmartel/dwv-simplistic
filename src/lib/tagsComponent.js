@@ -22,11 +22,11 @@ export class TagsComponent {
   #tagsService;
 
   /**
-   * The GUI UID.
+   * The viewer id.
    *
    * @type {string}
    */
-  #uid;
+  #viewerId;
 
   /**
    * The unsubscribe function.
@@ -79,11 +79,11 @@ export class TagsComponent {
 
   /**
    * @param {TagsService} tagsService The tags service.
-   * @param {string} uid The GUI UID.
+   * @param {string} viewerId The viewer id.
    */
-  constructor(tagsService, uid) {
+  constructor(tagsService, viewerId) {
     this.#tagsService = tagsService;
-    this.#uid = uid;
+    this.#viewerId = viewerId;
   }
 
   /**
@@ -129,7 +129,7 @@ export class TagsComponent {
     title.appendChild(document.createTextNode('DICOM Tags'));
 
     // slider input
-    const sliderId = 'instancenumber-slider-' + this.#uid;
+    const sliderId = this.#viewerId + '-instancenumber-slider';
     const slider = document.createElement('input');
     slider.type = 'range';
     slider.id = sliderId;
@@ -154,7 +154,7 @@ export class TagsComponent {
     // search input
     const searchInput = document.createElement('input');
     searchInput.type = 'search';
-    searchInput.id = 'tags-search-' + this.#uid;
+    searchInput.id = this.#viewerId + '-tags-search';
     searchInput.placeholder = 'Search tags';
     searchInput.title = 'Search in tag names and values';
     searchInput.className = 'tags-search';

@@ -77,14 +77,21 @@ function getGroup(annotations, overrides) {
  * @returns {object} The service and the panel element.
  */
 function render(state) {
-  document.body.innerHTML = '<div id="right-panel-content-0"></div>';
+  document.body.innerHTML = '<div id="0-right-panel-content"></div>';
   const service = getMockService(state);
   const component = new AnnotationComponent(service, document, '0');
   component.registerListeners();
   return {service, component};
 }
 
-const rowId = 'annotationgroup1-annotationa0';
+const rowId = '0-annotationgroup1-annotationa0';
+/**
+ * Get an annotation row element id.
+ *
+ * @param {string} type The element type.
+ * @returns {string} The id.
+ */
+const rowElementId = (type) => `0-${type}-annotationgroup1-annotationa0`;
 
 describe('AnnotationComponent', () => {
   beforeEach(() => {
@@ -93,12 +100,12 @@ describe('AnnotationComponent', () => {
 
   test('renders nothing without groups', () => {
     render({groups: [], selected: undefined});
-    expect(document.getElementById('annotationgroup-list')).toBeNull();
+    expect(document.getElementById('0-annotationgroup-list')).toBeNull();
   });
 
   test('renders an empty group', () => {
     const {service} = render({groups: [getGroup([])], selected: undefined});
-    const empty = document.getElementById('annotationgroup1-empty');
+    const empty = document.getElementById('0-annotationgroup1-empty');
     expect(empty.textContent).toBe('No annotation');
     expect(document.getElementById('addannotationgroupitem')).toBeNull();
 
@@ -106,7 +113,7 @@ describe('AnnotationComponent', () => {
     service.setState({
       groups: [getGroup([getAnnotation()])], selected: undefined
     });
-    expect(document.getElementById('annotationgroup1-empty')).toBeNull();
+    expect(document.getElementById('0-annotationgroup1-empty')).toBeNull();
     expect(document.getElementById(rowId)).not.toBeNull();
   });
 
@@ -149,18 +156,18 @@ describe('AnnotationComponent', () => {
     });
     const pressed = (id) =>
       document.getElementById(id).getAttribute('aria-pressed');
-    expect(pressed('lockb-annotationgroup1')).toBe('true');
-    expect(pressed('hidelabelsb-annotationgroup1')).toBe('true');
-    expect(pressed(`vb-${rowId}`)).toBe('true');
-    expect(pressed(`ib-${rowId}`)).toBe('false');
-    expect(document.getElementById(`cb-${rowId}`).disabled).toBe(true);
-    expect(document.getElementById(`db-${rowId}`).disabled).toBe(true);
+    expect(pressed('0-lockb-annotationgroup1')).toBe('true');
+    expect(pressed('0-hidelabelsb-annotationgroup1')).toBe('true');
+    expect(pressed(rowElementId('vb'))).toBe('true');
+    expect(pressed(rowElementId('ib'))).toBe('false');
+    expect(document.getElementById(rowElementId('cb')).disabled).toBe(true);
+    expect(document.getElementById(rowElementId('db')).disabled).toBe(true);
   });
 
   test('info toggles the quantification details', () => {
     render({groups: [getGroup([getAnnotation()])], selected: undefined});
-    const info = document.getElementById(`ib-${rowId}`);
-    const details = document.getElementById(`qd-${rowId}`);
+    const info = document.getElementById(rowElementId('ib'));
+    const details = document.getElementById(rowElementId('qd'));
     expect(info.getAttribute('aria-controls')).toBe(details.id);
     expect(details.hidden).toBe(true);
 
@@ -178,8 +185,8 @@ describe('AnnotationComponent', () => {
       groups: [getGroup([getAnnotation({quantification: undefined})])],
       selected: undefined
     });
-    document.getElementById(`ib-${rowId}`).click();
-    expect(document.getElementById(`qd-${rowId}`).textContent)
+    document.getElementById(rowElementId('ib')).click();
+    expect(document.getElementById(rowElementId('qd')).textContent)
       .toBe('No quantification');
   });
 

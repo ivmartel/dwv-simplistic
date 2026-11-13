@@ -5,12 +5,12 @@
 /**
  * Get the drop box HTML element.
  *
- * @param {string} appId The app id.
+ * @param {string} viewerId The viewer id.
  * @returns {HTMLElement} Drop box element.
  */
-export function getDropboxElement(appId) {
+export function getDropboxElement(viewerId) {
   const dropBoxDiv = document.createElement('div');
-  dropBoxDiv.id = 'dropBox-' + appId;
+  dropBoxDiv.id = viewerId + '-dropBox';
   return dropBoxDiv;
 }
 
@@ -29,11 +29,11 @@ export class DropboxLoader {
   #dwvAppService;
 
   /**
-   * The GUI UID.
+   * The viewer id.
    *
    * @type {string}
    */
-  #uid;
+  #viewerId;
 
   /**
    * The root document.
@@ -52,7 +52,7 @@ export class DropboxLoader {
    */
   constructor(dwvAppService) {
     this.#dwvAppService = dwvAppService;
-    this.#uid = dwvAppService.getOptions().uid;
+    this.#viewerId = dwvAppService.getOptions().viewerId;
     this.#rootDoc = dwvAppService.getOptions().rootDocument;
   }
 
@@ -69,7 +69,7 @@ export class DropboxLoader {
    * @returns {string} The id.
    */
   #getDropboxDivId() {
-    return 'dropBox-' + this.#uid;
+    return this.#viewerId + '-dropBox';
   }
 
   /**
@@ -143,7 +143,8 @@ export class DropboxLoader {
     if (!box) {
       return;
     }
-    const layerDiv = this.#rootDoc.getElementById('layerGroup-' + this.#uid);
+    const layerDiv =
+      this.#rootDoc.getElementById(this.#viewerId + '-layerGroup');
 
     if (show) {
       // reset css class
@@ -157,13 +158,14 @@ export class DropboxLoader {
         input.onchange = this.#onInputFile;
         input.type = 'file';
         input.multiple = true;
-        input.id = 'input-file';
+        input.id = this.#viewerId + '-input-file';
         input.style.display = 'none';
         const label = document.createElement('label');
-        label.htmlFor = 'input-file';
+        label.htmlFor = input.id;
         const link = document.createElement('a');
         link.appendChild(document.createTextNode('click here'));
-        link.id = 'input-file-link';
+        link.id = this.#viewerId + '-input-file-link';
+        link.className = 'input-file-link';
         label.appendChild(link);
         p.appendChild(input);
         p.appendChild(label);

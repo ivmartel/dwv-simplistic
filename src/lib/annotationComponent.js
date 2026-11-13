@@ -26,22 +26,30 @@ import {renderQuantification} from './quantificationUI.js';
 /**
  * Get the annotation group divId.
  *
+ * @param {string} viewerId The viewer id.
  * @param {string} dataId The data ID.
+ * @param {string} [type] Optional element type, inserted after
+ *   the viewer id (for ex 'lockb' for the lock button).
  * @returns {string} The divId.
  */
-function getAnnotationGroupDivId(dataId) {
-  return `annotationgroup${dataId}`;
+function getAnnotationGroupDivId(viewerId, dataId, type) {
+  const start = typeof type !== 'undefined'
+    ? `${viewerId}-${type}` : viewerId;
+  return `${start}-annotationgroup${dataId}`;
 }
 
 /**
  * Get the annotation divId from its id.
  *
+ * @param {string} viewerId The viewer id.
  * @param {string} annotationId The annotation tracking UID.
  * @param {string} dataId The data ID.
+ * @param {string} [type] Optional element type, inserted after
+ *   the viewer id (for ex 'qd' for the quantification details).
  * @returns {string} The divId.
  */
-function getAnnotationDivId(annotationId, dataId) {
-  const prefix = getAnnotationGroupDivId(dataId);
+function getAnnotationDivId(viewerId, annotationId, dataId, type) {
+  const prefix = getAnnotationGroupDivId(viewerId, dataId, type);
   return `${prefix}-annotation${annotationId}`;
 }
 
@@ -83,11 +91,11 @@ export class AnnotationComponent {
   #rootDoc = document;
 
   /**
-   * The GUI UID.
+   * The viewer id.
    *
    * @type {string}
    */
-  #uid;
+  #viewerId;
 
   /**
    * The unsubscribe function.
@@ -121,12 +129,12 @@ export class AnnotationComponent {
   /**
    * @param {AnnotationService} annotService The annotation service.
    * @param {Document} rootDoc The root document.
-   * @param {string} uid The GUI UID.
+   * @param {string} viewerId The viewer id.
    */
-  constructor(annotService, rootDoc, uid) {
+  constructor(annotService, rootDoc, viewerId) {
     this.#annotService = annotService;
     this.#rootDoc = rootDoc;
-    this.#uid = uid;
+    this.#viewerId = viewerId;
   }
 
   /**
@@ -159,17 +167,26 @@ export class AnnotationComponent {
   }
 
   /**
+   * Get the annotation list divId.
+   *
+   * @returns {string} The divId.
+   */
+  #getAnnotationListDivId() {
+    return `${this.#viewerId}-annotationgroup-list`;
+  }
+
+  /**
    * Setup the html for the annotation list.
    */
   #setupHtml() {
     // annotation list
     const annotList = document.createElement('ul');
-    annotList.id = 'annotationgroup-list';
+    annotList.id = this.#getAnnotationListDivId();
     annotList.className = 'data-list';
 
     // append first: above any other panel content
     const containerDiv =
-      this.#rootDoc.getElementById('right-panel-content-' + this.#uid);
+      this.#rootDoc.getElementById(this.#viewerId + '-right-panel-content');
     if (containerDiv) {
       containerDiv.prepend(annotList);
     }
@@ -186,14 +203,15 @@ export class AnnotationComponent {
     const previous = this.#renderedState;
     this.#renderedState = state;
 
-    let annotList = this.#rootDoc.getElementById('annotationgroup-list');
+    const annotListId = this.#getAnnotationListDivId();
+    let annotList = this.#rootDoc.getElementById(annotListId);
     if (!annotList) {
       // setup html on first group
       if (state.groups.length === 0) {
         return;
       }
       this.#setupHtml();
-      annotList = this.#rootDoc.getElementById('annotationgroup-list');
+      annotList = this.#rootDoc.getElementById(annotListId);
       if (!annotList) {
         logger.warn('Cannot find annotation group list element');
         return;
@@ -212,9 +230,10 @@ export class AnnotationComponent {
     for (const group of previousGroups) {
       if (!state.groups.some((item) => item.dataId === group.dataId)) {
         this.#rootDoc.getElementById(
-          getAnnotationGroupDivId(group.dataId))?.remove();
+          getAnnotationGroupDivId(this.#viewerId, group.dataId))?.remove();
         for (const annotation of group.annotations) {
-          const divId = getAnnotationDivId(annotation.id, group.dataId);
+          const divId = getAnnotationDivId(
+            this.#viewerId, annotation.id, group.dataId);
           this.#renderedAnnotations.delete(divId);
           this.#openDetails.delete(divId);
         }
@@ -234,7 +253,7 @@ export class AnnotationComponent {
    */
   #renderGroup(annotList, group) {
     const dataId = group.dataId;
-    const groupDivId = getAnnotationGroupDivId(dataId);
+    const groupDivId = getAnnotationGroupDivId(this.#viewerId, dataId);
     let item = this.#rootDoc.getElementById(groupDivId);
     if (!item) {
       item = this.#getAnnotationGroupHtml(dataId);
@@ -243,17 +262,19 @@ export class AnnotationComponent {
 
     // header buttons: pressed means locked / hidden
     setButtonPressed(
-      this.#rootDoc.getElementById(`lockb-${groupDivId}`),
+      this.#rootDoc.getElementById(
+        getAnnotationGroupDivId(this.#viewerId, dataId, 'lockb')),
       !group.editable);
     setButtonPressed(
-      this.#rootDoc.getElementById(`hidelabelsb-${groupDivId}`),
+      this.#rootDoc.getElementById(
+        getAnnotationGroupDivId(this.#viewerId, dataId, 'hidelabelsb')),
       !group.labelsVisible);
 
     // annotations
     const listDiv = this.#rootDoc.getElementById(`${groupDivId}-list`);
     const divIds = new Set();
     group.annotations.forEach((annotation, index) => {
-      const divId = getAnnotationDivId(annotation.id, dataId);
+      const divId = getAnnotationDivId(this.#viewerId, annotation.id, dataId);
       divIds.add(divId);
       let annotItem = this.#rootDoc.getElementById(divId);
       if (!annotItem ||
@@ -292,7 +313,13 @@ export class AnnotationComponent {
     }
 
     // disable annotation edit buttons if the group is not editable
-    const elements = listDiv.querySelectorAll('[id^="cb-"], [id^="db-"]');
+    const editPrefixes = [
+      `${this.#viewerId}-cb-`,
+      `${this.#viewerId}-db-`
+    ];
+    const elements = Array.from(listDiv.querySelectorAll('[id]')).filter(
+      (element) => editPrefixes.some(
+        (prefix) => element.id.startsWith(prefix)));
     for (const element of elements) {
       element.disabled = !group.editable;
     }
@@ -312,7 +339,8 @@ export class AnnotationComponent {
       return;
     }
     const item = this.#rootDoc.getElementById(
-      getAnnotationDivId(selected.annotationId, selected.dataId));
+      getAnnotationDivId(
+        this.#viewerId, selected.annotationId, selected.dataId));
     if (item) {
       item.classList.add('selected');
       if (changed) {
@@ -386,17 +414,20 @@ export class AnnotationComponent {
    * @returns {HTMLLIElement} The HTMl element.
    */
   #getAnnotationHtml(annotation, dataId) {
-    const annotationDivId = getAnnotationDivId(annotation.id, dataId);
     const annotationId = annotation.id;
+    const annotationDivId =
+      getAnnotationDivId(this.#viewerId, annotationId, dataId);
 
     // quantification details (folded by default)
     const detailsDiv = document.createElement('div');
-    detailsDiv.id = `qd-${annotationDivId}`;
+    detailsDiv.id = getAnnotationDivId(
+      this.#viewerId, annotationId, dataId, 'qd');
     detailsDiv.className = 'data-item-list-item-details';
     detailsDiv.hidden = true;
 
     const infoButton = getButton('Info');
-    infoButton.id = `ib-${annotationDivId}`;
+    infoButton.id = getAnnotationDivId(
+      this.#viewerId, annotationId, dataId, 'ib');
     infoButton.title = 'Show/hide quantification';
     infoButton.setAttribute('aria-controls', detailsDiv.id);
     this.#setDetailsOpen(infoButton, detailsDiv, annotation,
@@ -409,7 +440,8 @@ export class AnnotationComponent {
     const inputColour = document.createElement('input');
     inputColour.type = 'color';
     inputColour.title = 'Change annotation colour';
-    inputColour.id = `cb-${annotationDivId}`;
+    inputColour.id = getAnnotationDivId(
+      this.#viewerId, annotationId, dataId, 'cb');
     inputColour.value = annotation.colour;
     inputColour.onchange = () => {
       this.#annotService.changeAnnotationColour(
@@ -419,7 +451,8 @@ export class AnnotationComponent {
     // pressed means hidden
     const viewButton = getButton('View');
     setButtonPressed(viewButton, !annotation.visible);
-    viewButton.id = `vb-${annotationDivId}`;
+    viewButton.id = getAnnotationDivId(
+      this.#viewerId, annotationId, dataId, 'vb');
     viewButton.title = 'Show/hide annotation';
     viewButton.onclick = () => {
       this.#annotService.setAnnotationVisibility(
@@ -427,7 +460,8 @@ export class AnnotationComponent {
     };
 
     const deleteButton = getButton('Delete');
-    deleteButton.id = `db-${annotationDivId}`;
+    deleteButton.id = getAnnotationDivId(
+      this.#viewerId, annotationId, dataId, 'db');
     deleteButton.title = 'Delete annotation';
     deleteButton.onclick = () => {
       this.#annotService.deleteAnnotation(dataId, annotationId);
@@ -480,7 +514,7 @@ export class AnnotationComponent {
    * @returns {HTMLLIElement} The annotation group element.
    */
   #getAnnotationGroupHtml(dataId) {
-    const groupDivId = getAnnotationGroupDivId(dataId);
+    const groupDivId = getAnnotationGroupDivId(this.#viewerId, dataId);
 
     // name
     const nameDiv = document.createElement('span');
@@ -490,7 +524,7 @@ export class AnnotationComponent {
 
     // lock button (pressed state set by the group rendering)
     const lockButton = getButton('Lock');
-    lockButton.id = `lockb-${groupDivId}`;
+    lockButton.id = getAnnotationGroupDivId(this.#viewerId, dataId, 'lockb');
     lockButton.title = 'Lock/unlock annotation group';
     lockButton.onclick = () => {
       const group = this.#getGroupState(dataId);
@@ -509,7 +543,8 @@ export class AnnotationComponent {
 
     // hide labels button (pressed state set by the group rendering)
     const hideLabelsButton = getButton('Label');
-    hideLabelsButton.id = `hidelabelsb-${groupDivId}`;
+    hideLabelsButton.id =
+      getAnnotationGroupDivId(this.#viewerId, dataId, 'hidelabelsb');
     hideLabelsButton.title = 'Show/hide annotation labels';
     hideLabelsButton.onclick = () => {
       const group = this.#getGroupState(dataId);

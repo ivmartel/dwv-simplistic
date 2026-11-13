@@ -43,8 +43,10 @@ groupList
       └─ empty "No annotation"
 ```
 
-Annotation element id: `annotationgroup<dataId>-annotation<annotationId>`.
-The details element id is the same id prefixed with `qd-`.
+Annotation element id: `<viewerId>-annotationgroup<dataId>-annotation<annotationId>`,
+where the viewer id is unique per viewer on the page.
+The details element id is the same id with `qd-` inserted after the viewer
+id: `<viewerId>-qd-annotationgroup<dataId>-annotation<annotationId>`.
 
 ## Group header actions
 

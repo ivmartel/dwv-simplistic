@@ -49,15 +49,24 @@ describe('DwvComponent', () => {
     document.body.appendChild(element);
     const root = element.shadowRoot;
     expect(root.querySelector('style')).not.toBeNull();
-    expect(root.getElementById('dwv-render')).not.toBeNull();
-    expect(root.getElementById('layerGroup-render')).not.toBeNull();
+    expect(root.getElementById('render-dwv')).not.toBeNull();
+    expect(root.getElementById('render-layerGroup')).not.toBeNull();
+    element.remove();
+  });
+
+  test('generates a viewer id starting with a letter', () => {
+    const element = document.createElement('dwv-simple');
+    element.setAttribute('tools', 'scroll');
+    document.body.appendChild(element);
+    const container = element.shadowRoot.querySelector('.dwv');
+    expect(container.id).toMatch(/^[a-z][0-9a-f]{8}-dwv$/);
     element.remove();
   });
 
   test('survives a move', async () => {
     const element = createComponent('move');
     document.body.appendChild(element);
-    const container = element.shadowRoot.getElementById('dwv-move');
+    const container = element.shadowRoot.getElementById('move-dwv');
 
     const parent = document.createElement('div');
     document.body.appendChild(parent);
@@ -65,7 +74,7 @@ describe('DwvComponent', () => {
     await flushMicrotasks();
 
     // same content, not rebuilt nor released
-    expect(element.shadowRoot.getElementById('dwv-move')).toBe(container);
+    expect(element.shadowRoot.getElementById('move-dwv')).toBe(container);
     parent.remove();
   });
 
@@ -78,7 +87,7 @@ describe('DwvComponent', () => {
 
     // rebuilt when connected again
     document.body.appendChild(element);
-    expect(element.shadowRoot.getElementById('dwv-remove')).not.toBeNull();
+    expect(element.shadowRoot.getElementById('remove-dwv')).not.toBeNull();
     element.remove();
   });
 });
