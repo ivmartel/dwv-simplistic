@@ -164,7 +164,6 @@ export class DropboxLoader {
         label.htmlFor = input.id;
         const link = document.createElement('a');
         link.appendChild(document.createTextNode('click here'));
-        link.id = this.#viewerId + '-input-file-link';
         link.className = 'input-file-link';
         label.appendChild(link);
         p.appendChild(input);

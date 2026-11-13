@@ -160,7 +160,7 @@ export class DwvComponent extends HTMLElement {
     container.appendChild(this.#getHeader(viewerId));
     container.appendChild(this.#getContent(viewerId));
     if (this.hasAttribute('showlegend')) {
-      container.appendChild(this.#getFooter(viewerId));
+      container.appendChild(this.#getFooter());
     }
     container.appendChild(this.#getExtra(viewerId));
 
@@ -294,7 +294,6 @@ export class DwvComponent extends HTMLElement {
 
     // main content div
     const content = document.createElement('div');
-    content.id = viewerId + '-content';
     content.className = 'content';
     content.part = 'content';
     content.appendChild(layerGroup);
@@ -310,10 +309,9 @@ export class DwvComponent extends HTMLElement {
   /**
    * Get the HTML footer element.
    *
-   * @param {string} viewerId The viewer id.
    * @returns {HTMLElement} The element.
    */
-  #getFooter(viewerId) {
+  #getFooter() {
     const dwvLink = document.createElement('a');
     dwvLink.href = 'https://github.com/ivmartel/dwv';
     dwvLink.title = 'dwv on github';
@@ -326,7 +324,6 @@ export class DwvComponent extends HTMLElement {
       ' ' + getDwvVersion() + '.'));
 
     const footer = document.createElement('div');
-    footer.id = viewerId + '-footer';
     footer.className = 'footer';
     footer.part = 'footer';
     footer.appendChild(para);

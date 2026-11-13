@@ -105,7 +105,6 @@ describe('TagsComponent', () => {
     const [, controlsDiv, scrollDiv] = component.getContent();
     dispatchDataLoaded(service, true);
     const search = controlsDiv.querySelector('input[type=search]');
-    expect(search.id).toBe('test-tags-search');
     search.value = 'transfer';
     search.dispatchEvent(new Event('input'));
     expect(tagsService.getSnapshot().search).toBe('transfer');

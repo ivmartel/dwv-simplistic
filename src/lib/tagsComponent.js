@@ -137,7 +137,6 @@ export class TagsComponent {
     slider.min = 0;
     // slider label
     const sliderLabel = document.createElement('label');
-    sliderLabel.id = sliderId + '-label';
     sliderLabel.htmlFor = sliderId;
     sliderLabel.title = slider.title;
     // navigate in instance numbers
@@ -154,7 +153,6 @@ export class TagsComponent {
     // search input
     const searchInput = document.createElement('input');
     searchInput.type = 'search';
-    searchInput.id = this.#viewerId + '-tags-search';
     searchInput.placeholder = 'Search tags';
     searchInput.title = 'Search in tag names and values';
     searchInput.className = 'tags-search';
