@@ -4,11 +4,13 @@ Guidance for coding agents working in this repository.
 
 ## Project
 
-dwv-simplistic is a simple medical image viewer built on
-[DWV](https://github.com/ivmartel/dwv) (DICOM Web Viewer). It ships a single
-custom element, `<dwv-simple>`, bundled as an ES module
-(`dist/dwvsimplistic.min.js`). Plain JavaScript (ES modules, no framework,
-no TypeScript sources), browser only. Licensed GPL-3.0; not certified for
+dwv-simplistic is mainly a medical image viewer web component built on
+[DWV](https://github.com/ivmartel/dwv) (DICOM Web Viewer): a single custom
+element, `<dwv-simple>`, bundled as an ES module
+(`dist/dwvsimplistic.min.js`). It comes with a demo site (`demo/`, built
+into `build/demo/` and deployed to GitHub Pages) that uses the component.
+Plain JavaScript (ES modules, no framework, no TypeScript sources), browser
+only. Licensed GPL-3.0; not certified for
 diagnostic use.
 
 ## Commands

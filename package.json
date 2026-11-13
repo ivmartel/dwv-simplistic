@@ -1,11 +1,13 @@
 {
   "name": "dwv-simplistic",
   "version": "0.11.0-beta.0",
-  "description": "Simple medical viewer using DWV (DICOM Web Viewer).",
+  "description": "Medical image viewer web component using DWV (DICOM Web Viewer).",
   "keywords": [
     "DICOM",
     "medical",
-    "imaging"
+    "imaging",
+    "viewer",
+    "web component"
   ],
   "license": "GPL-3.0",
   "author": "ivmartel <ivmartel@gmail.com>",
