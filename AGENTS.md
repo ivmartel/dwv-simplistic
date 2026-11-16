@@ -5,8 +5,8 @@ Guidance for coding agents working in this repository.
 ## Project overview
 
 Medical (DICOM) image viewer web component built on
-[DWV](https://github.com/ivmartel/dwv), shipped with a demo application. Not
-certified for diagnostic use. License: GPL-3.0.
+[DWV](https://github.com/ivmartel/dwv), shipped with a demo application. 
+Not certified for diagnostic use. License: GPL-3.0.
 
 The main deliverable is the reusable viewer web component library: a single
 custom element, `<dwv-simple>`, bundled as an ES module
@@ -20,14 +20,14 @@ only. The library only exposes what consumers need.
 - Viewer inputs: the `<dwv-simple>` attributes (case insensitive, read
   when the element is first connected, later changes are ignored except
   for the watched ones; full list in the `DwvComponent` JSDoc):
-  - `uri` (watched): URI with search arguments describing the data to load
-    (for ex. `https://www.demo.com/index.html?input=file.dcm`, see the dwv
-    `App.loadFromUri` method),
-  - `urls` (watched): white space separated urls of the data to load,
-  - `loadfromwindowlocation` (boolean): use the window location as input
-    URI if it has search arguments,
-  - `showlegend` (boolean): show the footer legend ("Powered by" dwv, with
-    its version),
+  - `uri` (string, watched): URI with search arguments describing the data
+    to load (for ex. `https://www.demo.com/index.html?input=file.dcm`, see
+    the dwv `App.loadFromUri` method),
+  - `urls` (string[], watched): white space separated urls of the data to load,
+  - `loadfromwindowlocation` (boolean, default false): use the window
+    location as input URI if it has search arguments,
+  - `showlegend` (boolean, default false): show the footer legend
+    ("Powered by" dwv, with its version),
   - `wlpresetname`, `wlpresetcenter`, `wlpresetwidth`: initial window
     level preset (only used if all three are set),
   - `tools`: white space separated list of viewer tools,
