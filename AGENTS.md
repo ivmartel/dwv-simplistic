@@ -2,16 +2,103 @@
 
 Guidance for coding agents working in this repository.
 
-## Project
+## Project overview
 
-dwv-simplistic is mainly a medical image viewer web component built on
-[DWV](https://github.com/ivmartel/dwv) (DICOM Web Viewer): a single custom
-element, `<dwv-simple>`, bundled as an ES module
+Medical (DICOM) image viewer web component built on
+[DWV](https://github.com/ivmartel/dwv), shipped with a demo application. Not
+certified for diagnostic use. License: GPL-3.0.
+
+The main deliverable is the reusable viewer web component library: a single
+custom element, `<dwv-simple>`, bundled as an ES module
 (`dist/dwvsimplistic.min.js`). It comes with a demo site (`demo/`, built
 into `build/demo/` and deployed to GitHub Pages) that uses the component.
 Plain JavaScript (ES modules, no framework, no TypeScript sources), browser
-only. Licensed GPL-3.0; not certified for
-diagnostic use.
+only. The library only exposes what consumers need.
+
+## Requirements
+
+- Viewer inputs: the `<dwv-simple>` attributes (case insensitive, read
+  when the element is first connected, later changes are ignored except
+  for the watched ones; full list in the `DwvComponent` JSDoc):
+  - `uri` (watched): URI with search arguments describing the data to load
+    (for ex. `https://www.demo.com/index.html?input=file.dcm`, see the dwv
+    `App.loadFromUri` method),
+  - `urls` (watched): white space separated urls of the data to load,
+  - `loadfromwindowlocation` (boolean): use the window location as input
+    URI if it has search arguments,
+  - `showlegend` (boolean): show the footer legend ("Powered by" dwv, with
+    its version),
+  - `wlpresetname`, `wlpresetcenter`, `wlpresetwidth`: initial window
+    level preset (only used if all three are set),
+  - `tools`: white space separated list of viewer tools,
+  - `theme`: one or two theme names (light and dark),
+  - `height`, `width`: css size of the component.
+
+  The data inputs are checked in order `uri`, `urls`, then
+  `loadfromwindowlocation`; the first one that is set is used. `uri` and
+  `urls` are watched: when one changes to a new value, it is loaded on top
+  of the existing data (`loadFromWindowLocation` is only read on init).
+- Toolbar: load progress, the dwv tools (scroll, zoom and pan, window level
+  with presets, draw with shapes), reset, orientation toggle, fullscreen and
+  DICOM tags dialog. Tools are disabled until data is loaded and when they
+  cannot run on it (for ex. window level on colour images).
+- Image window: renders the loaded data with dwv and its overlays; data is
+  loaded from the viewer inputs, or by drag and drop or file selection
+  (local files) through a drop box shown while no data is loaded. It refits
+  when its size changes (window resize, right panel opened, closed or
+  resized).
+- Annotation list: in the right panel, lists the annotation groups and their
+  annotations and lets the user navigate to, inspect and edit them, and save
+  a group as DICOM SR. It only displays the annotation state, every action
+  goes through the annotation service.
+- Several viewers must work on the same page:
+  - each viewer owns its own dwv app and state, no global singletons for
+    viewer state,
+  - HTML element ids are built from a unique viewer id
+    (e.g. `<viewerId>-layerGroup`),
+  - DOM queries are done within the viewer root element (its shadow root)
+    rather than `document`,
+  - dialogs are attached to their viewer context.
+
+## Design specs
+
+Component behaviour and style are described in framework-agnostic design
+specs (`doc/design/`: purpose, placement, data, structure,
+actions, accessibility). Read the spec before changing a component and update
+it in the same change; add one for any significant new component. The viewer is
+modelled on [dwv dev viewer](https://github.com/ivmartel/dwv/blob/develop/dev/viewer/viewer.html);
+some modules are ports of it (see the notes at the top of files, the specs
+and [dwv linked files](#dwv-linked-files)): keep their behaviour aligned
+unless the spec says otherwise, and look there for reference behaviour when
+adding features.
+
+## Architecture
+
+- **Services hold the logic, components display state.** `startApp`
+  (`applauncher.js`) creates one `DwvAppService` and one `AnnotationService`
+  per viewer and passes them to the GUI classes through their constructors
+  (`Gui` -> `Toolbar`, `RightPanel`); `Toolbar` creates the viewer
+  `TagsService`. Do not create services elsewhere, do not share them between
+  viewers (no module level instances) and do not call the dwv `App`
+  directly from GUI classes.
+- Services keep their state in private fields and expose it read only:
+  `AnnotationService` and `TagsService` publish an immutable snapshot
+  through the external store contract (`subscribe` / `getSnapshot`), their
+  components (`AnnotationComponent`, `TagsComponent`) only render it and
+  never mutate it, every change goes through a service method.
+- `DwvAppService` and `AnnotationService` extend `EventTarget` and notify
+  events with `CustomEvent`s (`DwvAppService` re-dispatches the dwv app
+  events and adds its own, `AnnotationService` dispatches `error`).
+  Listeners and subscriptions are released when the viewer is disposed
+  (`DwvAppService` `dispose` event, sent when the element is removed from
+  the document).
+- `DwvComponent` creates the viewer id (the element `id` attribute if set,
+  else a random id starting with a letter) and passes it to `startApp`;
+  services and GUI classes read it from `dwvAppService.getOptions().viewerId`.
+  Element ids are `<viewerId>-<name>`, never hard-coded; use the helpers in
+  `appgui.js` or the same pattern. Only add an id when something references
+  it (`getElementById`, `<label for>`, `aria-controls`, dwv's layer
+  group...).
 
 ## Commands
 
@@ -99,49 +186,36 @@ build/                demo site (build/demo/) and coverage (build/coverage/)
 ## Architecture notes
 
 - Data flow: `DwvComponent` -> `startApp` -> `DwvAppService` + `Gui` + `DropboxLoader`.
-  GUI classes never touch the dwv `App` directly; they call `DwvAppService`
-  methods and listen to its `CustomEvent`s (`loadprogress`, `dataloaded`,
-  `dataready`, `presetnames`, `ismanualpreset`, `dataadd`, `dataremove`,
-  `drawlayeradd`, `annotationadd|update|remove|select`, `error`, `loadabort`, `dispose`). Event payloads live in `event.detail`.
-  Add new app-level interactions (loading, tools, layout) to `DwvAppService`
-  and expose them the same way.
+  GUI classes call `DwvAppService` methods and listen to its `CustomEvent`s
+  (`loadprogress`, `dataloaded`, `dataready`, `presetnames`,
+  `ismanualpreset`, `dataadd`, `dataremove`, `drawlayeradd`,
+  `annotationadd|update|remove|select`, `error`, `loadabort`, `dispose`).
+  Event payloads live in `event.detail`. Add new app-level interactions
+  (loading, tools, layout) to `DwvAppService` and expose them the same way.
+  `startApp` shows `error` and `loadabort` messages in a snackbar.
 - Exception: annotations mirror the dwv viewer (`dev/viewer/src`).
-  `AnnotationService` (`src/lib/annotationService.js`, no DOM access)
-  works on dwv objects itself, through the controllers `DwvAppService`
-  exposes like the dwv viewer `DwvAppService` (`getDataController`,
-  `getStageController`,
+  `AnnotationService` (no DOM access) works on dwv objects itself, through
+  the controllers `DwvAppService` exposes like the dwv viewer
+  `DwvAppService` (`getDataController`, `getStageController`,
   `getUndoController`, `createAnnotationData`,
   `addAndRenderAnnotationData`). It uses `DrawController`, draw layers and
-  `DicomWriter` directly, listens to `annotationgroupeditablechange` on
-  the annotation group and exposes an immutable state through the external
-  store contract (`subscribe` / `getSnapshot`). `AnnotationComponent`
-  (`src/lib/annotationComponent.js`) only renders that state and calls the
-  service actions. The service is created and connected by `startApp`
-  (`applauncher.js`), disposed on the `DwvAppService` `dispose` event,
-  and passed to `RightPanel` through `Gui`;
-  `RightPanel` creates the component. Keep that split to ease syncing
-  with dwv.
+  `DicomWriter` directly and listens to `annotationgroupeditablechange` on
+  the annotation group. `RightPanel` creates the `AnnotationComponent`.
+  Keep that split to ease syncing with dwv.
 - Supported viewer tools: `Scroll`, `ZoomAndPan`, `WindowLevel`, `Draw`
   (shapes: Ruler, Arrow, Rectangle, Circle, Ellipse, Protractor, Roi).
   Matching against user input is case insensitive.
 - The bundle is self-contained (dwv, konva, jszip and magic-wand are bundled).
   webpack emits the dwv web workers (`*.worker.min.js`) next to it, and they
   are loaded relative to the bundle URL.
-- `dwv` is pinned to an exact version in `package.json`; check its API
-  ([dwv repo](https://github.com/ivmartel/dwv)) before changing calls.
-- `doc/design/`: component design specs, framework agnostic. Read the spec
-  before changing a component and keep it up to date with behaviour
-  or style changes.
 
 ## Web component
 
 - Public API documentation of `<dwv-simple>` attributes is the JSDoc on
   `DwvComponent`; keep it in sync when adding or changing attributes.
 - Everything renders inside a shadow root. Look elements up through
-  `rootDocument` (`dwvAppService.getOptions().rootDocument`), never `document`
-  directly. Several components can coexist on a page, so all element ids are
-  prefixed with the viewer id (`<viewerId>-layerGroup`, `<viewerId>-header`,
-  ...); use the helpers in `appgui.js` or the same pattern.
+  `rootDocument` (`dwvAppService.getOptions().rootDocument`). Build element
+  ids as described in [Architecture](#architecture).
 - CSS is imported as strings via `css-loader` and injected in a `<style>`
   element. Themes use CSS custom properties; when two themes are given they
   are switched with `prefers-color-scheme`.
