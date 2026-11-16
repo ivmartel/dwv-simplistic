@@ -1,5 +1,6 @@
-import {describe, test, expect} from 'vitest';
+import {describe, test, expect, vi} from 'vitest';
 import {splitAttribute} from '../src/dwv-component.js';
+import {DwvAppService} from '../src/lib/dwvAppService.js';
 
 /**
  * Create a test component: only uses the scroll tool since
@@ -89,5 +90,43 @@ describe('DwvComponent', () => {
     document.body.appendChild(element);
     expect(element.shadowRoot.getElementById('remove-dwv')).not.toBeNull();
     element.remove();
+  });
+
+  test('watches the uri and urls attributes', () => {
+    const urlsSpy = vi.spyOn(DwvAppService.prototype, 'loadURLs')
+      .mockImplementation(() => {});
+    const uriSpy = vi.spyOn(DwvAppService.prototype, 'loadFromUri')
+      .mockImplementation(() => {});
+
+    const element = createComponent('watch');
+    // not running: only loaded on connection
+    element.setAttribute('urls', 'a.dcm');
+    expect(urlsSpy).not.toHaveBeenCalled();
+    document.body.appendChild(element);
+    expect(urlsSpy).toHaveBeenCalledTimes(1);
+    expect(urlsSpy).toHaveBeenLastCalledWith(['a.dcm']);
+
+    // urls change
+    element.setAttribute('urls', 'b.dcm c.dcm');
+    expect(urlsSpy).toHaveBeenCalledTimes(2);
+    expect(urlsSpy).toHaveBeenLastCalledWith(['b.dcm', 'c.dcm']);
+    // same value: no load
+    element.setAttribute('urls', 'b.dcm c.dcm');
+    expect(urlsSpy).toHaveBeenCalledTimes(2);
+    // uri has priority
+    element.setAttribute('uri', 'https://a.org/?input=d.dcm');
+    expect(uriSpy).toHaveBeenCalledTimes(1);
+    expect(uriSpy).toHaveBeenLastCalledWith('https://a.org/?input=d.dcm');
+    // removal: back to urls
+    element.removeAttribute('uri');
+    expect(urlsSpy).toHaveBeenCalledTimes(3);
+    expect(urlsSpy).toHaveBeenLastCalledWith(['b.dcm', 'c.dcm']);
+    // nothing to load
+    element.removeAttribute('urls');
+    expect(urlsSpy).toHaveBeenCalledTimes(3);
+    expect(uriSpy).toHaveBeenCalledTimes(1);
+
+    element.remove();
+    vi.restoreAllMocks();
   });
 });

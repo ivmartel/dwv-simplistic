@@ -49,7 +49,9 @@ export function splitAttribute(value) {
  *
  * Attributes are case insensitive. Boolean type are considered true if
  * present whatever the value. Attributes are read when the element is
- * first connected to the document, later changes are ignored.
+ * first connected to the document. Later changes are ignored except
+ * for `uri` and `urls`: changing (or removing) them loads the data
+ * of the new input, if any.
  *
  * The viewer is released when the element is removed from the document
  * (but not when it is moved within it).
@@ -115,6 +117,13 @@ export function splitAttribute(value) {
  * ></dwv-simple>
  */
 export class DwvComponent extends HTMLElement {
+  /**
+   * The watched attributes: changes trigger `attributeChangedCallback`.
+   *
+   * @type {string[]}
+   */
+  static observedAttributes = ['uri', 'urls'];
+
   /**
    * The dwv app service, defined while the viewer is running.
    *
@@ -215,17 +224,7 @@ export class DwvComponent extends HTMLElement {
     this.shadowRoot.replaceChildren(styleElement, container);
 
     // create options from attributes
-    const options = {};
-    // load
-    if (this.hasAttribute('uri')) {
-      options.uri = this.getAttribute('uri');
-    } else if (this.hasAttribute('urls')) {
-      options.urls = splitAttribute(this.getAttribute('urls'));
-    } else if (this.hasAttribute('loadfromwindowlocation')) {
-      if (window.location.search !== '') {
-        options.uri = window.location.href;
-      }
-    }
+    const options = this.#getLoadOptions();
     // window level
     if (this.hasAttribute('wlpresetname') &&
       this.hasAttribute('wlpresetcenter') &&
@@ -243,6 +242,53 @@ export class DwvComponent extends HTMLElement {
 
     // start app
     this.#dwvAppService = startApp(viewerId, options, this.shadowRoot);
+  }
+
+  /**
+   * Invoked each time a watched attribute (see `observedAttributes`)
+   * is added, removed or changed: load the data of the new input if
+   * the viewer is running.
+   *
+   * @param {string} _name The attribute name.
+   * @param {string|null} oldValue The old value.
+   * @param {string|null} newValue The new value.
+   */
+  attributeChangedCallback(_name, oldValue, newValue) {
+    // not running yet: the attributes are read on connection
+    if (typeof this.#dwvAppService === 'undefined' ||
+      oldValue === newValue) {
+      return;
+    }
+    const options = this.#getLoadOptions();
+    if (typeof options.uri !== 'undefined') {
+      this.#dwvAppService.loadFromUri(options.uri);
+    } else if (typeof options.urls !== 'undefined') {
+      this.#dwvAppService.loadURLs(options.urls);
+    }
+  }
+
+  /**
+   * Get the load options from the attributes: the first set
+   * of `uri`, `urls` and `loadfromwindowlocation`.
+   *
+   * @returns {object} The options, with either a `uri` (string) or
+   *   `urls` (string[]) property, or none if there is nothing to load.
+   */
+  #getLoadOptions() {
+    const options = {};
+    if (this.hasAttribute('uri')) {
+      options.uri = this.getAttribute('uri');
+    } else if (this.hasAttribute('urls')) {
+      const urls = splitAttribute(this.getAttribute('urls'));
+      if (urls.length !== 0) {
+        options.urls = urls;
+      }
+    } else if (this.hasAttribute('loadfromwindowlocation')) {
+      if (window.location.search !== '') {
+        options.uri = window.location.href;
+      }
+    }
+    return options;
   }
 
   /**
