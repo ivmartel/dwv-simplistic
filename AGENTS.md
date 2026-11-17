@@ -114,11 +114,10 @@ yarn run build        # library bundle into dist/
 yarn run build-demo   # full demo site into build/demo/
 ```
 
-CI ([.github/workflows/nodejs-ci.yml](.github/workflows/nodejs-ci.yml))
-has a `build` job (`lint`, `test-ci` then `build-demo`, all must pass) and a
-`deploy` job that pushes the demo to `gh-pages` (main and release tags
-only). Verify UI changes manually with `yarn run start` (load DICOM via drag and drop or `?input=<url>` in the
-page URL).
+Before finishing a change, verify it with the
+[verify skill](.agents/skills/verify/SKILL.md): same checks as CI
+([.github/workflows/nodejs-ci.yml](.github/workflows/nodejs-ci.yml)),
+convention review and manual UI check with the dev server.
 
 ## Tests
 
@@ -129,9 +128,6 @@ page URL).
 - Import `describe`/`test`/`expect` explicitly from `vitest` (no globals).
 - `dwv` imports work in tests; prefer testing pure helpers and `DwvAppService`
   logic over full rendering (no canvas in jsdom).
-- Coverage: v8 provider over `src/**/*.js`, reports (text, html, lcov) in the
-  git-ignored `build/coverage/` folder; open `build/coverage/index.html` for
-  details. No thresholds are enforced.
 - Add or update tests with behaviour changes.
 
 ## Layout
@@ -178,6 +174,7 @@ src/
 tests/                vitest unit tests, mirrors src/
 demo/                 demo index.html, PWA manifest, service worker, assets
 config/               webpack (common/dev/prod) and full eslint config
+.agents/skills/       agent skills (verify: pre-finish checks)
 resources/scripts/    outdated Conquest lua script
 dist/                 built library bundle (see below)
 build/                demo site (build/demo/) and coverage (build/coverage/)
@@ -262,7 +259,6 @@ Enforced by eslint (`eslint.config.js` + `config/eslint.config-full.js`):
 - Use private class fields/methods (`#field`) for internal state, as in the
   existing classes. Prefer `typeof x !== 'undefined'` checks, matching the
   surrounding code.
-- Run `yarn run lint` and `yarn run test` before finishing.
 
 ## Build output and releases
 
