@@ -93,7 +93,7 @@ Read `git diff` and check it against the rules of
   and stay in sync with dwv.
 - **Style** ([Code style](../../../AGENTS.md#code-style)): what eslint does
   not catch (private `#` members, `typeof` checks, `@import` type imports).
-- **Docs in the same change**: `DwvComponent` JSDoc and AGENTS.md
+- **Docs in the same change**: `DwvViewer` JSDoc and AGENTS.md
   requirements for attribute changes, `doc/design/` spec for component
   behaviour or style changes.
 - **dwv API**: `dwv` is pinned to an exact version; any new call must exist in
@@ -127,7 +127,7 @@ Check, as relevant to the change:
   combination touched (`theme="blue pink"`).
 - Watched `uri` / `urls` attributes: changing them loads the new data on top
   of the existing one.
-- Several `<dwv-simple>` on one page if ids, lookups, services or dialogs
+- Several `<dwv-viewer>` on one page if ids, lookups, services or dialogs
   changed (edit a scratch copy of the demo page, not the committed one).
 
 If a headless browser is available (Chromium/Chrome is installed here), a

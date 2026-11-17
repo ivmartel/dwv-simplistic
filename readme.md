@@ -1,10 +1,10 @@
 # dwv-simplistic
 
 Medical (DICOM) image viewer web component using [DWV](https://github.com/ivmartel/dwv)
-(DICOM Web Viewer). This repository mainly provides the `<dwv-simple>` web
+(DICOM Web Viewer). This repository mainly provides the `<dwv-viewer>` web
 component, bundled as an ES module, and comes with a demo site that uses it.
 
-Simple usage: in an HTML document, import the library and add `<dwv-simple urls="..."></dwv-simple>` to
+Simple usage: in an HTML document, import the library and add `<dwv-viewer urls="..."></dwv-viewer>` to
 its body. This will display the image and a toolbar with basic tools (scroll, zoom, window level...). See it live in the [demo page](https://ivmartel.github.io/dwv-simplistic/).
 
 All coding/implementation contributions and comments are welcome. Releases should be ready for deployment.

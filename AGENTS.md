@@ -9,7 +9,7 @@ Medical (DICOM) image viewer web component built on
 Not certified for diagnostic use. License: GPL-3.0.
 
 The main deliverable is the reusable viewer web component library: a single
-custom element, `<dwv-simple>`, bundled as an ES module
+custom element, `<dwv-viewer>`, bundled as an ES module
 (`dist/dwvsimplistic.min.js`). It comes with a demo site (`demo/`, built
 into `build/demo/` and deployed to GitHub Pages) that uses the component.
 Plain JavaScript (ES modules, no framework, no TypeScript sources), browser
@@ -17,9 +17,9 @@ only. The library only exposes what consumers need.
 
 ## Requirements
 
-- Viewer inputs: the `<dwv-simple>` attributes (case insensitive, read
+- Viewer inputs: the `<dwv-viewer>` attributes (case insensitive, read
   when the element is first connected, later changes are ignored except
-  for the watched ones; full list in the `DwvComponent` JSDoc):
+  for the watched ones; full list in the `DwvViewer` JSDoc):
   - `uri` (string, watched): URI with search arguments describing the data
     to load (for ex. `https://www.demo.com/index.html?input=file.dcm`, see
     the dwv `App.loadFromUri` method),
@@ -92,7 +92,7 @@ adding features.
   Listeners and subscriptions are released when the viewer is disposed
   (`DwvAppService` `dispose` event, sent when the element is removed from
   the document).
-- `DwvComponent` creates the viewer id (the element `id` attribute if set,
+- `DwvViewer` creates the viewer id (the element `id` attribute if set,
   else a random id starting with a letter) and passes it to `startApp`;
   services and GUI classes read it from `dwvAppService.getOptions().viewerId`.
   Element ids are `<viewerId>-<name>`, never hard-coded; use the helpers in
@@ -134,8 +134,8 @@ convention review and manual UI check with the dev server.
 
 ```
 src/
-  index.js            public exports: startApp, DwvComponent
-  dwv-component.js    <dwv-simple> custom element: reads attributes, builds the
+  index.js            public exports: startApp, DwvViewer
+  dwv-viewer.js       <dwv-viewer> custom element: reads attributes, builds the
                       shadow DOM (header/content/footer), injects CSS, calls startApp
   applauncher.js      startApp(viewerId, options, rootDoc): wires services, GUI, dropbox
   appgui.js           Gui: owns Toolbar + RightPanel, progress bar, div id helpers
@@ -170,7 +170,7 @@ src/
     icons.js          inline SVG icons and button helpers
   theme/              light/dark/blue/pink + common CSS (Material 3 color roles,
                       see doc/design/theme.md)
-  dwv-component.css   component styles
+  dwv-viewer.css      component styles
 tests/                vitest unit tests, mirrors src/
 demo/                 demo index.html, PWA manifest, service worker, assets
 config/               webpack (common/dev/prod) and full eslint config
@@ -182,7 +182,7 @@ build/                demo site (build/demo/) and coverage (build/coverage/)
 
 ## Architecture notes
 
-- Data flow: `DwvComponent` -> `startApp` -> `DwvAppService` + `Gui` + `DropboxLoader`.
+- Data flow: `DwvViewer` -> `startApp` -> `DwvAppService` + `Gui` + `DropboxLoader`.
   GUI classes call `DwvAppService` methods and listen to its `CustomEvent`s
   (`loadprogress`, `dataloaded`, `dataready`, `presetnames`,
   `ismanualpreset`, `dataadd`, `dataremove`, `drawlayeradd`,
@@ -208,8 +208,8 @@ build/                demo site (build/demo/) and coverage (build/coverage/)
 
 ## Web component
 
-- Public API documentation of `<dwv-simple>` attributes is the JSDoc on
-  `DwvComponent`; keep it in sync when adding or changing attributes.
+- Public API documentation of `<dwv-viewer>` attributes is the JSDoc on
+  `DwvViewer`; keep it in sync when adding or changing attributes.
 - Everything renders inside a shadow root. Look elements up through
   `rootDocument` (`dwvAppService.getOptions().rootDocument`). Build element
   ids as described in [Architecture](#architecture).

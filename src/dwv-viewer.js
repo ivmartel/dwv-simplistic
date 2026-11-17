@@ -4,7 +4,7 @@ import {getDropboxElement} from './lib/dropboxLoader.js';
 import {getRightPanelElements} from './lib/rightPanel.js';
 import {getModalElement} from './lib/modal.js';
 
-import styles from './dwv-component.css';
+import styles from './dwv-viewer.css';
 import themeCommon from './theme/common.css';
 import themeDark from './theme/dark.css';
 import themeLight from './theme/light.css';
@@ -27,7 +27,7 @@ export function splitAttribute(value) {
 }
 
 /**
- * DWV component: display DICOM data using DWV (DICOM Web Viewer).
+ * DWV viewer: display DICOM data using DWV (DICOM Web Viewer).
  * Possible attributes are:
  * - uri: an input string URI to load the data from,
  * - urls: white space separated list of urls to load the data from,
@@ -70,35 +70,35 @@ export function splitAttribute(value) {
  *   <div class='footer'></div>
  * </div>
  * ```
- * Each div css is overridable via `dwv-simple::part(dwv)` (replace `dwv`
+ * Each div css is overridable via `dwv-viewer::part(dwv)` (replace `dwv`
  * by the desired div class name).
  *
  * The component renders in a shadow root without slot: children of the
- * `dwv-simple` element are not displayed.
+ * `dwv-viewer` element are not displayed.
  *
  * Ref:
  * - {@link https://developer.mozilla.org/en-US/docs/Web/API/Web_components},
  * - {@link https://github.com/ivmartel/dwv}.
  *
  * @example
- * <dwv-simple></dwv-simple>
+ * <dwv-viewer></dwv-viewer>
  * @example
- * <dwv-simple showlegend loadfromwindowlocation></dwv-simple>
+ * <dwv-viewer showlegend loadfromwindowlocation></dwv-viewer>
  * @example
- * <dwv-simple showlegend loadfromwindowlocation theme="blue"></dwv-simple>
+ * <dwv-viewer showlegend loadfromwindowlocation theme="blue"></dwv-viewer>
  * @example
- * <dwv-simple
+ * <dwv-viewer
  *   uri="https://www.demo.com/index.html?input=file.dcm"
- * ></dwv-simple>
+ * ></dwv-viewer>
  * @example
- * <dwv-simple
+ * <dwv-viewer
  *   urls="
  *     https://raw.githubusercontent.com/ivmartel/dwv/master/tests/data/bbmri-53323851.dcm
  *     https://raw.githubusercontent.com/ivmartel/dwv/master/tests/data/bbmri-53323707.dcm
  *   "
- * ></dwv-simple>
+ * ></dwv-viewer>
  * @example
- * <dwv-simple
+ * <dwv-viewer
  *   urls="
  *     https://raw.githubusercontent.com/ivmartel/dwv/master/tests/data/bbmri-53323851.dcm
  *     https://raw.githubusercontent.com/ivmartel/dwv/master/tests/data/bbmri-53323707.dcm
@@ -106,17 +106,17 @@ export function splitAttribute(value) {
  *   wlpresetname="preset0"
  *   wlpresetcenter="0"
  *   wlpresetwidth="2500"
- * ></dwv-simple>
+ * ></dwv-viewer>
  * @example
- * <dwv-simple
+ * <dwv-viewer
  *   urls="
  *     https://raw.githubusercontent.com/ivmartel/dwv/master/tests/data/bbmri-53323851.dcm
  *     https://raw.githubusercontent.com/ivmartel/dwv/master/tests/data/bbmri-53323707.dcm
  *   "
  *   tools="scroll windowlevel"
- * ></dwv-simple>
+ * ></dwv-viewer>
  */
-export class DwvComponent extends HTMLElement {
+export class DwvViewer extends HTMLElement {
   /**
    * The watched attributes: changes trigger `attributeChangedCallback`.
    *
@@ -391,4 +391,4 @@ export class DwvComponent extends HTMLElement {
 
 // Define the new element
 // https://developer.mozilla.org/en-US/docs/Web/API/Window/customElements
-customElements.define('dwv-simple', DwvComponent);
+customElements.define('dwv-viewer', DwvViewer);

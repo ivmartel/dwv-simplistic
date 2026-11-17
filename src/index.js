@@ -1,7 +1,7 @@
 import {startApp} from './applauncher.js';
-import {DwvComponent} from './dwv-component.js';
+import {DwvViewer} from './dwv-viewer.js';
 
 export {
   startApp,
-  DwvComponent
+  DwvViewer
 };

@@ -1,5 +1,5 @@
 import {describe, test, expect, vi} from 'vitest';
-import {splitAttribute} from '../src/dwv-component.js';
+import {splitAttribute} from '../src/dwv-viewer.js';
 import {DwvAppService} from '../src/lib/dwvAppService.js';
 
 /**
@@ -10,7 +10,7 @@ import {DwvAppService} from '../src/lib/dwvAppService.js';
  * @returns {HTMLElement} The component.
  */
 function createComponent(id) {
-  const element = document.createElement('dwv-simple');
+  const element = document.createElement('dwv-viewer');
   element.id = id;
   element.setAttribute('tools', 'scroll');
   return element;
@@ -40,9 +40,9 @@ describe('splitAttribute', () => {
   });
 });
 
-describe('DwvComponent', () => {
+describe('DwvViewer', () => {
   test('is defined', () => {
-    expect(customElements.get('dwv-simple')).toBeDefined();
+    expect(customElements.get('dwv-viewer')).toBeDefined();
   });
 
   test('renders in its shadow root when connected', () => {
@@ -56,7 +56,7 @@ describe('DwvComponent', () => {
   });
 
   test('generates a viewer id starting with a letter', () => {
-    const element = document.createElement('dwv-simple');
+    const element = document.createElement('dwv-viewer');
     element.setAttribute('tools', 'scroll');
     document.body.appendChild(element);
     const container = element.shadowRoot.querySelector('.dwv');
