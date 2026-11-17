@@ -178,7 +178,7 @@ export class DwvViewer extends HTMLElement {
     if (this.hasAttribute('height')) {
       extraCss += 'height: ' + this.getAttribute('height') + ';';
     } else {
-      extraCss += 'height: 90%;';
+      extraCss += 'height: 100%;';
     }
     if (this.hasAttribute('width')) {
       extraCss += 'width: ' + this.getAttribute('width') + ';';
