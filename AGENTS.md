@@ -84,7 +84,7 @@ adding features.
 - Services keep their state in private fields and expose it read only:
   `AnnotationService` and `TagsService` publish an immutable snapshot
   through the external store contract (`subscribe` / `getSnapshot`), their
-  components (`AnnotationComponent`, `TagsComponent`) only render it and
+  components (`AnnotationComponent`, `TagsTable`) only render it and
   never mutate it, every change goes through a service method.
 - `DwvAppService` and `AnnotationService` extend `EventTarget` and notify
   events with `CustomEvent`s (`DwvAppService` re-dispatches the dwv app
@@ -165,7 +165,7 @@ src/
     tagsService.js    TagsService: DICOM tags logic and state store
                       (instance numbers, meta flattening), same design
                       as AnnotationService
-    tagsComponent.js  TagsComponent: DICOM tags modal renderer of the
+    tagsTable.js      TagsTable: DICOM tags modal renderer of the
                       TagsService state (instance slider and tags table)
     icons.js          inline SVG icons and button helpers
   theme/              light/dark/blue/pink + common CSS (Material 3 color roles,

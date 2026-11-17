@@ -2,24 +2,24 @@ import {describe, test, expect} from 'vitest';
 
 import {TagsService} from '../../src/lib/tagsService.js';
 import {
-  TagsComponent,
+  TagsTable,
   arrayToHtmlTable
-} from '../../src/lib/tagsComponent.js';
+} from '../../src/lib/tagsTable.js';
 
 /**
- * Get a connected tags service and component.
+ * Get a connected tags service and table.
  *
  * @param {object} meta The meta data.
- * @returns {object} The fake app service, tags service and component.
+ * @returns {object} The fake app service, tags service and table.
  */
 function setup(meta) {
   const service = new EventTarget();
   service.getMetaData = () => meta;
   const tagsService = new TagsService(service);
   tagsService.connect();
-  const component = new TagsComponent(tagsService, 'test');
-  component.registerListeners();
-  return {service, tagsService, component};
+  const table = new TagsTable(tagsService, 'test');
+  table.registerListeners();
+  return {service, tagsService, table};
 }
 
 /**
@@ -58,18 +58,18 @@ describe('arrayToHtmlTable', () => {
   });
 });
 
-describe('TagsComponent', () => {
+describe('TagsTable', () => {
   test('returns the same content elements', () => {
-    const {component} = setup(meta);
-    const content = component.getContent();
+    const {table} = setup(meta);
+    const content = table.getContent();
     expect(content.length).toBe(3);
     expect(content[0].textContent).toBe('DICOM Tags');
-    expect(component.getContent()).toBe(content);
+    expect(table.getContent()).toBe(content);
   });
 
   test('renders the loaded state', () => {
-    const {service, component} = setup(meta);
-    const [, controlsDiv, scrollDiv] = component.getContent();
+    const {service, table} = setup(meta);
+    const [, controlsDiv, scrollDiv] = table.getContent();
     const sliderDiv = controlsDiv.querySelector('span');
     dispatchDataLoaded(service, true);
     const slider = sliderDiv.querySelector('input');
@@ -81,15 +81,15 @@ describe('TagsComponent', () => {
   });
 
   test('renders a state loaded before the first content request', () => {
-    const {service, component} = setup(meta);
+    const {service, table} = setup(meta);
     dispatchDataLoaded(service, true);
-    const [, , scrollDiv] = component.getContent();
+    const [, , scrollDiv] = table.getContent();
     expect(scrollDiv.textContent).toContain('InstanceNumber1');
   });
 
   test('selects the instance number on slider input', () => {
-    const {service, tagsService, component} = setup(meta);
-    const [, controlsDiv, scrollDiv] = component.getContent();
+    const {service, tagsService, table} = setup(meta);
+    const [, controlsDiv, scrollDiv] = table.getContent();
     const sliderDiv = controlsDiv.querySelector('span');
     dispatchDataLoaded(service, true);
     const slider = sliderDiv.querySelector('input');
@@ -101,8 +101,8 @@ describe('TagsComponent', () => {
   });
 
   test('filters the tags on search input', () => {
-    const {service, tagsService, component} = setup(meta);
-    const [, controlsDiv, scrollDiv] = component.getContent();
+    const {service, tagsService, table} = setup(meta);
+    const [, controlsDiv, scrollDiv] = table.getContent();
     dispatchDataLoaded(service, true);
     const search = controlsDiv.querySelector('input[type=search]');
     search.value = 'transfer';
@@ -116,15 +116,15 @@ describe('TagsComponent', () => {
   });
 
   test('syncs the search input with the state', () => {
-    const {tagsService, component} = setup(meta);
-    const [, controlsDiv] = component.getContent();
+    const {tagsService, table} = setup(meta);
+    const [, controlsDiv] = table.getContent();
     tagsService.setSearch('abc');
     expect(controlsDiv.querySelector('input[type=search]').value).toBe('abc');
   });
 
   test('hides the slider without instance number', () => {
-    const {service, component} = setup({width: {value: 512}});
-    const [, controlsDiv, scrollDiv] = component.getContent();
+    const {service, table} = setup({width: {value: 512}});
+    const [, controlsDiv, scrollDiv] = table.getContent();
     const sliderDiv = controlsDiv.querySelector('span');
     dispatchDataLoaded(service, true);
     expect(sliderDiv.style.display).toBe('none');
@@ -132,9 +132,9 @@ describe('TagsComponent', () => {
   });
 
   test('stops rendering on dispose', () => {
-    const {service, component} = setup(meta);
-    const [, , scrollDiv] = component.getContent();
-    component.dispose();
+    const {service, table} = setup(meta);
+    const [, , scrollDiv] = table.getContent();
+    table.dispose();
     dispatchDataLoaded(service, true);
     expect(scrollDiv.textContent).toBe('Empty input array...');
   });

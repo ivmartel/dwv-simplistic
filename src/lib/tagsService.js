@@ -6,7 +6,7 @@ import {getTagFromKey, getDicomTagInfo} from 'dwv';
 
 /**
  * Note: follows the design of './annotationService.js'
- *   (logic and state here, rendering in './tagsComponent.js').
+ *   (logic and state here, rendering in './tagsTable.js').
  */
 
 /**

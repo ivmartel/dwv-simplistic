@@ -8,11 +8,11 @@
  */
 
 /**
- * Tags component: renders the tags service state as an instance
+ * Tags table: renders the tags service state as an instance
  *   number slider, a search input and a tags table, and calls
  *   the service actions.
  */
-export class TagsComponent {
+export class TagsTable {
 
   /**
    * The tags service.
@@ -222,7 +222,7 @@ export class TagsComponent {
     }
   };
 
-} // class TagsComponent
+} // class TagsTable
 
 /**
  * Get an HTML table from a string array.

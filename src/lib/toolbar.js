@@ -5,7 +5,7 @@ import {
 } from '../appgui.js';
 import {Modal} from './modal.js';
 import {TagsService} from './tagsService.js';
-import {TagsComponent} from './tagsComponent.js';
+import {TagsTable} from './tagsTable.js';
 import {
   getButton,
   getIconElement
@@ -242,9 +242,9 @@ export class Toolbar {
   /**
    * DICOM tags component.
    *
-   * @type {TagsComponent}
+   * @type {TagsTable}
    */
-  #tagsComponent;
+  #tagsTable;
 
   /**
    * @param {DwvAppService} dwvAppService The dwv app service.
@@ -286,7 +286,7 @@ export class Toolbar {
     // modal dialog
     this.#modal = new Modal(this.#viewerId, this.#rootDoc);
     this.#tagsService = new TagsService(dwvAppService);
-    this.#tagsComponent = new TagsComponent(this.#tagsService, this.#viewerId);
+    this.#tagsTable = new TagsTable(this.#tagsService, this.#viewerId);
 
     // watch data ready
     this.#dwvAppService.addEventListener('dataready', (event) => {
@@ -366,7 +366,7 @@ export class Toolbar {
     this.#modal.init();
 
     this.#tagsService.connect();
-    this.#tagsComponent.registerListeners();
+    this.#tagsTable.registerListeners();
   };
 
   /**
@@ -575,7 +575,7 @@ export class Toolbar {
    * Open the DICOM tags modal.
    */
   openTagsModal() {
-    this.#modal.open(this.#tagsComponent.getContent());
+    this.#modal.open(this.#tagsTable.getContent());
   };
 
   /**
