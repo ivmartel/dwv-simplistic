@@ -282,7 +282,7 @@ button:enabled:hover {
   }
 }
 
-/* right panel content (see doc/design/annotationComponent.md) */
+/* right panel content (see doc/design/annotationList.md) */
 .data-list {
   list-style-type: none;
   margin: 0;

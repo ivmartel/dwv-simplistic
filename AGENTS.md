@@ -84,7 +84,7 @@ adding features.
 - Services keep their state in private fields and expose it read only:
   `AnnotationService` and `TagsService` publish an immutable snapshot
   through the external store contract (`subscribe` / `getSnapshot`), their
-  components (`AnnotationComponent`, `TagsTable`) only render it and
+  components (`AnnotationList`, `TagsTable`) only render it and
   never mutate it, every change goes through a service method.
 - `DwvAppService` and `AnnotationService` extend `EventTarget` and notify
   events with `CustomEvent`s (`DwvAppService` re-dispatches the dwv app
@@ -152,8 +152,8 @@ src/
     overlays.js       dwv overlay config
     toolbar.js        tools, shapes, WL presets, reset/orientation/fullscreen/tags
     rightPanel.js     side panel hosting annotations
-    annotationComponent.js
-                      AnnotationComponent: annotation list renderer of the
+    annotationList.js
+                      AnnotationList: annotation list renderer of the
                       AnnotationService state, based on dwv
                       dev/viewer/src/annotationComponent.js (keep in sync)
     quantificationUI.js
@@ -197,7 +197,7 @@ build/                demo site (build/demo/) and coverage (build/coverage/)
   `getUndoController`, `createAnnotationData`,
   `addAndRenderAnnotationData`). It uses `DrawController`, draw layers and
   `DicomWriter` directly and listens to `annotationgroupeditablechange` on
-  the annotation group. `RightPanel` creates the `AnnotationComponent`.
+  the annotation group. `RightPanel` creates the `AnnotationList`.
   Keep that split to ease syncing with dwv.
 - Supported viewer tools: `Scroll`, `ZoomAndPan`, `WindowLevel`, `Draw`
   (shapes: Ruler, Arrow, Rectangle, Circle, Ellipse, Protractor, Roi).
@@ -227,7 +227,7 @@ and must be kept in sync with it:
 | file | dwv source |
 | --- | --- |
 | `src/lib/annotationService.js` | `dev/viewer/src/annotationService.js` |
-| `src/lib/annotationComponent.js` | `dev/viewer/src/annotationComponent.js` |
+| `src/lib/annotationList.js` | `dev/viewer/src/annotationComponent.js` |
 | `src/lib/quantification.js` | `dev/viewer/src/quantification.js` |
 | `src/lib/quantificationUI.js` | `dev/viewer/src/quantificationUI.js` |
 

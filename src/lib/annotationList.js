@@ -68,13 +68,13 @@ function getShapeIcon(factoryName) {
 }
 
 /**
- * Annotation component: vanilla renderer of the annotation service
+ * Annotation list: vanilla renderer of the annotation service
  *   state. Reference implementation for framework components.
  *
  * Rendering reuses the elements of unchanged groups and annotations
  *   (the state keeps the identity of unchanged parts).
  */
-export class AnnotationComponent {
+export class AnnotationList {
 
   /**
    * The annotation service.
@@ -590,4 +590,4 @@ export class AnnotationComponent {
     return item;
   };
 
-}; // AnnotationComponent
+}; // AnnotationList

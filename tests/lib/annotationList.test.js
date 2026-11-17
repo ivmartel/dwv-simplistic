@@ -1,6 +1,6 @@
 import {describe, test, expect, vi, beforeEach} from 'vitest';
 
-import {AnnotationComponent} from '../../src/lib/annotationComponent.js';
+import {AnnotationList} from '../../src/lib/annotationList.js';
 import {getIconElement} from '../../src/lib/icons.js';
 
 /**
@@ -71,7 +71,7 @@ function getGroup(annotations, overrides) {
 }
 
 /**
- * Render a component in a fresh panel.
+ * Render an annotation list in a fresh panel.
  *
  * @param {object} state The service state.
  * @returns {object} The service and the panel element.
@@ -79,9 +79,9 @@ function getGroup(annotations, overrides) {
 function render(state) {
   document.body.innerHTML = '<div id="0-right-panel-content"></div>';
   const service = getMockService(state);
-  const component = new AnnotationComponent(service, document, '0');
-  component.registerListeners();
-  return {service, component};
+  const list = new AnnotationList(service, document, '0');
+  list.registerListeners();
+  return {service, list};
 }
 
 const rowId = '0-annotationgroup1-annotationa0';
@@ -93,7 +93,7 @@ const rowId = '0-annotationgroup1-annotationa0';
  */
 const rowElementId = (type) => `0-${type}-annotationgroup1-annotationa0`;
 
-describe('AnnotationComponent', () => {
+describe('AnnotationList', () => {
   beforeEach(() => {
     Element.prototype.scrollIntoView = vi.fn();
   });

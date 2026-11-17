@@ -1,4 +1,4 @@
-import {AnnotationComponent} from './annotationComponent.js';
+import {AnnotationList} from './annotationList.js';
 import {getIconElement} from './icons.js';
 
 /**
@@ -210,11 +210,11 @@ export class RightPanel {
   #rootDoc;
 
   /**
-   * Annotation component.
+   * Annotation list.
    *
-   * @type {AnnotationComponent}
+   * @type {AnnotationList}
    */
-  #annotComponent;
+  #annotList;
 
   /**
    * Open state.
@@ -260,7 +260,7 @@ export class RightPanel {
     this.#viewerId = dwvAppService.getOptions().viewerId;
     this.#rootDoc = dwvAppService.getOptions().rootDocument;
 
-    this.#annotComponent = new AnnotationComponent(
+    this.#annotList = new AnnotationList(
       annotService, this.#rootDoc, this.#viewerId);
   }
 
@@ -271,7 +271,7 @@ export class RightPanel {
     this.#setupUI();
     this.#render();
 
-    this.#annotComponent.registerListeners();
+    this.#annotList.registerListeners();
   }
 
   /**

@@ -3,7 +3,7 @@
  */
 
 /**
- * Note: follows the design of './annotationComponent.js'
+ * Note: follows the design of './annotationList.js'
  *   (rendering here, logic and state in './tagsService.js').
  */
 
