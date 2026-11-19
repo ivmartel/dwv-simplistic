@@ -1,7 +1,7 @@
 # Annotation list: design spec
 
 Reference: dwv viewer
-[`annotationComponent.js`](https://github.com/ivmartel/dwv/blob/develop/dev/viewer/src/annotationComponent.js)
+[`annotationList.js`](https://github.com/ivmartel/dwv/blob/develop/dev/viewer/src/annotationList.js)
 (dwv `dev/viewer`)
 
 ## Purpose

@@ -155,7 +155,7 @@ src/
     annotationList.js
                       AnnotationList: annotation list renderer of the
                       AnnotationService state, based on dwv
-                      dev/viewer/src/annotationComponent.js (keep in sync)
+                      dev/viewer/src/annotationList.js (keep in sync)
     quantificationUI.js
                       annotation quantification rendering, based on dwv
                       dev/viewer/src/quantificationUI.js
@@ -227,7 +227,7 @@ and must be kept in sync with it:
 | file | dwv source |
 | --- | --- |
 | `src/lib/annotationService.js` | `dev/viewer/src/annotationService.js` |
-| `src/lib/annotationList.js` | `dev/viewer/src/annotationComponent.js` |
+| `src/lib/annotationList.js` | `dev/viewer/src/annotationList.js` |
 | `src/lib/quantification.js` | `dev/viewer/src/quantification.js` |
 | `src/lib/quantificationUI.js` | `dev/viewer/src/quantificationUI.js` |
 

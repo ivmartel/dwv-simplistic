@@ -20,7 +20,7 @@ import {renderQuantification} from './quantificationUI.js';
 
 /**
  * Note: highly inspired from the dwv viewer
- *   and 'dev/viewer/src/annotationComponent.js'.
+ *   and 'dev/viewer/src/annotationList.js'.
  */
 
 /**
