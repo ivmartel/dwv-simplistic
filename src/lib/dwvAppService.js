@@ -359,12 +359,14 @@ export class DwvAppService extends EventTarget {
       this.#dispatch('dataloaded', {value: true});
     });
 
-    // abort shortcut
+    // abort shortcut, on the root document to only abort this viewer
+    //   loads (the viewer needs the focus)
+    const rootDoc = this.#options.rootDocument;
     this.#dwvApp.addEventListener('loadstart', (/*event*/) => {
-      window.addEventListener('keydown', this.#onAbortKeydown);
+      rootDoc.addEventListener('keydown', this.#onAbortKeydown);
     });
     this.#dwvApp.addEventListener('loadend', (/*event*/) => {
-      window.removeEventListener('keydown', this.#onAbortKeydown);
+      rootDoc.removeEventListener('keydown', this.#onAbortKeydown);
     });
 
     // warn/error
@@ -657,7 +659,8 @@ export class DwvAppService extends EventTarget {
   dispose() {
     this.dispatchEvent(new CustomEvent('dispose'));
     window.removeEventListener('resize', this.#dwvApp.onResize);
-    window.removeEventListener('keydown', this.#onAbortKeydown);
+    this.#options.rootDocument.removeEventListener(
+      'keydown', this.#onAbortKeydown);
     this.#dwvApp.abortAllLoads();
     this.#dwvApp.reset();
   }

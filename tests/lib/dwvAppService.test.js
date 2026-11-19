@@ -9,7 +9,7 @@ import {
 import {DwvAppService} from '../../src/lib/dwvAppService.js';
 
 describe('DwvAppService', () => {
-  test('dispose removes the window listeners', () => {
+  test('dispose removes the window and root document listeners', () => {
     const div = document.createElement('div');
     div.id = 'dispose-layerGroup';
     document.body.appendChild(div);
@@ -19,13 +19,18 @@ describe('DwvAppService', () => {
     const onDispose = vi.fn();
     service.addEventListener('dispose', onDispose);
     const spy = vi.spyOn(window, 'removeEventListener');
+    // abort shortcut: on the root document (defaults to document)
+    const docSpy = vi.spyOn(document, 'removeEventListener');
     service.dispose();
     const types = spy.mock.calls.map((call) => call[0]);
     expect(types).toContain('resize');
-    expect(types).toContain('keydown');
+    expect(types).not.toContain('keydown');
+    const docTypes = docSpy.mock.calls.map((call) => call[0]);
+    expect(docTypes).toContain('keydown');
     expect(onDispose).toHaveBeenCalledTimes(1);
 
     spy.mockRestore();
+    docSpy.mockRestore();
     div.remove();
   });
 
