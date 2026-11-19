@@ -20,7 +20,7 @@
   "sideEffects": false,
   "main": "dist/dwvsimplistic.min.js",
   "dependencies": {
-    "dwv": "0.37.0-beta.24"
+    "dwv": "0.37.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

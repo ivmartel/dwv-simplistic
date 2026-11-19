@@ -2341,7 +2341,7 @@ __metadata:
     "@vitest/coverage-v8": "npm:^5.1.1"
     copy-webpack-plugin: "npm:^14.0.0"
     css-loader: "npm:^7.1.2"
-    dwv: "npm:0.37.0-beta.24"
+    dwv: "npm:0.37.0"
     eslint: "npm:^10.15.0"
     eslint-plugin-jsdoc: "npm:^65.4.8"
     globals: "npm:^17.0.0"
@@ -2357,15 +2357,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"dwv@npm:0.37.0-beta.24":
-  version: 0.37.0-beta.24
-  resolution: "dwv@npm:0.37.0-beta.24"
+"dwv@npm:0.37.0":
+  version: 0.37.0
+  resolution: "dwv@npm:0.37.0"
   dependencies:
     dcmstdtojs: "npm:0.2.0"
     jszip: "npm:^3.10.1"
     konva: "npm:~10.9.0"
     magic-wand-tool: "npm:~1.1.7"
-  checksum: 10c0/d4349691ec6756ab40d145750513f167003bd28156aa9d252e2b22904706dce9771741c51ca3dfba3e401845e72843e4068d74d347448c805dc6c552f66902db
+  checksum: 10c0/8309134992d6a755b3cf6a3bde64781ccbc411c0479fc932a4050b4ae5fe0b366674df3694ba22d398fa3f557efcd9dce3986af05935cb7bc965e763c0289b5e
   languageName: node
   linkType: hard
 
