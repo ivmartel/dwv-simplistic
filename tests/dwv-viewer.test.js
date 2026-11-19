@@ -55,6 +55,14 @@ describe('DwvViewer', () => {
     element.remove();
   });
 
+  test('has a focusable layer group for keyboard shortcuts', () => {
+    const element = createComponent('focus');
+    document.body.appendChild(element);
+    const layerGroup = element.shadowRoot.getElementById('focus-layerGroup');
+    expect(layerGroup.tabIndex).toBe(0);
+    element.remove();
+  });
+
   test('generates a viewer id starting with a letter', () => {
     const element = document.createElement('dwv-viewer');
     element.setAttribute('tools', 'scroll');

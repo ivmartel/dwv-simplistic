@@ -334,6 +334,9 @@ export class DwvViewer extends HTMLElement {
     layerGroup.id = viewerId + '-layerGroup';
     layerGroup.className = 'layerGroup';
     layerGroup.part = 'layerGroup';
+    // focusable: dwv listens to keyboard shortcuts on the shadow root,
+    //   which only gets the events when the focus is inside the viewer
+    layerGroup.tabIndex = 0;
     // drop box
     const dropBox = getDropboxElement(viewerId);
     layerGroup.appendChild(dropBox);
