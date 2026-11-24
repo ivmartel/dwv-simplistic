@@ -2,8 +2,9 @@ import {describe, test, expect} from 'vitest';
 
 import {
   TagsService,
-  getInstanceNumbers,
+  getMergeIds,
   getMetaArray,
+  getElementValue,
   filterTags
 } from '../../src/lib/tagsService.js';
 
@@ -29,41 +30,60 @@ function dispatchDataLoaded(service, value) {
   service.dispatchEvent(new CustomEvent('dataloaded', {detail: {value}}));
 }
 
+// merged meta data of multi file data (see dwv `mergeObjects`)
 const meta = {
+  mergeId: ['3', '1', '2'],
   '00020010': {vr: 'UI', value: ['1.2.840.10008.1.2.1']},
-  '00200013': {vr: 'IS', value: ['3', '1', '2']}
+  '00200013': {vr: 'IS', value: {3: ['3'], 1: ['1'], 2: ['2']}}
 };
 
-// merged meta data of multi file data (see dwv `mergeObjects`)
 const mergedMeta = {
   mergeId: ['10', '2', '1'],
   '00020010': {vr: 'UI', value: ['1.2.840.10008.1.2.1']},
   '00200013': {vr: 'IS', value: {10: ['10'], 2: ['2'], 1: ['1']}},
   '00100010': {vr: 'PN', value: ['Doe^John']},
-  '00080018': {vr: 'UI', value: {10: ['1.10'], 2: ['1.2'], 1: ['1.1']}}
+  '00080018': {vr: 'UI', value: {10: ['1.10'], 2: ['1.2'], 1: ['1.1']}},
+  '00081140': {
+    vr: 'SQ',
+    value: {
+      10: [{'00081155': {vr: 'UI', value: ['1.2.10']}}],
+      2: [{'00081155': {vr: 'UI', value: ['1.2.2']}}],
+      1: undefined
+    }
+  }
 };
 
-describe('getInstanceNumbers', () => {
-  test('returns sorted instance numbers', () => {
-    expect(getInstanceNumbers(meta)).toEqual(['1', '2', '3']);
-  });
-
-  test('handles a single string instance number', () => {
-    expect(getInstanceNumbers({'00200013': {value: '7'}})).toEqual(['7']);
-  });
-
-  test('returns sorted merge ids of merged meta data', () => {
-    expect(getInstanceNumbers(mergedMeta)).toEqual(['1', '2', '10']);
+describe('getMergeIds', () => {
+  test('returns sorted merge ids', () => {
+    expect(getMergeIds(mergedMeta)).toEqual(['1', '2', '10']);
   });
 
   test('sorts merge ids with a second id suffix', () => {
-    const merged = {mergeId: ['2-1', '1-1', '2-0', '1-0']};
-    expect(getInstanceNumbers(merged))
-      .toEqual(['1-0', '1-1', '2-0', '2-1']);
+    const merged = {mergeId: ['2-1', '1-1', '10-0', '2-0', '1-0']};
+    expect(getMergeIds(merged))
+      .toEqual(['1-0', '1-1', '2-0', '2-1', '10-0']);
   });
 
-  test('returns an empty array without instance number', () => {
-    expect(getInstanceNumbers({width: {value: 1}})).toEqual([]);
+  test('returns an empty array for non merged meta data', () => {
+    expect(getMergeIds({'00200013': {vr: 'IS', value: ['7']}}))
+      .toEqual([]);
+    expect(getMergeIds({width: {value: 1}})).toEqual([]);
+  });
+});
+
+describe('getElementValue', () => {
+  test('returns non merged values', () => {
+    expect(getElementValue({value: ['a']}, '1')).toEqual(['a']);
+    const typed = new Uint8Array(2);
+    expect(getElementValue({value: typed}, '1')).toBe(typed);
+    expect(getElementValue({value: 'a'}, undefined)).toBe('a');
+  });
+
+  test('returns merged values for the merge id', () => {
+    const element = {value: {1: ['a'], 2: ['b']}};
+    expect(getElementValue(element, '2')).toEqual(['b']);
+    expect(getElementValue(element, '3')).toBeUndefined();
+    expect(getElementValue(element, undefined)).toBeUndefined();
   });
 });
 
@@ -92,8 +112,8 @@ describe('TagsService', () => {
   test('starts empty', () => {
     const tagsService = new TagsService(getFakeService(meta));
     expect(tagsService.getSnapshot()).toEqual({
-      instanceNumbers: [],
-      instanceNumber: undefined,
+      mergeIds: [],
+      mergeId: undefined,
       search: '',
       tags: []
     });
@@ -108,8 +128,8 @@ describe('TagsService', () => {
     dispatchDataLoaded(service, true);
     expect(calls).toBe(1);
     const state = tagsService.getSnapshot();
-    expect(state.instanceNumbers).toEqual(['1', '2', '3']);
-    expect(state.instanceNumber).toBe('1');
+    expect(state.mergeIds).toEqual(['1', '2', '3']);
+    expect(state.mergeId).toBe('1');
     expect(state.tags[1]).toEqual({name: 'InstanceNumber', value: '1'});
   });
 
@@ -122,20 +142,20 @@ describe('TagsService', () => {
     expect(tagsService.getSnapshot().tags).toEqual([]);
   });
 
-  test('selects an instance number', () => {
+  test('selects a merge id', () => {
     const service = getFakeService(meta);
     const tagsService = new TagsService(service);
     tagsService.connect();
     dispatchDataLoaded(service, true);
     const before = tagsService.getSnapshot();
-    tagsService.setInstanceNumber('1');
+    tagsService.setMergeId('1');
     // no change: same snapshot
     expect(tagsService.getSnapshot()).toBe(before);
-    tagsService.setInstanceNumber('3');
+    tagsService.setMergeId('3');
     const state = tagsService.getSnapshot();
     expect(state).not.toBe(before);
-    expect(state.instanceNumbers).toBe(before.instanceNumbers);
-    expect(state.instanceNumber).toBe('3');
+    expect(state.mergeIds).toBe(before.mergeIds);
+    expect(state.mergeId).toBe('3');
     expect(state.tags[1]).toEqual({name: 'InstanceNumber', value: '3'});
   });
 
@@ -152,8 +172,8 @@ describe('TagsService', () => {
     let state = tagsService.getSnapshot();
     expect(state.search).toBe('instance');
     expect(state.tags).toEqual([{name: 'InstanceNumber', value: '1'}]);
-    // kept on instance number change
-    tagsService.setInstanceNumber('2');
+    // kept on merge id change
+    tagsService.setMergeId('2');
     state = tagsService.getSnapshot();
     expect(state.tags).toEqual([{name: 'InstanceNumber', value: '2'}]);
     // kept on new data
@@ -173,15 +193,36 @@ describe('TagsService', () => {
     const tagsService = new TagsService(service);
     tagsService.connect();
     dispatchDataLoaded(service, true);
-    expect(tagsService.getSnapshot().instanceNumbers)
+    expect(tagsService.getSnapshot().mergeIds)
       .toEqual(['1', '2', '10']);
-    tagsService.setInstanceNumber('10');
+    tagsService.setMergeId('10');
     expect(tagsService.getSnapshot().tags).toEqual([
       {name: 'TransferSyntaxUID', value: '1.2.840.10008.1.2.1'},
       {name: 'InstanceNumber', value: '10'},
       {name: 'PatientName', value: 'Doe^John'},
-      {name: 'SOPInstanceUID', value: '1.10'}
+      {name: 'SOPInstanceUID', value: '1.10'},
+      {name: 'ReferencedImageSequence', value: ''},
+      {name: '[0] ReferencedSOPInstanceUID', value: '1.2.10'}
     ]);
+    // element not present for a merge id
+    tagsService.setMergeId('1');
+    expect(tagsService.getSnapshot().tags.slice(4)).toEqual([
+      {name: 'ReferencedImageSequence', value: ''}
+    ]);
+  });
+
+  test('loads non merged meta data', () => {
+    const service = getFakeService({
+      '00020010': {vr: 'UI', value: ['1.2.840.10008.1.2.1']},
+      '00200013': {vr: 'IS', value: ['7']}
+    });
+    const tagsService = new TagsService(service);
+    tagsService.connect();
+    dispatchDataLoaded(service, true);
+    const state = tagsService.getSnapshot();
+    expect(state.mergeIds).toEqual([]);
+    expect(state.mergeId).toBeUndefined();
+    expect(state.tags[1]).toEqual({name: 'InstanceNumber', value: '7'});
   });
 
   test('stops listening on dispose', () => {
@@ -203,10 +244,23 @@ describe('getMetaArray', () => {
       width: {value: 512},
       name: {value: 'test'}
     };
-    expect(getMetaArray(meta, 0)).toEqual([
+    expect(getMetaArray(meta)).toEqual([
       {name: 'width', value: 512},
       {name: 'name', value: 'test'}
     ]);
+  });
+
+  test('flattens merged simple meta data', () => {
+    const meta = {
+      mergeId: ['a', 'b'],
+      width: {value: 512},
+      name: {value: {a: 'test-a'}}
+    };
+    expect(getMetaArray(meta, 'a')).toEqual([
+      {name: 'width', value: 512},
+      {name: 'name', value: 'test-a'}
+    ]);
+    expect(getMetaArray(meta, 'b')[1]).toEqual({name: 'name', value: ''});
   });
 
   test('uses dictionary names for DICOM meta data', () => {
@@ -215,19 +269,10 @@ describe('getMetaArray', () => {
       '00020010': {vr: 'UI', value: ['1.2.840.10008.1.2.1']},
       '00100010': {vr: 'PN', value: ['Doe^John']}
     };
-    expect(getMetaArray(meta, 0)).toEqual([
+    expect(getMetaArray(meta)).toEqual([
       {name: 'TransferSyntaxUID', value: '1.2.840.10008.1.2.1'},
       {name: 'PatientName', value: 'Doe^John'}
     ]);
-  });
-
-  test('forces the instance number', () => {
-    const meta = {
-      '00020010': {vr: 'UI', value: ['1.2.840.10008.1.2.1']},
-      '00200013': {vr: 'IS', value: ['1']}
-    };
-    const res = getMetaArray(meta, 5);
-    expect(res[1]).toEqual({name: 'InstanceNumber', value: '5'});
   });
 
   test('prefixes sequence items', () => {
@@ -240,7 +285,7 @@ describe('getMetaArray', () => {
         ]
       }
     };
-    expect(getMetaArray(meta, 0).slice(1)).toEqual([
+    expect(getMetaArray(meta).slice(1)).toEqual([
       {name: 'ReferencedImageSequence', value: ''},
       {name: '[0] ReferencedSOPClassUID', value: '1.2.3'}
     ]);
@@ -251,7 +296,7 @@ describe('getMetaArray', () => {
       '00020010': {vr: 'UI', value: ['1.2.840.10008.1.2.1']},
       '00091001': {vr: 'OB', value: new Uint8Array(20)}
     };
-    expect(getMetaArray(meta, 0)[1].value)
+    expect(getMetaArray(meta)[1].value)
       .toBe('0,0,0,0,0,0,0,0,0,0... (len:20)');
   });
 });

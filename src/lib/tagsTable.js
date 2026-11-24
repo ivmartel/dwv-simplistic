@@ -8,8 +8,8 @@
  */
 
 /**
- * Tags table: renders the tags service state as an instance
- *   number slider, a search input and a tags table, and calls
+ * Tags table: renders the tags service state as a merge id
+ *   (instance number) slider, a search input and a tags table, and calls
  *   the service actions.
  */
 export class TagsTable {
@@ -50,14 +50,14 @@ export class TagsTable {
   #content;
 
   /**
-   * The instance number slider.
+   * The merge id slider.
    *
    * @type {HTMLInputElement|undefined}
    */
   #slider;
 
   /**
-   * The instance number slider label.
+   * The merge id slider label.
    *
    * @type {HTMLLabelElement|undefined}
    */
@@ -106,7 +106,7 @@ export class TagsTable {
 
   /**
    * Get the content elements: title, controls (search input and
-   *   instance number slider) and scrollable tags table.
+   *   merge id slider) and scrollable tags table.
    *   Always returns the same elements.
    *
    * @returns {HTMLElement[]} The content elements.
@@ -129,7 +129,7 @@ export class TagsTable {
     title.appendChild(document.createTextNode('DICOM Tags'));
 
     // slider input
-    const sliderId = this.#viewerId + '-instancenumber-slider';
+    const sliderId = this.#viewerId + '-mergeid-slider';
     const slider = document.createElement('input');
     slider.type = 'range';
     slider.id = sliderId;
@@ -139,13 +139,12 @@ export class TagsTable {
     const sliderLabel = document.createElement('label');
     sliderLabel.htmlFor = sliderId;
     sliderLabel.title = slider.title;
-    // navigate in instance numbers
+    // navigate in merge ids
     slider.addEventListener('input', (event) => {
-      const instanceNumbers = this.#tagsService.getSnapshot().instanceNumbers;
-      this.#tagsService.setInstanceNumber(
-        instanceNumbers[event.target.value]);
+      const mergeIds = this.#tagsService.getSnapshot().mergeIds;
+      this.#tagsService.setMergeId(mergeIds[event.target.value]);
     });
-    // container span (hidden without instance number)
+    // container span (hidden without merge id)
     const sliderSpan = document.createElement('span');
     sliderSpan.appendChild(slider);
     sliderSpan.appendChild(sliderLabel);
@@ -192,16 +191,15 @@ export class TagsTable {
     this.#renderedState = state;
 
     // slider
-    if (state.instanceNumbers !== previous?.instanceNumbers) {
-      this.#slider.max = Math.max(state.instanceNumbers.length - 1, 0);
+    if (state.mergeIds !== previous?.mergeIds) {
+      this.#slider.max = Math.max(state.mergeIds.length - 1, 0);
       this.#slider.parentElement.style.display =
-        state.instanceNumbers.length === 0 ? 'none' : '';
+        state.mergeIds.length === 0 ? 'none' : '';
     }
-    const index = state.instanceNumbers.indexOf(state.instanceNumber);
+    const index = state.mergeIds.indexOf(state.mergeId);
     this.#slider.value = Math.max(index, 0);
     this.#sliderLabel.replaceChildren(document.createTextNode(
-      typeof state.instanceNumber !== 'undefined'
-        ? state.instanceNumber : ''));
+      typeof state.mergeId !== 'undefined' ? state.mergeId : ''));
 
     // search
     if (this.#searchInput.value !== state.search) {

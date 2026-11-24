@@ -20,47 +20,40 @@ import {getTagFromKey, getDicomTagInfo} from 'dwv';
 /**
  * Tags state: plain data, do not modify.
  *
+ * Merged meta data (several slices or volumes, see dwv `mergeObjects`)
+ *   has a `mergeId` list and, for the elements that differ between the
+ *   merged items, a value object indexed by merge id.
+ *
  * @typedef {object} TagsState
- * @property {string[]} instanceNumbers The sorted instance numbers,
- *   empty if the data has no InstanceNumber.
- * @property {string|undefined} instanceNumber The selected
- *   instance number.
+ * @property {string[]} mergeIds The sorted merge ids (instance numbers,
+ *   with a possible '-<secondId>' suffix for multi volume data),
+ *   empty if the meta data is not merged.
+ * @property {string|undefined} mergeId The selected merge id.
  * @property {string} search The search string, empty for no search.
- * @property {TagItemState[]} tags The tags of the selected instance
+ * @property {TagItemState[]} tags The tags of the selected merge id
  *   matching the search.
  */
 
 /**
- * Get the sorted list of instance numbers of meta data.
- *
- * For merged meta data (multi file data), they are the dwv merge ids:
- *   instance numbers with a possible '-<secondId>' suffix, used as keys
- *   of the merged values (see dwv `mergeObjects`).
+ * Key of the merge id list in merged meta data.
+ */
+const MERGE_ID_KEY = 'mergeId';
+
+/**
+ * Get the sorted list of merge ids of meta data.
  *
  * @param {object} metaData The meta data.
- * @returns {string[]} The instance numbers, empty if the meta data
- *   has no InstanceNumber.
+ * @returns {string[]} The merge ids, empty if the meta data
+ *   is not merged.
  */
-export function getInstanceNumbers(metaData) {
-  let instanceNumbers;
-  if (typeof metaData.mergeId !== 'undefined') {
-    // merged meta data
-    instanceNumbers = metaData.mergeId.map(String);
-  } else {
-    // InstanceNumber
-    const instanceElement = metaData['00200013'];
-    if (typeof instanceElement === 'undefined') {
-      return [];
-    }
-    let instanceNumberValue = instanceElement.value;
-    if (typeof instanceNumberValue === 'string') {
-      instanceNumberValue = [instanceNumberValue];
-    }
-    instanceNumbers = instanceNumberValue.map(String);
+export function getMergeIds(metaData) {
+  const mergeIds = metaData[MERGE_ID_KEY];
+  if (!Array.isArray(mergeIds)) {
+    return [];
   }
   // numerical sort
-  return instanceNumbers.sort(function (a, b) {
-    return parseFloat(a) - parseFloat(b) || a.localeCompare(b);
+  return mergeIds.map(String).sort(function (a, b) {
+    return a.localeCompare(b, undefined, {numeric: true});
   });
 }
 
@@ -121,8 +114,8 @@ export class TagsService {
    * @type {TagsState}
    */
   #snapshot = {
-    instanceNumbers: [],
-    instanceNumber: undefined,
+    mergeIds: [],
+    mergeId: undefined,
     search: '',
     tags: []
   };
@@ -200,19 +193,19 @@ export class TagsService {
   // actions
 
   /**
-   * Select the instance number to show the tags of.
+   * Select the merge id to show the tags of.
    *
-   * @param {string} instanceNumber The instance number.
+   * @param {string} mergeId The merge id.
    */
-  setInstanceNumber(instanceNumber) {
+  setMergeId(mergeId) {
     if (typeof this.#metaData === 'undefined' ||
-      instanceNumber === this.#snapshot.instanceNumber) {
+      mergeId === this.#snapshot.mergeId) {
       return;
     }
-    this.#allTags = getMetaArray(this.#metaData, instanceNumber);
+    this.#allTags = getMetaArray(this.#metaData, mergeId);
     this.#emit({
       ...this.#snapshot,
-      instanceNumber,
+      mergeId,
       tags: filterTags(this.#allTags, this.#snapshot.search)
     });
   }
@@ -261,21 +254,21 @@ export class TagsService {
       this.#allTags = [];
       this.#emit({
         ...this.#snapshot,
-        instanceNumbers: [],
-        instanceNumber: undefined,
+        mergeIds: [],
+        mergeId: undefined,
         tags: []
       });
       return;
     }
     // TODO allow for different dataid
     this.#metaData = this.#dwvAppService.getMetaData();
-    const instanceNumbers = getInstanceNumbers(this.#metaData);
-    const instanceNumber = instanceNumbers[0];
-    this.#allTags = getMetaArray(this.#metaData, instanceNumber);
+    const mergeIds = getMergeIds(this.#metaData);
+    const mergeId = mergeIds[0];
+    this.#allTags = getMetaArray(this.#metaData, mergeId);
     this.#emit({
       ...this.#snapshot,
-      instanceNumbers,
-      instanceNumber,
+      mergeIds,
+      mergeId,
       tags: filterTags(this.#allTags, this.#snapshot.search)
     });
   }
@@ -286,18 +279,19 @@ export class TagsService {
  * Get the meta data as an array.
  *
  * @param {any} meta The meta data.
- * @param {string} instanceNumber The instance number.
+ * @param {string|undefined} mergeId The merge id, undefined if the
+ *   meta data is not merged.
  * @returns {TagItemState[]} The meta data as a flat array.
  */
-export function getMetaArray(meta, instanceNumber) {
+export function getMetaArray(meta, mergeId) {
   let reducer;
   if (isDicomMeta(meta)) {
-    reducer = getDicomTagReducer(meta, instanceNumber, '');
+    reducer = getDicomTagReducer(meta, mergeId, '');
   } else {
-    reducer = getTagReducer(meta);
+    reducer = getTagReducer(meta, mergeId);
   }
-  // skip the dwv merge ids of merged meta data
-  const keys = Object.keys(meta).filter((key) => key !== 'mergeId');
+  // skip the merge id list of merged meta data
+  const keys = Object.keys(meta).filter((key) => key !== MERGE_ID_KEY);
   return keys.reduce(reducer, []);
 }
 
@@ -313,16 +307,37 @@ function isDicomMeta(meta) {
 }
 
 /**
+ * Get the value of an element for a merge id: merged elements
+ *   which values differ have a value object indexed by merge id.
+ *
+ * @param {any} element The data element.
+ * @param {string|undefined} mergeId The merge id.
+ * @returns {any} The element value, undefined or null if the
+ *   element is not present for the merge id.
+ */
+export function getElementValue(element, mergeId) {
+  const value = element.value;
+  if (typeof value === 'object' && value !== null &&
+    !Array.isArray(value) && !ArrayBuffer.isView(value)) {
+    return typeof mergeId !== 'undefined' ? value[mergeId] : undefined;
+  }
+  return value;
+}
+
+/**
  * Get a simple data array reducer.
  *
  * @param {any} tagData Simple data with a 'value' property.
- * @returns {Function} The data recuder.
+ * @param {string|undefined} mergeId The merge id.
+ * @returns {Function} The data reducer.
  */
-function getTagReducer(tagData) {
+function getTagReducer(tagData, mergeId) {
   return function (accumulator, currentValue) {
+    const value = getElementValue(tagData[currentValue], mergeId);
     accumulator.push({
       name: currentValue,
-      value: tagData[currentValue].value
+      value: typeof value === 'undefined' || value === null
+        ? '' : value
     });
     return accumulator;
   };
@@ -332,11 +347,11 @@ function getTagReducer(tagData) {
  * Get a DICOM data array reducer.
  *
  * @param {any} tagData DICOM data.
- * @param {string} instanceNumber The instance number.
+ * @param {string|undefined} mergeId The merge id.
  * @param {string} prefix The prefix.
  * @returns {Function} The data reducer.
  */
-function getDicomTagReducer(tagData, instanceNumber, prefix) {
+function getDicomTagReducer(tagData, mergeId, prefix) {
   return function (accumulator, currentValue) {
     const tag = getTagFromKey(currentValue);
     const tagInfo = getDicomTagInfo(tag);
@@ -347,46 +362,37 @@ function getDicomTagReducer(tagData, instanceNumber, prefix) {
       // add 'x' to help sorting
       key = 'x' + tag.getKey();
     }
-    const name = key;
+    const name = (prefix ? prefix + ' ' : '') + key;
     const element = tagData[currentValue];
-    let value = element.value;
-    // possible 'merged' object
-    // (use slice method as test for array and typed array)
-    if (typeof value.slice === 'undefined' &&
-      typeof value[instanceNumber] !== 'undefined') {
-      value = value[instanceNumber];
-    }
-    // force instance number (otherwise takes value in non indexed array)
-    if (name === 'InstanceNumber') {
-      value = instanceNumber;
+    const value = getElementValue(element, mergeId);
+    // element not present for this merge id
+    if (typeof value === 'undefined' || value === null) {
+      accumulator.push({name, value: ''});
+      return accumulator;
     }
     // recurse for sequence
     if (element.vr === 'SQ') {
       // sequence tag
-      accumulator.push({
-        name: (prefix ? prefix + ' ' : '') + name,
-        value: ''
-      });
-      // sequence value
+      accumulator.push({name, value: ''});
+      // sequence items
       for (let i = 0; i < value.length; ++i) {
         const sqItems = value[i];
         const keys = Object.keys(sqItems);
         const res = keys.reduce(
-          getDicomTagReducer(
-            sqItems, instanceNumber, prefix + '[' + i + ']'), []
+          getDicomTagReducer(sqItems, mergeId, prefix + '[' + i + ']'), []
         );
         accumulator = accumulator.concat(res);
       }
     } else {
+      let strValue;
       // shorten long 'o'ther data
       if (element.vr[0] === 'O' && value.length > 10) {
-        value = value.slice(0, 10).toString() +
+        strValue = value.slice(0, 10).toString() +
           '... (len:' + value.length + ')';
+      } else {
+        strValue = value.toString();
       }
-      accumulator.push({
-        name: (prefix ? prefix + ' ' : '') + name,
-        value: value.toString()
-      });
+      accumulator.push({name, value: strValue});
     }
     return accumulator;
   };

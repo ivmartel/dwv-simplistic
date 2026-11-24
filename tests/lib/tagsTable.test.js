@@ -32,9 +32,11 @@ function dispatchDataLoaded(service, value) {
   service.dispatchEvent(new CustomEvent('dataloaded', {detail: {value}}));
 }
 
+// merged meta data of multi file data (see dwv `mergeObjects`)
 const meta = {
+  mergeId: ['3', '1', '2'],
   '00020010': {vr: 'UI', value: ['1.2.840.10008.1.2.1']},
-  '00200013': {vr: 'IS', value: ['3', '1', '2']}
+  '00200013': {vr: 'IS', value: {3: ['3'], 1: ['1'], 2: ['2']}}
 };
 
 describe('arrayToHtmlTable', () => {
@@ -73,7 +75,7 @@ describe('TagsTable', () => {
     const sliderDiv = controlsDiv.querySelector('span');
     dispatchDataLoaded(service, true);
     const slider = sliderDiv.querySelector('input');
-    expect(slider.id).toBe('test-instancenumber-slider');
+    expect(slider.id).toBe('test-mergeid-slider');
     expect(slider.max).toBe('2');
     expect(sliderDiv.style.display).toBe('');
     expect(sliderDiv.querySelector('label').textContent).toBe('1');
@@ -87,7 +89,7 @@ describe('TagsTable', () => {
     expect(scrollDiv.textContent).toContain('InstanceNumber1');
   });
 
-  test('selects the instance number on slider input', () => {
+  test('selects the merge id on slider input', () => {
     const {service, tagsService, table} = setup(meta);
     const [, controlsDiv, scrollDiv] = table.getContent();
     const sliderDiv = controlsDiv.querySelector('span');
@@ -95,7 +97,7 @@ describe('TagsTable', () => {
     const slider = sliderDiv.querySelector('input');
     slider.value = '2';
     slider.dispatchEvent(new Event('input'));
-    expect(tagsService.getSnapshot().instanceNumber).toBe('3');
+    expect(tagsService.getSnapshot().mergeId).toBe('3');
     expect(sliderDiv.querySelector('label').textContent).toBe('3');
     expect(scrollDiv.textContent).toContain('InstanceNumber3');
   });
@@ -122,7 +124,7 @@ describe('TagsTable', () => {
     expect(controlsDiv.querySelector('input[type=search]').value).toBe('abc');
   });
 
-  test('hides the slider without instance number', () => {
+  test('hides the slider for non merged data', () => {
     const {service, table} = setup({width: {value: 512}});
     const [, controlsDiv, scrollDiv] = table.getContent();
     const sliderDiv = controlsDiv.querySelector('span');
